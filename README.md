@@ -36,3 +36,8 @@ npm --prefix frontend test
 ```
 
 Set `PRAMITI_BASE_URL` to test a different instance. Set `PRAMITI_EXPECT_SEMANTIC=1` to require a calibrated prediction in the legitimate scenario.
+
+
+## Interface design and validation
+
+See the [interface audit](docs/UI_AUDIT.md), [design system](docs/DESIGN_SYSTEM.md), [progress](docs/UI_PROGRESS.md), and [browser verification and screenshots](docs/UI_TEST_RESULTS.md).
