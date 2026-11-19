@@ -15,7 +15,7 @@ test('public landing, mobile drawer, theme, and original deep links', { timeout:
     await go(page,'',/Autonomous payments/i)
     const overview = await page.request.get(base+'/overview.html')
     assert.match(await overview.text(), /Competition overview/)
-    await page.getByRole('link',{name:'Launch Interactive Demo'}).first().click()
+    await page.getByRole('link',{name:'Launch Live Demo'}).first().click()
     await page.getByRole('heading',{level:1,name:'Live Demo'}).waitFor()
     const toggle = page.getByRole('button',{name:'Open navigation'})
     await toggle.focus()

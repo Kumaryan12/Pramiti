@@ -51,6 +51,8 @@ export async function signDefault(page, { validation = false, receipt } = {}) {
 export async function runDemo(page, scenario, expected) {
   if (!page.url().endsWith('/#demo')) await go(page,'demo','Live Demo')
   await page.getByRole('button',{name:'Run '+scenario,exact:true}).click()
+  await page.waitForURL(/#demo\?tx=[\w-]+$/)
+  await page.getByRole('link',{name:'Inspect transaction',exact:true}).click()
   await page.waitForURL(/#verification\?tx=[\w-]+$/)
   await page.getByRole('heading',{level:1,name:'Transactions'}).waitFor()
   await page.locator('.decision-hero .status-tag').first().filter({hasText:expected}).waitFor()

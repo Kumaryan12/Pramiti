@@ -5,7 +5,9 @@ import { api, sign, type Evidence, type Mandate, type Payment, type Product } fr
 import { ErrorState, LoadingSkeleton } from './components'
 import { Mandates } from './mandates'
 import { AttackLab, Documentation, EvidenceExplorer, Ledger } from './investigation'
-import { Dashboard, Demo, Landing, type Scenario } from './overview'
+import { Landing } from './landing'
+import { Demo } from './demo'
+import { Dashboard, type Scenario } from './overview'
 import { Agent, Reviews, Transactions } from './payments'
 import { AppShell, type NavGroup } from './shell'
 import './style.css'
@@ -128,7 +130,7 @@ function App() {
       savePayment(result)
       setAgentPaymentId(result.id)
       await refreshAfterSave()
-      if (scenario && !keepContext) navigate('verification',result.id)
+      if (scenario && !keepContext) navigate('demo',result.id)
       return result
     })
   }
@@ -143,6 +145,9 @@ function App() {
   const transactionId = route.params.get('tx') ?? undefined
   const payment = transactionId ? payments.find(item=>item.id===transactionId) : payments[0]
   const latestAgentPayment = payments.find(item=>item.id===agentPaymentId) ?? payments.find(item=>item.source==='scripted' || item.source==='llm')
+  useEffect(()=>{
+    if (route.id==='demo' && transactionId && payment) setMandateId(payment.proposal.mandate_id)
+  },[route.id,transactionId,payment?.id])
   const offlinePage = route.id==='documentation' || route.id==='analytics'
   if (!route.id) return <Landing/>
 
@@ -152,7 +157,8 @@ function App() {
       {!offlinePage && (session==='idle' || session==='loading') && <LoadingSkeleton label="Connecting to the synthetic sandbox…"/>}
       {session==='ready' && route.id==='dashboard' && <Dashboard payments={payments} catalogue={catalogue} evidence={evidence} refreshed={refreshed}
         busy={busy} onRefresh={()=>void perform(refresh)}/>}
-      {session==='ready' && route.id==='demo' && <Demo mandates={mandates} mandateId={mandateId} setMandateId={setMandateId}
+      {session==='ready' && route.id==='demo' && <Demo mandates={mandates} mandateId={mandateId} setMandateId={id=>{setMandateId(id);navigate('demo')}}
+        catalogue={catalogue} evidence={evidence} payment={transactionId ? payment : payments.find(p=>p.source==='scripted' && p.proposal.mandate_id===mandateId)}
         busy={busy} run={scenario=>void run('scripted','',scenario)}/>}
       {session==='ready' && route.id==='mandates' && <Mandates catalogue={catalogue} mandates={mandates} busy={busy}
         next={route.params.get('next')==='demo' ? 'demo' : 'agent'}
