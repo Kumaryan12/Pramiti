@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Activity, BookOpen, FileSignature, FlaskConical, Grid2X2, Layers3, Play, ScanLine, ShieldCheck, ShoppingBag, UserRoundCheck } from 'lucide-react'
-import { api, sign, type Evidence, type Mandate, type Payment, type Product } from './api'
+import { api, sign, streamAgentRun, type AgentStep, type StoppedAgentRun, type Evidence, type Mandate, type Payment, type Product } from './api'
 import { ErrorState, LoadingSkeleton } from './components'
 import { Mandates } from './mandates'
 import { AttackLab, Documentation, EvidenceExplorer, Ledger } from './investigation'
@@ -60,6 +60,10 @@ function App() {
   const [refreshed,setRefreshed] = useState<string>()
   const [mandateId,setMandateId] = useState('')
   const [agentPaymentId,setAgentPaymentId] = useState('')
+  const [shopperMandate,setShopperMandate] = useState('')
+  const [shopperSteps,setShopperSteps] = useState<AgentStep[]>([])
+  const [shopperRunning,setShopperRunning] = useState(false)
+  const [shopperStop,setShopperStop] = useState<StoppedAgentRun>()
   const [llmEnabled,setLlmEnabled] = useState(false)
   const pendingAction = useRef(false)
   const connecting = useRef(false)
@@ -134,6 +138,26 @@ function App() {
       return result
     })
   }
+  function runShopper(mode: 'scripted' | 'llm', token: string) {
+    return perform(async () => {
+      setShopperMandate(mandateId)
+      setShopperSteps([])
+      setShopperStop(undefined)
+      setShopperRunning(true)
+      try {
+        const result = await streamAgentRun(mandateId, mode, token, step => setShopperSteps(steps => [...steps, step]))
+        if ('outcome' in result) setShopperStop(result)
+        else {
+          savePayment(result)
+          setAgentPaymentId(result.id)
+        }
+        await refreshAfterSave()
+        setShopperSteps([])
+      } finally {
+        setShopperRunning(false)
+      }
+    })
+  }
   function decide(id:string,decision:'approve'|'reject',note:string) {
     return perform(async()=>{
       const result = await api<Payment>('/payments/' + encodeURIComponent(id) + '/review',{decision,note})
@@ -144,7 +168,8 @@ function App() {
   }
   const transactionId = route.params.get('tx') ?? undefined
   const payment = transactionId ? payments.find(item=>item.id===transactionId) : payments[0]
-  const latestAgentPayment = payments.find(item=>item.id===agentPaymentId) ?? payments.find(item=>item.source==='scripted' || item.source==='llm')
+  const agentPayments = payments.filter(item => item.proposal.mandate_id === mandateId && (item.source === 'scripted' || item.source === 'llm'))
+  const latestAgentPayment = agentPayments.find(item => item.id === agentPaymentId) ?? agentPayments[0]
   useEffect(()=>{
     if (route.id==='demo' && transactionId && payment) setMandateId(payment.proposal.mandate_id)
   },[route.id,transactionId,payment?.id])
@@ -171,7 +196,8 @@ function App() {
         })}/>}
       {session==='ready' && route.id==='agent' && <Agent mandates={mandates} mandateId={mandateId} setMandateId={setMandateId}
         catalogue={catalogue} payment={latestAgentPayment} evidence={evidence} busy={busy} llmEnabled={llmEnabled}
-        onRun={(mode,token)=>void run(mode,token)}/>}
+        running={shopperRunning && shopperMandate === mandateId} liveSteps={shopperMandate === mandateId ? shopperSteps : []} stoppedRun={shopperStop}
+        onRun={(mode,token)=>void runShopper(mode,token)}/>}
       {session==='ready' && route.id==='verification' && <>
         {transactionId && !payment && <ErrorState message="This transaction is unavailable in your browser session."/>}
         <Transactions payment={payment} payments={payments} catalogue={catalogue} mandates={mandates} evidence={evidence}/>

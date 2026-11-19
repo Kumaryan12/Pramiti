@@ -196,24 +196,23 @@ def test_concurrent_duplicate_nonce_and_split_total(client):
     assert client.get("/api/mandates").json()[0]["spent"] == 239900
 
 
-@pytest.mark.parametrize(("arguments", "expected"), [
-    ({"product_id": "compact-20", "rationale": "Merchant recommendation"}, 201),
-    ({"product_id": "compact-20", "rationale": "Merchant recommendation", "amount": 5}, 502),
-    ({"product_id": "external-listing", "rationale": "Outside catalogue"}, 502),
-])
-def test_llm_selection_uses_strict_server_catalogue(client, monkeypatch, arguments, expected):
+def mock_shopping_model(monkeypatch, actions, inspect_request=None):
     from openai import OpenAI
 
     def response(request):
         assert request.url == "https://api.openai.com/v1/responses"
         body = json.loads(request.content)
-        assert body["tools"][0]["strict"] and not body["parallel_tool_calls"]
-        assert "compact substitute" in body["input"]
+        assert all(tool["strict"] and not tool["parameters"]["additionalProperties"] for tool in body["tools"])
+        assert not body["parallel_tool_calls"] and body["store"] is False
+        name, arguments = next(actions)
+        call_id = f"call_{len(body['input'])}"
+        if inspect_request:
+            inspect_request(body)
         return httpx.Response(200, json={
             "id": "resp_synthetic", "object": "response", "status": "completed",
             "created_at": 1, "model": "test-model",
-            "output": [{"type": "function_call", "id": "fc_synthetic", "call_id": "call_synthetic",
-                        "name": "propose_catalog_purchase", "arguments": json.dumps(arguments)}],
+            "output": [{"type": "function_call", "id": f"fc_{call_id}", "call_id": call_id,
+                        "name": name, "arguments": json.dumps(arguments)}],
         })
 
     monkeypatch.setenv("OPENAI_API_KEY", "synthetic-test-key")
@@ -221,10 +220,24 @@ def test_llm_selection_uses_strict_server_catalogue(client, monkeypatch, argumen
     monkeypatch.setattr("backend.pramiti.agent.OpenAI", lambda **kwargs: OpenAI(
         **kwargs, http_client=httpx.Client(transport=httpx.MockTransport(response)),
     ))
+    return {"X-LLM-Token": "test-operator-token"}
+
+
+@pytest.mark.parametrize(("arguments", "expected"), [
+    ({"product_id": "compact-20", "rationale": "Merchant recommendation"}, 201),
+    ({"product_id": "compact-20", "rationale": "Merchant recommendation", "amount": 5}, 502),
+    ({"product_id": "external-listing", "rationale": "Outside catalogue"}, 502),
+])
+def test_llm_selection_uses_strict_server_catalogue(client, monkeypatch, arguments, expected):
+    headers = mock_shopping_model(monkeypatch, iter([
+        ("search_catalogue", {"query": "charger"}),
+        ("check_product_evidence", {"product_id": "compact-20"}),
+        ("propose_catalog_purchase", arguments),
+    ]))
     mandate_id = approve(client)
     result = client.post("/api/agent/runs",
                          json={"mandate_id": mandate_id, "mode": "llm", "scenario": "substitution"},
-                         headers={"X-LLM-Token": "test-operator-token"})
+                         headers=headers)
     assert result.status_code == expected
     if expected == 201:
         body = result.json()
@@ -235,8 +248,73 @@ def test_llm_selection_uses_strict_server_catalogue(client, monkeypatch, argumen
                      if event["action"] == "agent_observations")
         assert event["detail"]["model"] == "test-model"
         assert event["detail"]["tool_call"]["product_id"] == "compact-20"
+        assert "compact substitute" in event["detail"]["steps"][0]["result"]["products"][1]["description"]
     else:
         assert client.get("/api/payments").json() == []
+
+
+def test_llm_shopper_streams_and_records_a_revised_selection(client, monkeypatch):
+    calls = [
+        ("propose_catalog_purchase", {"product_id": "compact-20", "rationale": "Initial choice"}),
+        ("search_catalogue", {"query": "charger"}),
+        ("compare_products", {"product_ids": ["compact-20", "assemble-65"]}),
+        ("check_product_evidence", {"product_id": "compact-20"}),
+        ("propose_catalog_purchase", {"product_id": "compact-20", "rationale": "Lower cost"}),
+        ("check_product_evidence", {"product_id": "assemble-65"}),
+        ("propose_catalog_purchase", {"product_id": "assemble-65", "rationale": "65W confirmed"}),
+    ]
+    outputs = []
+
+    def inspect_request(body):
+        if len(body["input"]) > 1:
+            call, result = body["input"][-2:]
+            assert call["call_id"] == result["call_id"]
+            outputs.append(json.loads(result["output"]))
+
+    headers = mock_shopping_model(monkeypatch, iter(calls), inspect_request)
+    response = client.post("/api/agent/runs", json={"mandate_id": approve(client), "mode": "llm"},
+                           headers={**headers, "Accept": "application/x-ndjson"})
+    assert response.headers["content-type"].startswith("application/x-ndjson")
+    messages = [json.loads(line) for line in response.text.splitlines()]
+    steps = [message["step"] for message in messages[:-1]]
+    assert [step["name"] for step in steps] == [name for name, _ in calls]
+    assert "error" in outputs[0]
+    assert outputs[3]["compatibility"]["missing"] == ["65w"]
+    assert "Try another product" in outputs[4]["error"]
+    assert outputs[5]["compatibility"]["confirmed"] == ["65w", "pd", "usb-c"]
+    payment = messages[-1]["result"]
+    assert payment["proposal"]["product_id"] == "assemble-65"
+    assert payment["status"] == "SETTLED"
+    ledger = client.get("/api/evidence").json()
+    event = next(event for event in ledger["events"] if event["action"] == "agent_observations")
+    assert ledger["valid"] and event["detail"]["steps"] == steps
+
+
+def test_no_viable_scripted_purchase_asks_buyer_without_payment(client):
+    mandate_id = approve(client, max_amount=150000)
+    response = client.post("/api/agent/runs", json={"mandate_id": mandate_id})
+    assert response.status_code == 200
+    assert response.json()["outcome"] == "needs_input"
+    assert client.get("/api/payments").json() == []
+    assert client.get("/api/mandates").json()[0]["spent"] == 0
+    ledger = client.get("/api/evidence").json()
+    assert ledger["valid"]
+    event = ledger["events"][-1]
+    assert event["action"] == "agent_run_stopped" and event["detail"]["mandate_id"] == mandate_id
+    assert event["detail"]["steps"][-1]["name"] == "ask_buyer"
+
+
+def test_llm_run_stops_at_max_tool_steps(client, monkeypatch):
+    from itertools import repeat
+    from backend.pramiti.agent import MAX_TOOL_STEPS
+
+    inspected = []
+    headers = mock_shopping_model(monkeypatch, repeat(("search_catalogue", {"query": "charger"})), inspected.append)
+    response = client.post("/api/agent/runs", json={"mandate_id": approve(client), "mode": "llm"}, headers=headers)
+    assert response.status_code == 200
+    assert response.json()["outcome"] == "limit_reached"
+    assert len(inspected) == MAX_TOOL_STEPS
+    assert client.get("/api/payments").json() == []
 
 
 def test_schema_revision_adopts_existing_data(client):

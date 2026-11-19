@@ -86,8 +86,8 @@ export function Dashboard({ payments, catalogue, evidence, refreshed, busy, onRe
   </>
 }
 
-export function MandateSelect({ mandates, id, setId }: { mandates: Mandate[]; id: string; setId: (id: string) => void }) {
-  return <label className="control">Signed mandate<select value={id} onChange={event => setId(event.target.value)}>
+export function MandateSelect({ mandates, id, setId, disabled }: { mandates: Mandate[]; id: string; setId: (id: string) => void; disabled?: boolean }) {
+  return <label className="control">Signed mandate<select disabled={disabled} value={id} onChange={event => setId(event.target.value)}>
     <option value="">Select a signed mandate</option>
     {mandates.map(item => <option value={item.id} key={item.id}>{item.instruction.slice(0, 108)}</option>)}
   </select></label>

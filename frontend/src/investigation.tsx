@@ -5,15 +5,15 @@ import {
   ActionLink, Card, CopyableIdentifier, EmptyState, FilterToolbar, instant, PageHeader, StatusBadge, TextLink, Timeline,
 } from './components'
 import { MandateSelect, scenarios, type Scenario } from './overview'
-import { asRecord } from './payments'
+import { agentSteps, AgentTrace, asRecord } from './agent-trace'
 
 const eventNames: Record<string,string> = {
   user_instruction:'User instruction recorded', mandate_approved:'Mandate signed', agent_observations:'Agent observations',
-  agent_proposal:'Payment proposal', verification:'Verification decision', human_review:'Human review',
+  agent_proposal:'Payment proposal', agent_run_stopped:'Shopping run stopped', verification:'Verification decision', human_review:'Human review',
   simulated_settlement:'Simulated settlement',
 }
 const eventIcons = {
-  user_instruction:FileSignature, mandate_approved:FileSignature, agent_observations:ShoppingBag, agent_proposal:ShoppingBag,
+  user_instruction:FileSignature, mandate_approved:FileSignature, agent_observations:ShoppingBag, agent_proposal:ShoppingBag, agent_run_stopped:ShoppingBag,
   verification:ShieldCheck, human_review:UserRoundCheck, simulated_settlement:Check,
 }
 function eventTitle(action: string) { return eventNames[action] ?? label(action) }
@@ -35,6 +35,7 @@ function eventFields(event: EvidenceEvent) {
     const tool = asRecord(detail.tool_call)
     return [['Selected listing',text(product.title)],['Merchant observation',text(product.description)],['Tool call',text(tool.name)],['Model',text(detail.model)]]
   }
+  if (event.action === 'agent_run_stopped') return [['Outcome',text(detail.message)],['Mandate ID',text(detail.mandate_id)],['Model',text(detail.model)]]
   if (event.action === 'agent_proposal') {
     const proposal = asRecord(detail.proposal)
     return [['Product',text(proposal.product_id)],['Merchant',text(proposal.merchant)],
@@ -48,6 +49,7 @@ function eventFields(event: EvidenceEvent) {
 }
 
 function EvidenceCard({ event }: { event:EvidenceEvent }) {
+  const steps = agentSteps(asRecord(event.detail).steps)
   const fields = eventFields(event).filter(([,value])=>value)
   const readable = event.action==='mandate_approved' ? fields.find(([name])=>name==='Expiry') : fields[0]
   return <>{readable && <p className="event-summary">{readable[0]} · {readable[1]}</p>}<details className="record-disclosure evidence-event">
@@ -55,6 +57,7 @@ function EvidenceCard({ event }: { event:EvidenceEvent }) {
     <div className="record-body">
       {fields.length ? <dl className="detail-list">{fields.map(([name,value])=><div key={name}><dt>{name}</dt><dd>{value}</dd></div>)}</dl> :
         <p>Insufficient evidence for a structured summary. Inspect the recorded payload below.</p>}
+      {!!steps.length && <AgentTrace steps={steps}/>}
       <dl className="detail-list evidence-ids">
         <div><dt>Entity ID</dt><dd><CopyableIdentifier name="entity ID" value={event.entity} compact/></dd></div>
         <div><dt>Event digest</dt><dd><CopyableIdentifier name="event digest" value={event.digest} compact/></dd></div>

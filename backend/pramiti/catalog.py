@@ -64,14 +64,3 @@ SCENARIOS = {
     "over_budget": "travel-100",
     "substitution": "compact-20",
 }
-
-
-def scripted_product(mandate):
-    candidates = sorted(CATALOG.values(), key=lambda p: (
-        p.category not in mandate.categories or p.merchant not in mandate.merchants,
-        p.id != mandate.product_id if mandate.product_id else False,
-        len(set(mandate.requirements) - set(p.requirements)),
-        p.amount > mandate.max_amount,
-        p.amount,
-    ))
-    return candidates[0]

@@ -1,4 +1,5 @@
 import hashlib
+import json
 import os
 import secrets
 from contextlib import asynccontextmanager
@@ -7,13 +8,14 @@ from typing import Annotated
 from uuid import uuid4
 
 from fastapi import Cookie, Depends, FastAPI, Header, HTTPException, Query, Response
+from fastapi.responses import StreamingResponse
 from pydantic import ValidationError
 from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import text
 from starlette.staticfiles import StaticFiles
 
-from .agent import choose_product
+from .agent import AgentSelection, catalogue_proposal, choose_product, llm_credentials
 from .catalog import CATALOG
 from .domain import AgentRun, Mandate, Proposal, Review, SignedMandate, now, valid_signature
 from .firewall import verify
@@ -169,19 +171,56 @@ def create_app(database_url=None):
     def propose(proposal: Proposal, owner: Owner):
         return submit(proposal, owner, "manual", "Proposal submitted to the sandbox verifier.")
 
+    def agent_flow(run, owner, mandate, envelope, used, key):
+        for entry in choose_product(run, mandate, envelope, used, key):
+            if not isinstance(entry, AgentSelection):
+                yield {"type": "step", "step": entry}
+                continue
+            if entry.product is not None:
+                result = submit(catalogue_proposal(run.mandate_id, entry.product), owner, run.mode,
+                                entry.rationale, entry.observations)
+            else:
+                result = {"id": str(uuid4()), "mandate_id": str(run.mandate_id), "source": run.mode,
+                          "outcome": entry.outcome, "message": entry.rationale}
+                with engine.begin() as connection:
+                    lock_ledger(connection, owner)
+                    event = append_event(connection, owner, "agent_run_stopped", result["id"],
+                                         {**result, **entry.observations})
+                result["created_at"] = event["at"]
+            yield {"type": "result", "result": result}
+
     @app.post("/api/agent/runs", status_code=201)
-    def agent(run: AgentRun, owner: Owner, x_llm_token: Annotated[str, Header()] = ""):
+    def agent(run: AgentRun, owner: Owner, response: Response, x_llm_token: Annotated[str, Header()] = "",
+              accept: Annotated[str, Header()] = ""):
         with engine.connect() as connection:
-            envelope, mandate = unpack(fetch_mandate(connection, owner, run.mandate_id))
+            row = fetch_mandate(connection, owner, run.mandate_id)
+            envelope, mandate = unpack(row)
         if mandate is None:
             raise HTTPException(404, "Mandate unavailable")
         if not valid_signature(envelope):
             raise HTTPException(409, "Mandate integrity check failed")
-        selection = choose_product(run, mandate, x_llm_token)
-        product = selection.product
-        proposal = Proposal(mandate_id=run.mandate_id, nonce=uuid4(), product_id=product.id,
-                            merchant=product.merchant, category=product.category, amount=product.amount)
-        return submit(proposal, owner, run.mode, selection.rationale, selection.observations)
+        key = llm_credentials(run, x_llm_token) if run.mode == "llm" else None
+        flow = agent_flow(run, owner, mandate, envelope, row.reserved + row.spent, key)
+        if accept == "application/x-ndjson":
+            def stream():
+                try:
+                    for entry in flow:
+                        yield json.dumps(entry, ensure_ascii=False) + "\n"
+                except HTTPException as exc:
+                    yield json.dumps({"type": "error", "message": exc.detail}) + "\n"
+                finally:
+                    flow.close()
+
+            return StreamingResponse(stream(), media_type="application/x-ndjson",
+                                     headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no"})
+
+        for entry in flow:
+            if entry["type"] == "result":
+                result = entry["result"]
+                if "outcome" in result:
+                    response.status_code = 200
+                return result
+        raise RuntimeError("The shopper ended without an outcome")
 
     @app.get("/api/payments")
     def list_payments(owner: Owner):

@@ -2,7 +2,7 @@ import { Play } from 'lucide-react'
 import { label, money, type Evidence, type Mandate, type Payment, type Product } from './api'
 import { ActionLink, Card, CopyableIdentifier, PageHeader, StatusBadge, StepIndicator, TextLink } from './components'
 import { MandateSelect, scenarios, type Scenario } from './overview'
-import { asRecord } from './payments'
+import { asRecord } from './agent-trace'
 
 export function Demo({ mandates, mandateId, setMandateId, catalogue, payment, evidence, busy, run }: {
   mandates:Mandate[]; mandateId:string; setMandateId:(id:string)=>void; catalogue:Product[]; payment?:Payment;
@@ -17,7 +17,8 @@ export function Demo({ mandates, mandateId, setMandateId, catalogue, payment, ev
   const passed=result ? Object.values(result.checks).filter(Boolean).length : 0
   const stage=!mandate ? 0 : !result ? 1 : result.status==='PENDING' ? 2 : 3
   return <>
-    <PageHeader title="Live Demo" description="Sign a spending mandate and run a scripted purchase."/>
+    <PageHeader title="Live Demo" description="Sign a spending mandate and run a scripted purchase."
+      actions={<a className="btn secondary" href="#agent">Open shopping agent</a>}/>
     <div className="journey-progress"><StepIndicator current={stage} steps={['Authorise intent','Run the agent','Inspect decision','Trace outcome']}/></div>
     {result && <div className="demo-decision" role="status" key={result.id}>
       <StatusBadge value={result.decision}/>

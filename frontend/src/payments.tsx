@@ -3,29 +3,36 @@ import {
   ArrowRight, Check, CircleAlert, Fingerprint, GitBranch, Layers3, Play, ScanLine, Search,
   ShieldCheck, ShoppingBag, Terminal, UserRoundCheck,
 } from 'lucide-react'
-import { label, money, type Evidence, type Mandate, type Payment, type Product } from './api'
+import { label, money, type AgentStep, type StoppedAgentRun, type Evidence, type Mandate, type Payment, type Product } from './api'
 import {
   ActionLink, Card, ConfirmationDialog, CopyableIdentifier, EmptyState, FilterToolbar, instant, PageHeader, StatusBadge,
   TextLink, Timeline, TransactionTable,
 } from './components'
 import { MandateSummary } from './mandates'
 import { MandateSelect } from './overview'
+import { agentSteps, AgentTrace, asRecord } from './agent-trace'
 
-export const asRecord = (value: unknown): Record<string, unknown> =>
-  value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {}
 const string = (value: unknown) => typeof value === 'string' ? value : undefined
 const sourceName = (value: string) => value === 'llm' ? 'Live LLM' : value === 'scripted' ? 'Scripted agent' : 'Manual proposal'
 const productTitle = (item: Payment, catalogue: Product[]) => catalogue.find(p => p.id === item.proposal.product_id)?.title ?? item.proposal.product_id
 
-export function Agent({ mandates, mandateId, setMandateId, catalogue, payment, evidence, busy, llmEnabled, onRun }: {
+export function Agent({ mandates, mandateId, setMandateId, catalogue, payment, evidence, busy, llmEnabled, running, liveSteps, stoppedRun, onRun }: {
   mandates: Mandate[]; mandateId: string; setMandateId: (value:string)=>void; catalogue: Product[]; payment?: Payment;
-  evidence?: Evidence; busy:boolean; llmEnabled:boolean; onRun:(mode:'scripted'|'llm',token:string)=>void
+  evidence?: Evidence; busy:boolean; llmEnabled:boolean; running:boolean; liveSteps:AgentStep[]; stoppedRun?:StoppedAgentRun; onRun:(mode:'scripted'|'llm',token:string)=>void
 }) {
   const [mode,setMode] = useState<'scripted'|'llm'>('scripted')
   const [token,setToken] = useState('')
   const [query,setQuery] = useState('')
   const active = mandates.find(item=>item.id === mandateId)
   const entry = payment && evidence?.events.find(event=>event.entity===payment.id && event.action==='agent_observations')
+  const stoppedEntry = evidence?.events.filter(event => event.action === 'agent_run_stopped' &&
+    asRecord(event.detail).mandate_id === mandateId).at(-1)
+  const stopped = stoppedEntry && (!payment?.created_at || stoppedEntry.at > payment.created_at) ? stoppedEntry : undefined
+  const pendingStop = stoppedRun?.mandate_id === mandateId && (!payment?.created_at || stoppedRun.created_at > payment.created_at) ? stoppedRun : undefined
+  const stop = pendingStop ?? asRecord(stopped?.detail)
+  const recordedSteps = agentSteps(asRecord(stopped?.detail ?? entry?.detail).steps)
+  const steps = liveSteps.length || running ? liveSteps : recordedSteps
+  const showPayment = stopped || pendingStop || liveSteps.length ? undefined : payment
   const observed = asRecord(entry?.detail)
   const listing = asRecord(observed.selected_listing)
   const call = asRecord(observed.tool_call)
@@ -34,47 +41,57 @@ export function Agent({ mandates, mandateId, setMandateId, catalogue, payment, e
   return <>
     <PageHeader title="AI Agent" description="Follow the signed instructions, merchant inputs and proposal from selection through verification."
       actions={<a href="#demo" className="btn secondary">Run a guided scenario <ArrowRight size={16} aria-hidden="true"/></a>}/>
-    <div className="investigation-grid">
-      <div className="flow">
-        <Card title="User-controlled instruction" note="Source · Signed spending mandate">
-          {mandates.length ? <div className="form-stack"><MandateSelect mandates={mandates} id={mandateId} setId={setMandateId}/>
-            {active && <div className="instruction-box"><span>Authorized intent</span><p>{active.instruction}</p><small className="muted">{money(active.max_amount)} per payment · {money(active.cumulative_limit)} cumulative</small></div>}
-          </div> : <EmptyState title="A signed mandate is required" description="Define what the agent may purchase." action={<ActionLink href="#mandates">Create mandate</ActionLink>}/>}
-        </Card>
-        <Card title="Available products" note="Merchant-controlled descriptions · synthetic catalogue">
-          <label className="control search-control">Search products or merchants<input type="search" value={query} onChange={e=>setQuery(e.target.value)}/></label>
-          {visible.length ? <div className="catalogue-list">{visible.map(product=><details key={product.id} className="record-disclosure">
-            <summary><div><strong>{product.title}</strong><small>{product.merchant} · {product.category}</small></div><span className="amount">{money(product.amount)}</span></summary>
-            <div className="record-body"><p>{product.description}</p><p>Claimed attributes · {product.requirements.join(', ')}</p></div>
-          </details>)}</div> : <p className="muted">No matching products.</p>}
-        </Card>
-      </div>
-      <div className="flow">
-        <Card title="Run shopper" note="Agent-generated activity is recorded separately from verifier decisions.">
-          <div className="form-stack">
-            <div className="row-actions"><StatusBadge value="UNKNOWN" text={mode === 'llm' && llmEnabled ? 'Live LLM' : 'Scripted agent'}/>
-              {!llmEnabled && <StatusBadge value="UNKNOWN" text="LLM unavailable"/>}</div>
-            <label className="control">Agent mode<select value={mode} onChange={e=>setMode(e.target.value === 'llm' ? 'llm' : 'scripted')}>
-              <option value="scripted">Scripted agent</option><option value="llm" disabled={!llmEnabled}>Live LLM{!llmEnabled ? ' · unavailable' : ''}</option></select></label>
-            {mode === 'llm' && <label className="control">LLM operator token<input type="password" autoComplete="off" value={token} onChange={e=>setToken(e.target.value)}/></label>}
-            <button type="button" className="btn primary" onClick={()=>onRun(mode,token)} disabled={busy || !active || (mode==='llm' && (!llmEnabled || !token.trim()))}>
-              <Play size={16} aria-hidden="true"/>{busy ? 'Running agent…' : 'Propose payment'}</button>
-          </div>
-        </Card>
-        <Card title="Agent activity" note={payment ? sourceName(payment.source) + ' · ' + instant(payment.created_at) : 'Run the shopper to record observations and decisions.'}>
-          {payment ? <Timeline entries={[
+    <div className="shopper-grid">
+      <Card className="shopper-mandate" title="User-controlled instruction" note="Source · Signed spending mandate">
+        {mandates.length ? <div className="form-stack"><MandateSelect mandates={mandates} id={mandateId} setId={setMandateId} disabled={busy}/>
+          {active && <div className="instruction-box"><span>Authorized intent</span><p>{active.instruction}</p><small className="muted">{money(active.max_amount)} per payment · {money(active.cumulative_limit)} cumulative</small></div>}
+        </div> : <EmptyState title="A signed mandate is required" description="Define what the agent may purchase." action={<ActionLink href="#mandates">Create mandate</ActionLink>}/>}
+      </Card>
+      <Card className="shopper-run" title="Run shopper" note="The shopper can search, compare and check evidence. The payment verifier makes the final decision.">
+        <div className="form-stack">
+          <div className="row-actions"><StatusBadge value="UNKNOWN" text={mode === 'llm' && llmEnabled ? 'Live LLM' : 'Scripted agent'}/>
+            {!llmEnabled && <StatusBadge value="UNKNOWN" text="LLM unavailable"/>}</div>
+          <label className="control">Agent mode<select disabled={busy} value={mode} onChange={e=>setMode(e.target.value === 'llm' ? 'llm' : 'scripted')}>
+            <option value="scripted">Scripted agent</option><option value="llm" disabled={!llmEnabled}>Live LLM{!llmEnabled ? ' · unavailable' : ''}</option></select></label>
+          {mode === 'llm' && <label className="control">LLM operator token<input type="password" autoComplete="off" value={token} onChange={e=>setToken(e.target.value)}/></label>}
+          <button type="button" className="btn primary" onClick={()=>onRun(mode,token)} disabled={busy || !active || (mode==='llm' && (!llmEnabled || !token.trim()))}>
+            <Play size={16} aria-hidden="true"/>{busy ? 'Running agent…' : 'Start shopping'}</button>
+        </div>
+      </Card>
+      <Card className="shopper-activity" title="Agent activity" note={!running && showPayment ? sourceName(showPayment.source) + ' · ' + instant(showPayment.created_at) : undefined}>
+        {running && <p className="agent-running" role="status">{liveSteps.length ? liveSteps.length + ' shopping steps completed' : 'Starting the shopper…'}</p>}
+        {steps.length > 0 && <AgentTrace steps={steps}/>}
+        {!running && !liveSteps.length && typeof stop.message === 'string' && <div className="callout neutral agent-outcome">
+          <div><strong>{stop.outcome === 'needs_input' ? 'Buyer input needed' : 'Shopping run limit reached'}</strong>
+            <p>{stop.message}</p><TextLink href="#mandates">Review or create a mandate</TextLink></div>
+        </div>}
+        {!running && showPayment && (
+          recordedSteps.length ? <div className="agent-outcome">
+            <h3>Independent verifier decision</h3>
+            <div className="row-actions activity-result"><StatusBadge value={showPayment.decision}/>
+              <TextLink href={'#verification?tx=' + showPayment.id}>Inspect transaction</TextLink>
+              <TextLink href={'#evidence?tx=' + showPayment.id}>View evidence</TextLink></div>
+          </div> : <Timeline entries={[
             { id:'observe', title:'Catalogue observed', icon:Search, body:<><p>{entry ? observedProducts.length + ' product references recorded by the agent.' : 'Observation record unavailable.'}</p>
               {!!observedProducts.length && <details className="record-disclosure"><summary>Observed products</summary><ul className="plain-list">
                 {observedProducts.map(id=><li key={id}>{catalogue.find(p=>p.id===id)?.title ?? id}</li>)}</ul></details>}
               {string(listing.description) && <p>Selected listing · {string(listing.description)}</p>}</> },
             { id:'tool', title:'Tool calls', icon:Terminal, body:<p>{string(call.name) ? string(call.name) + ' · ' + (string(call.product_id) ?? '') :
-              payment.source==='scripted' ? 'Scripted catalogue selection.' : 'No tool call recorded.'}</p>, meta:string(observed.model) },
-            { id:'proposal', title:'Payment proposed', icon:ShoppingBag, body:<p>{productTitle(payment,catalogue)} · {money(payment.proposal.amount)} · {payment.rationale}</p> },
-            { id:'verify', title:'Independent verifier decision', icon:ShieldCheck, body:<div className="row-actions activity-result"><StatusBadge value={payment.decision}/>
-              <TextLink href={'#verification?tx='+payment.id}>Inspect transaction</TextLink></div> },
-          ]}/> : <EmptyState title="No shopper run selected" description="Run the shopper with a signed mandate to view its activity."/>}
-        </Card>
-      </div>
+              showPayment.source==='scripted' ? 'Scripted catalogue selection.' : 'No tool call recorded.'}</p>, meta:string(observed.model) },
+            { id:'proposal', title:'Payment proposed', icon:ShoppingBag, body:<p>{productTitle(showPayment,catalogue)} · {money(showPayment.proposal.amount)} · {showPayment.rationale}</p> },
+            { id:'verify', title:'Independent verifier decision', icon:ShieldCheck, body:<div className="row-actions activity-result"><StatusBadge value={showPayment.decision}/>
+              <TextLink href={'#verification?tx='+showPayment.id}>Inspect transaction</TextLink></div> },
+          ]}/>
+        )}
+        {!running && !showPayment && !stop.message && !steps.length && <EmptyState title="No shopping run yet" description="Start with a signed mandate to see the shopper’s activity."/>}
+      </Card>
+      <Card className="shopper-catalogue" title="Available products" note="Merchant-controlled descriptions · synthetic catalogue">
+        <label className="control search-control">Search products or merchants<input type="search" value={query} onChange={e=>setQuery(e.target.value)}/></label>
+        {visible.length ? <div className="catalogue-list">{visible.map(product=><details key={product.id} className="record-disclosure">
+          <summary><div><strong>{product.title}</strong><small>{product.merchant} · {product.category}</small></div><span className="amount">{money(product.amount)}</span></summary>
+          <div className="record-body"><p>{product.description}</p><p>Claimed attributes · {product.requirements.join(', ')}</p></div>
+        </details>)}</div> : <p className="muted">No matching products.</p>}
+      </Card>
     </div>
   </>
 }

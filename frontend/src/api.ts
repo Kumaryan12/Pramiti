@@ -45,6 +45,62 @@ export interface Payment {
   semantic?: { alpha?: number; prediction_set: string[]; p_values: Record<string, number> } | null
 }
 
+export interface AgentStep {
+  name: string
+  at: string
+  arguments: Record<string, unknown>
+  result: Record<string, unknown>
+}
+
+export interface StoppedAgentRun {
+  id: string
+  mandate_id: string
+  outcome: 'needs_input' | 'limit_reached'
+  message: string
+  source: 'scripted' | 'llm'
+  created_at: string
+}
+
+type AgentStreamEvent =
+  | { type: 'step'; step: AgentStep }
+  | { type: 'result'; result: Payment | StoppedAgentRun }
+  | { type: 'error'; message: string }
+
+export async function streamAgentRun(
+  mandateId: string, mode: 'scripted' | 'llm', token: string, onStep: (step: AgentStep) => void,
+) {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json', Accept: 'application/x-ndjson' }
+  if (mode === 'llm') headers['X-LLM-Token'] = token
+  const response = await fetch('/api/agent/runs', {
+    method: 'POST', headers, body: JSON.stringify({ mandate_id: mandateId, mode }),
+  })
+  if (!response.ok) {
+    const body = await response.json().catch(() => null)
+    throw new Error(typeof body?.detail === 'string' ? body.detail : 'The shopper could not start.')
+  }
+  if (!response.body) throw new Error('The shopper returned an empty response.')
+
+  const reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
+  let pending = ''
+  try {
+    while (true) {
+      const { value, done } = await reader.read()
+      if (done) throw new Error('The shopper disconnected before returning an outcome. Refresh before trying again.')
+      const lines = (pending + value).split('\n')
+      pending = lines.pop() ?? ''
+      for (const line of lines) {
+        if (!line.trim()) continue
+        const event = JSON.parse(line) as AgentStreamEvent
+        if (event.type === 'step') onStep(event.step)
+        if (event.type === 'result') return event.result
+        if (event.type === 'error') throw new Error(event.message)
+      }
+    }
+  } finally {
+    await reader.cancel().catch(() => {})
+  }
+}
+
 export interface Evidence {
   valid: boolean
   head: string

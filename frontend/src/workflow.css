@@ -173,3 +173,28 @@
 .demo-decision strong { font-size:.9rem; }.demo-decision p { color:var(--muted-ink); font-size:.82rem; }.demo-decision .text-link { margin-left:auto; }
 #demo-verification { scroll-margin-block:90px; }
 @media(max-width:680px){.demo-decision strong { flex-basis:100%; }.demo-decision .text-link { margin-left:0; }}
+
+.agent-running { color:var(--muted-ink); margin-bottom:12px; font-size:.85rem; }
+.agent-listings { list-style:none; margin:0; padding:0 10px; }
+.agent-listings > li { padding:8px 0; border-top:1px solid var(--edge); }
+.agent-listings > li > div { display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; font-size:.84rem; }
+.agent-specs { margin-top:5px; }
+.agent-outcome { margin-top:12px; }
+
+.shopper-grid {
+  display:grid;
+  grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);
+  grid-template-areas:"mandate run" "catalogue activity";
+  gap:16px 24px;
+  align-items:start;
+}
+.shopper-mandate { grid-area:mandate; }
+.shopper-run { grid-area:run; }
+.shopper-activity { grid-area:activity; }
+.shopper-catalogue { grid-area:catalogue; }
+@media (max-width:680px) {
+  .shopper-grid {
+    grid-template-columns:minmax(0,1fr);
+    grid-template-areas:"mandate" "run" "activity" "catalogue";
+  }
+}

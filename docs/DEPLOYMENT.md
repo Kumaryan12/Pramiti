@@ -38,4 +38,4 @@ Use a local operator-controlled process. Set `OPENAI_API_KEY` and a strong `LLM_
 .venv/bin/python -m scripts.smoke_llm
 ```
 
-The script uses two LLM calls and two scripted runs with separate synthetic mandates. One LLM run sees the ordinary catalogue and the other sees the misleading compatibility claim. It reports the selected SKU, verifier decision, tool call and ledger head. The proposal-only tool has a strict enum and cannot set price, merchant, category, settlement status or any external action. Dev tests exercise the real SDK with a mock transport. Live validation requires an available key and was pending in this execution.
+The script runs two model-driven shopping sessions and two scripted sessions, each against a separate signed mandate. One pair uses the ordinary catalogue and one sees the merchant compatibility claim. It reports the final proposal or buyer question, the recorded tool sequence and the verified evidence head. The same trace is available in the AI Agent workspace. A model run requires configured server credentials and its operator token. Development tests exercise the OpenAI SDK with a mock transport.

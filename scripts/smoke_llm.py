@@ -1,4 +1,4 @@
-"""Run two paid proposal-only calls against an explicitly configured local sandbox."""
+"""Run two paid tool-using shopping runs against an explicitly configured local sandbox."""
 
 import argparse
 import base64
@@ -34,7 +34,7 @@ def main():
     token = os.environ.get("LLM_OPERATOR_TOKEN")
     if not token:
         parser.error("LLM_OPERATOR_TOKEN is required")
-    with httpx.Client(base_url=f"http://127.0.0.1:{args.port}", timeout=35) as client:
+    with httpx.Client(base_url=f"http://127.0.0.1:{args.port}", timeout=90) as client:
         def post(path, body, headers=None):
             response = client.post(path, json=body, headers=headers)
             response.raise_for_status()
@@ -48,14 +48,18 @@ def main():
                 post("/api/mandates", envelope)
                 report = post("/api/agent/runs", {"mode": mode, "scenario": scenario, "mandate_id": mandate_id},
                               {"X-LLM-Token": token} if mode == "llm" else None)
-                print(mode, scenario or "ordinary", report["proposal"]["product_id"], report["decision"],
-                      report["compatibility"]["status"], report["id"])
+                if "outcome" in report:
+                    print(mode, scenario or "ordinary", report["outcome"], report["message"], report["id"])
+                else:
+                    print(mode, scenario or "ordinary", report["proposal"]["product_id"], report["decision"],
+                          report["compatibility"]["status"], report["id"])
         evidence = client.get("/api/evidence").raise_for_status().json()
         if not evidence["valid"]:
             raise SystemExit("Evidence verification failed")
         for entry in evidence["events"]:
-            if entry["action"] == "agent_observations" and "tool_call" in entry["detail"]:
-                print(entry["detail"]["model"], entry["detail"]["tool_call"])
+            detail = entry["detail"]
+            if entry["action"] in ("agent_observations", "agent_run_stopped") and "model" in detail:
+                print(detail["model"], [step["name"] for step in detail["steps"]])
         print("Verified evidence head", evidence["head"])
 
 

@@ -150,6 +150,43 @@ test('demo preserves a reviewed case and enforces hard rejection across navigati
   } finally { await page.context().close() }
 })
 
+test('shopping trace survives reload and an unsuitable purchase asks the buyer', {timeout:60000}, async () => {
+  const context = await browser.newContext({viewport:{width:390,height:844}})
+  const page = await context.newPage()
+  try {
+    await signDefault(page)
+    await page.getByRole('link',{name:'Open shopping agent'}).click()
+    await page.getByRole('heading',{level:1,name:'AI Agent'}).waitFor()
+    const start = page.getByRole('button',{name:'Start shopping'})
+    const activity = page.locator('.card').filter({has:page.getByRole('heading',{name:'Agent activity',exact:true})})
+    await start.click()
+    await activity.getByText('Independent verifier decision',{exact:true}).waitFor()
+    await activity.getByText('Searched the catalogue',{exact:true}).waitFor()
+    await activity.getByText('Compared products',{exact:true}).waitFor()
+    await activity.getByText('Checked product evidence',{exact:true}).waitFor()
+    await activity.getByRole('link',{name:'View evidence',exact:true}).click()
+    await page.locator('.timeline').getByText('Agent observations',{exact:true}).waitFor()
+    const observations = page.locator('.timeline > li').filter({hasText:'Agent observations'})
+    await observations.locator('summary').first().click()
+    await observations.getByText('Checked product evidence',{exact:true}).waitFor()
+
+    await go(page,'agent','AI Agent')
+    const second = page.waitForResponse(response=>response.url().endsWith('/api/agent/runs') && response.ok())
+    await start.click()
+    await second
+    await start.click()
+    await activity.getByText('Buyer input needed',{exact:true}).waitFor()
+    await activity.getByText('Asked the buyer',{exact:true}).waitFor()
+    assert.equal((await (await page.request.get(base+'/api/payments')).json()).length,2)
+    await page.reload()
+    await activity.getByText('Buyer input needed',{exact:true}).waitFor()
+    await activity.getByText('Asked the buyer',{exact:true}).waitFor()
+    const axe = await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze()
+    assert.deepEqual(axe.violations.map(violation=>violation.id),[])
+    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth))
+  } finally { await context.close() }
+})
+
 test('axe WCAG 2.2 A/AA checks on critical desktop and mobile views', {timeout:95000},async()=>{
   const all=[]
   const check=async(page,name)=>{
