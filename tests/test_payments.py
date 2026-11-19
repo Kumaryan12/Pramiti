@@ -196,28 +196,47 @@ def test_concurrent_duplicate_nonce_and_split_total(client):
     assert client.get("/api/mandates").json()[0]["spent"] == 239900
 
 
-def test_llm_selection_uses_server_catalogue(client, monkeypatch):
-    def response(url, *, headers, json, timeout):
-        assert url == "https://api.openai.com/v1/chat/completions"
-        assert "mandate" in json["messages"][1]["content"]
-        assert timeout > 0
-        return httpx.Response(200, request=httpx.Request("POST", url), json={
-            "choices": [{"message": {
-                "content": '{"product_id":"compact-20","rationale":"Merchant recommendation","amount":5}',
-            }}],
+@pytest.mark.parametrize(("arguments", "expected"), [
+    ({"product_id": "compact-20", "rationale": "Merchant recommendation"}, 201),
+    ({"product_id": "compact-20", "rationale": "Merchant recommendation", "amount": 5}, 502),
+    ({"product_id": "external-listing", "rationale": "Outside catalogue"}, 502),
+])
+def test_llm_selection_uses_strict_server_catalogue(client, monkeypatch, arguments, expected):
+    from openai import OpenAI
+
+    def response(request):
+        assert request.url == "https://api.openai.com/v1/responses"
+        body = json.loads(request.content)
+        assert body["tools"][0]["strict"] and not body["parallel_tool_calls"]
+        assert "compact substitute" in body["input"]
+        return httpx.Response(200, json={
+            "id": "resp_synthetic", "object": "response", "status": "completed",
+            "created_at": 1, "model": "test-model",
+            "output": [{"type": "function_call", "id": "fc_synthetic", "call_id": "call_synthetic",
+                        "name": "propose_catalog_purchase", "arguments": json.dumps(arguments)}],
         })
 
     monkeypatch.setenv("OPENAI_API_KEY", "synthetic-test-key")
     monkeypatch.setenv("LLM_OPERATOR_TOKEN", "test-operator-token")
-    monkeypatch.setattr("backend.pramiti.agent.httpx.post", response)
+    monkeypatch.setattr("backend.pramiti.agent.OpenAI", lambda **kwargs: OpenAI(
+        **kwargs, http_client=httpx.Client(transport=httpx.MockTransport(response)),
+    ))
     mandate_id = approve(client)
-    result = client.post("/api/agent/runs", json={"mandate_id": mandate_id, "mode": "llm"},
+    result = client.post("/api/agent/runs",
+                         json={"mandate_id": mandate_id, "mode": "llm", "scenario": "substitution"},
                          headers={"X-LLM-Token": "test-operator-token"})
-    assert result.status_code == 201
-    body = result.json()
-    assert body["source"] == "llm"
-    assert body["proposal"]["amount"] == CATALOG["compact-20"].amount
-    assert body["decision"] == "ESCALATE"
+    assert result.status_code == expected
+    if expected == 201:
+        body = result.json()
+        assert body["source"] == "llm"
+        assert body["proposal"]["amount"] == CATALOG["compact-20"].amount
+        assert body["decision"] == "ESCALATE"
+        event = next(event for event in client.get("/api/evidence").json()["events"]
+                     if event["action"] == "agent_observations")
+        assert event["detail"]["model"] == "test-model"
+        assert event["detail"]["tool_call"]["product_id"] == "compact-20"
+    else:
+        assert client.get("/api/payments").json() == []
 
 
 def test_schema_revision_adopts_existing_data(client):
@@ -289,3 +308,22 @@ def test_attestation_cannot_be_reused_across_skus(client, monkeypatch):
     payment = submit(client, proposal(approve(client), "compact-20"))
     assert payment["decision"] == "ESCALATE"
     assert payment["compatibility"]["evidence_reference"] is None
+
+
+def test_instruction_material_requires_independent_evidence(client, monkeypatch):
+    from backend.pramiti.catalog import ATTESTATIONS, SpecificationRecord
+
+    mandate = approve(client, instruction="Buy an aluminium adjustable stand", requirements=["adjustable"],
+                      product_id="studio-stand", merchants=["Desk Assembly"], categories=["accessories"])
+    monkeypatch.setitem(ATTESTATIONS, "studio-stand",
+                        SpecificationRecord("studio-stand", ("plastic", "adjustable"), "SYNTHETIC-LAB/check"))
+    decision = submit(client, proposal(mandate, "studio-stand"))
+    assert decision["decision"] == "REJECT"
+    assert decision["compatibility"]["contradictions"] == ["aluminium"]
+
+
+def test_qualified_specification_in_instruction_escalates(client):
+    mandate = approve(client, instruction="Buy a charger with at least 65 W", requirements=["usb-c"])
+    decision = submit(client, proposal(mandate))
+    assert decision["decision"] == "ESCALATE"
+    assert decision["compatibility"]["missing"] == ["qualified instruction requires review"]

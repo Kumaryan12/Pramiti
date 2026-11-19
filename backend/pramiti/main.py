@@ -116,7 +116,7 @@ def create_app(database_url=None):
         return [{**mandate.model_dump(mode="json"), "reserved": row.reserved, "spent": row.spent}
                 for row in rows if (mandate := unpack(row)[1]) is not None]
 
-    def submit(proposal, owner, source, rationale):
+    def submit(proposal, owner, source, rationale, observations=None):
         payment_id = str(uuid4())
         nonce = str(proposal.nonce)
         mandate_id = str(proposal.mandate_id)
@@ -140,6 +140,8 @@ def create_app(database_url=None):
                 "status": "REJECTED", "settlement": None, "review": None, "semantic": prediction,
                 "compatibility": evidence_record,
             }
+            if observations is not None:
+                append_event(connection, owner, "agent_observations", payment_id, observations)
             append_event(connection, owner, "agent_proposal", payment_id, {
                 "proposal": record["proposal"], "source": source, "rationale": rationale,
             })
@@ -175,10 +177,11 @@ def create_app(database_url=None):
             raise HTTPException(404, "Mandate unavailable")
         if not valid_signature(envelope):
             raise HTTPException(409, "Mandate integrity check failed")
-        product, rationale = choose_product(run, mandate, x_llm_token)
+        selection = choose_product(run, mandate, x_llm_token)
+        product = selection.product
         proposal = Proposal(mandate_id=run.mandate_id, nonce=uuid4(), product_id=product.id,
                             merchant=product.merchant, category=product.category, amount=product.amount)
-        return submit(proposal, owner, run.mode, rationale)
+        return submit(proposal, owner, run.mode, selection.rationale, selection.observations)
 
     @app.get("/api/payments")
     def list_payments(owner: Owner):
