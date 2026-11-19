@@ -1,42 +1,60 @@
-# Research
+# PRAMITI research evaluation
 
-The optional semantic verifier uses gradient boosting on eight observations available before execution. Features compare the signed instruction against the catalogue title, verified attributes, and description. They also capture the requested SKU and ratio of proposed amount to the signed limit. Training uses synthetic labels. Family names, split identifiers, ledger outcomes, and reviewer decisions are excluded from the feature vector.
+## Reproduced baseline and cause
 
-For each true class, store the sorted held-out scores `1 − P(class | features)`. With class size `n`, the finite-sample threshold is the one-indexed rank `ceil((n + 1) × (1 − alpha))`. If the rank exceeds `n`, use an infinite threshold. At runtime the equivalent rank test keeps labels with `(1 + count(calibration score ≥ candidate score)) / (n + 1) > alpha`, so ties are conservative.
+Re-ran training and the 1,200-case evaluation at commit `70c2851`. The original firewall approved **314/1,000** unsafe proposals and the original calibrated system approved **103/1,000**, while reviewing **418/1,200** proposals. Both approved **100/100** concealed-specification proposals. The listing title, merchant claims and structured listing attributes all repeated the desired specification. The verifier had no provenance field and interpreted the merchant’s claim as an independent attribute. The classifier received the same apparently compatible inputs, so it had no missing-evidence signal.
 
-Class-conditional coverage concerns the true label’s inclusion under exchangeability within the class between calibration and future observations, conditional on the independently fit model. This does not establish coverage for a fixed subgroup, a new merchant distribution, or an unseen manipulation. It does not bound the proportion of unsafe payments among auto-approved payments.
+The current verifier checks a separate, server-controlled synthetic inspection registry linked to the exact SKU. It records independently verified compatibility, a verified conflict, missing evidence, or merchant-only evidence. A verified conflict is a hard rejection. A missing observation escalates or rejects under the signed policy, including when the prediction set is a singleton conformant. Compatible cases can still escalate under a signed consent rule or the optional calibrated policy. Signed structured attributes define enforceable constraints. The verifier supplements them with supported units, paper sizes and materials from the signed instruction. It escalates qualified prose such as “at least” for human interpretation.
 
-The semantic gate auto-approves only the singleton set **{conformant}** and only after the deterministic policy would approve. Other sets escalate. Hard policy violations reject and deterministic review rules remain in force.
-
-## Run
+## Reproduce
 
 ```sh
-.venv/bin/pip install -r requirements-research.txt
+.venv/bin/pip install -r requirements-dev.txt -r requirements-research.txt
 .venv/bin/python -m research.train
-PRAMITI_MODEL_PATH=artifacts/semantic.joblib .venv/bin/python -m uvicorn backend.pramiti.main:app --port 8000
+.venv/bin/python -m research.evaluate --output artifacts/competition
 ```
 
-Load artifacts generated locally by this training script. Without a configured artifact the app uses its deterministic verifier. See [Theoretical Foundations of Conformal Prediction](https://arxiv.org/abs/2411.11824) and [Class-Conditional Conformal Prediction with Many Classes](https://arxiv.org/abs/2306.09335).
+The evaluator writes decision-level CSV, machine-readable metrics and chart PNGs. [Competition results](results/competition/metrics.json) and [prior baseline snapshot](results/metrics.json).
 
-## Held-out experiment
+### Design and leakage checks
 
-```sh
-.venv/bin/python -m research.evaluate
-```
+- The classifier was fit on 2,000 synthetic examples. Separate class-conditional calibration used 400 conformant and 400 nonconforming cases. Train, calibration and test fixture IDs are checked for overlap against the loaded model. The data generator uses separate seeds per split.
+- All four policies were evaluated on the same 1,320 proposals: 900 in the known synthetic suite, 300 in a shift suite containing 100 fresh benign cases and 200 attacks from held-out families, and 120 benign substitutes with an incomplete inspection. The shift suite includes 100 concealed specifications and 100 understated checkout amounts.
+- Observations available to the gate include listing text, recorded specifications and inspection provenance. For the original fully concealed fixtures, the new provenance channel has no independently verified record. The ambiguous benign cohort also lacks inspection of the specified attribute. Simulator labels, attack-family IDs and post-decision records never enter the verifier or the classifier. The experiment assumes the synthetic registry is trusted. Missing records are represented in the fixture generator as pre-checkout evidence, so this experiment tests a conservative policy for that trust model.
+- The model’s eight features are the original lexical and numeric comparisons, SKU match indicator and amount-to-limit ratio. Product IDs are used only for equality. Product types and wording templates recur in the known suite. The audit found three distinct feature vectors shared between training and calibration, two between training and the known suite, and one between calibration and the known suite. Different proposals can map to the same vector. The corpus is not a product- or merchant-disjoint external validation set. Both shifted manipulation families were excluded from model fitting and calibration.
+- Replay, concurrent and split-budget rows represent observed pre-execution state in the comparison. The API tests separately exercise actual concurrent requests, locking and settlement. The experiment simulates merchant-influenced decisions and cannot measure a live LLM’s resistance.
 
-The evaluator compares a spending-cap-only policy, the production deterministic verifier, the firewall followed by a conventional 0.5 probability cutoff, and the firewall followed by the calibrated gate. It executes the same Ed25519, deterministic and semantic functions used by the application. Tests independently exercise settlement, replay, split spending, and concurrent reservations through the HTTP API and both database engines. The evaluation’s split and concurrent budget fixtures supply the observed committed total. They do not benchmark parallel database execution. The text and review manipulation fixtures model shopper outcomes using synthetic catalogue descriptions and verified product attributes. They do not measure an external LLM’s susceptibility.
+### Class-conditional conformal gate
 
-The model saw 2,000 training and 800 calibration examples. The evaluation uses independent seeds and verifies distinct fixture IDs from the trained model’s recorded split membership. The known suite contains 900 proposals across benign, catalogue, and transaction cases. The shift suite contains 100 fresh benign proposals and 200 proposals from two manipulation families omitted from training and calibration. Product types and template structures recur in the known suite by design. Field values and examples are drawn independently. The scored-set coverage figures are conditional on reaching the semantic gate in these suites.
+The nonconformity score for class `y` is `1 − P(y | x)`. For class size `n`, the corrected threshold is the sorted score at one-indexed rank `ceil((n + 1)(1 − α))`. If this exceeds `n`, the threshold is infinite. The implementation uses the equivalent rank test `(1 + count(calibration score ≥ candidate score)) / (n + 1) > α` and handles ties conservatively. A missing calibration class has p-value 1 by this rule. The gate auto-approves only the exact set `{conformant}`; empty, two-label and nonconforming sets route to review. The hard and independent-evidence gates take precedence.
 
-| Policy | Unsafe approvals | Human review | False rejections |
-| --- | ---: | ---: | ---: |
-| Spending limit | 90.0% | 0.0% | 0.0% |
-| Firewall | 31.4% | 15.5% | 0.0% |
-| Firewall + ML | 11.8% | 15.5% | 0.0% |
-| PRAMITI | 10.3% | 34.8% | 0.0% |
+The class-conditional coverage statement assumes exchangeability within each label between calibration and new observations, conditional on the independently fit model. Selecting a subset that passes the firewall or changing the mix of products, sellers or evidence sources can break that assumption. These results do not bound the unsafe fraction among approved payments. See [Theoretical Foundations of Conformal Prediction](https://arxiv.org/abs/2411.11824) and [Class-Conditional Conformal Prediction with Many Classes](https://arxiv.org/abs/2306.09335).
 
-Unsafe approvals use the 1,000 nonconforming proposals as the denominator. Human-review rates use all 1,200 proposals. False rejections use the 200 conformant proposals. PRAMITI escalated 10.5% of conformant proposals. Known-family unsafe approvals were 0.375% with PRAMITI versus 2.25% with conventional ML. Across the two held-out families, all firewall-based approaches approved 50% of nonconforming proposals. They rejected the checkout mismatches and approved every concealed specification gap because the visible evidence claimed the authorized configuration.
+## Native operating points
 
-Observed true-label inclusion for PRAMITI was 87% on known conformant cases and 94% on known scored nonconforming cases. On the shifted suite it was 92% for conformant cases and 0% for scored nonconforming cases. The other nonconforming shift family was rejected by the hard checks before semantic scoring. These results describe the synthetic corpus and reveal a blind spot when the observed listing fully conceals the product mismatch.
+| Policy | Unsafe auto-approval (95% Wilson) | Human review | False rejection | Legitimate auto-approval | p95, ms |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Signed amount and basic authorization | 90.0% (88.0–91.7%) | 0.0% | 0.0% | 100.0% | 0.159 |
+| Evidence-aware deterministic firewall | 0.0% (0–0.38%) | 16.7% | 0.0% | 62.5% | 0.178 |
+| Firewall + conventional ML | 0.0% (0–0.38%) | 16.7% | 0.0% | 62.5% | 0.252 |
+| Firewall + calibrated gate | 0.0% (0–0.38%) | 18.3% | 0.0% | 55.9% | 0.252 |
 
-The [trade-off](results/tradeoffs.png), [attack family](results/families.png), [known vs held-out](results/known-unseen.png), and [latency](results/latency.png) charts reflect this run. See the [machine-readable snapshot](results/metrics.json). The evaluator also writes a per-proposal CSV when run locally. Latency measures in-process policy verification on the development machine, with signing, network, and database work outside the timer.
+Unsafe approval divides approved unsafe proposals by 1,000 unsafe proposals. Attack success uses the same definition within each family. Human review divides escalations by all 1,320 proposals. False rejection and legitimate auto-approval each use 320 conformant proposals. Wilson intervals describe case-level binomial sampling uncertainty and do not account for correlation across templates. Latency is measured inside the policy pipeline on the development machine and excludes network, database and signing time. The JSON includes all intervals, medians and cohort denominators.
+
+### Cohorts
+
+- **Known suite:** The evidence-aware firewall and both learned variants recorded 0/800 unsafe auto-approvals. The deterministic and conventional gates approved 100/100 benign cases, and the calibrated gate approved 87/100.
+- **Held-out suite:** All three firewall variants recorded 0/200 unsafe auto-approvals. All 100 checkout discrepancies were rejected and all 100 merchant-only concealed-specification cases escalated. On the 100 fresh benign cases, the deterministic and conventional gates approved 100, and the calibrated gate approved 92.
+- **Ambiguous benign substitutes:** All 120 went to review under the three evidence-aware policies. The calibrated set contained the true label in 1/120. None of the 100 held-out concealed cases had the true nonconforming label in its set. The evidence gate still escalated them. The known set contained the conformant label in 87/100 known benign cases. Known nonconforming cases were rejected before scoring, so conditional coverage there is undefined.
+
+### Matched review rates
+
+The [security–autonomy frontier](results/competition/frontier.png) keeps each policy’s native reviews and rejections. It adds reviews only from otherwise-approved proposals until every policy reviews the same number. Unscored systems use a fixed, label-blind hash order. Conventional ML ranks by estimated nonconforming probability, and PRAMITI ranks by the nonconforming conformal p-value. The plotted range contains the jointly feasible review budgets.
+
+At the first common budget of 241/1,320 reviews (18.26%), the basic authorization baseline approved 726 unsafe proposals. Each evidence-aware system approved zero and automatically approved 179/320 legitimate proposals. At 20% review, each evidence-aware system still approved zero unsafe proposals. The experiment attributes the observed security gain to independent evidence and shows no added security gain from calibration at matched review. At native settings, calibration adds reviews of otherwise eligible legitimate proposals.
+
+[Decision trade-offs](results/competition/tradeoffs.png) · [Attack families](results/competition/families.png) · [Known vs held-out](results/competition/known-unseen.png) · [Latency](results/competition/latency.png)
+
+## Remaining limitations
+
+The verifier depends on the accuracy, freshness and custody of the evidence registry. A wrong trusted record or item change after verification can defeat that trust model. The prototype uses synthetic records and does not integrate an external attestation authority. Free-text parsing covers a small set of attributes and simple phrasing. Reviews take place in the same browser session and a note documents the reviewer’s decision without proving the underlying fact. The synthetic test corpus informed improvements to the parser, so these findings need confirmation on independently collected, frozen benchmarks.

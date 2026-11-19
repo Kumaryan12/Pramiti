@@ -3,15 +3,19 @@
 import argparse
 import base64
 import csv
+import hashlib
+import math
 import json
 from collections import Counter
+from dataclasses import replace
 from pathlib import Path
 from statistics import median, quantiles
 from time import perf_counter_ns
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
-from backend.pramiti.domain import SignedMandate
+from backend.pramiti.catalog import SpecificationRecord
+from backend.pramiti.domain import SignedMandate, now, valid_signature
 from backend.pramiti.firewall import verify
 from backend.pramiti.semantic import CONFORMANT, NONCONFORMING, calibrated_decision, load_verifier
 from research.dataset import FAMILIES, UNSEEN, create_split
@@ -27,24 +31,37 @@ def sign(key, mandate):
     )
 
 
-def decide(method, row, envelope, verifier):
-    if method == METHODS[0]:
-        return ("ALLOW" if row.proposal.amount <= row.mandate.max_amount else "REJECT"), None
+def trusted_record(row, cohort):
+    # The fixture generator models provenance separately from the shopper's listing.
+    # A missing inspection is observable before payment and also occurs for legitimate alternatives.
+    if row.family == "concealed_spec_gap":
+        return {}
+    attributes = row.listing.requirements[-1:] if cohort == "Ambiguous benign" else row.listing.requirements
+    return {row.listing.id: SpecificationRecord(row.listing.id, attributes, f"SYNTHETIC-INSPECTION/{row.id}")}
 
-    decision, reasons, _ = verify(
-        row.proposal, row.mandate, envelope, row.used, replay=row.replay, catalogue={row.listing.id: row.listing},
+
+def decide(method, row, envelope, verifier, attestations):
+    if method == METHODS[0]:
+        authorized = (valid_signature(envelope) and row.mandate.id == row.proposal.mandate_id
+                      and row.mandate.expires_at > now() and row.proposal.amount <= row.mandate.max_amount)
+        return ("ALLOW" if authorized else "REJECT"), None, 0.0, None
+
+    decision, reasons, _, compatibility = verify(
+        row.proposal, row.mandate, envelope, row.used, replay=row.replay,
+        catalogue={row.listing.id: row.listing}, attestations=attestations,
     )
+    evidence = compatibility.status
     if method == METHODS[1] or decision == "REJECT":
-        return decision, None
+        return decision, None, 0.0, evidence
     if method == METHODS[2]:
         if decision != "ALLOW":
-            return decision, None
+            return decision, None, 0.0, evidence
         probability = verifier.probabilities(row.mandate, row.proposal, row.listing)[CONFORMANT]
-        return ("ALLOW" if probability >= 0.5 else "REJECT"), None
+        return ("ALLOW" if probability >= 0.5 else "REJECT"), None, 1 - probability, evidence
 
     prediction = verifier.predict(row.mandate, row.proposal, row.listing)
     decision, _ = calibrated_decision(decision, reasons, prediction)
-    return decision, prediction["prediction_set"]
+    return decision, prediction["prediction_set"], prediction["p_values"][NONCONFORMING], evidence
 
 
 def run(rows, verifier):
@@ -53,14 +70,16 @@ def run(rows, verifier):
     for cohort, examples in rows.items():
         for example in examples:
             envelope = sign(key, example.mandate)
+            attestations = trusted_record(example, cohort)
             for method in METHODS:
                 start = perf_counter_ns()
-                decision, prediction_set = decide(method, example, envelope, verifier)
+                decision, prediction_set, priority, evidence = decide(method, example, envelope, verifier, attestations)
                 milliseconds = (perf_counter_ns() - start) / 1_000_000
                 results.append({
                     "id": example.id, "cohort": cohort, "family": example.family,
                     "truth": example.label, "method": method, "decision": decision,
                     "milliseconds": milliseconds, "prediction_set": prediction_set,
+                    "review_priority": priority, "compatibility": evidence,
                 })
     return results
 
@@ -69,16 +88,36 @@ def ratio(numerator, denominator):
     return numerator / denominator if denominator else None
 
 
+def wilson(successes, total):
+    if not total:
+        return None
+    z = 1.959963984540054
+    p = successes / total
+    adjustment = 1 + z * z / total
+    center = (p + z * z / (2 * total)) / adjustment
+    radius = z * math.sqrt((p * (1 - p) + z * z / (4 * total)) / total) / adjustment
+    return [max(0.0, center - radius) if successes else 0.0,
+            min(1.0, center + radius) if successes < total else 1.0]
+
+
 def summarize(rows):
     counts = Counter((row["truth"], row["decision"]) for row in rows)
     unsafe = sum(count for (truth, _), count in counts.items() if truth == NONCONFORMING)
     benign = len(rows) - unsafe
     times = [row["milliseconds"] for row in rows]
+    reviewed = sum(row["decision"] == "ESCALATE" for row in rows)
     return {
         "total": len(rows), "nonconforming": unsafe, "conformant": benign,
         "unsafe_approval_rate": ratio(counts[NONCONFORMING, "ALLOW"], unsafe),
-        "human_review_rate": ratio(sum(row["decision"] == "ESCALATE" for row in rows), len(rows)),
+        "unsafe_approval_ci95": wilson(counts[NONCONFORMING, "ALLOW"], unsafe),
+        "unsafe_approval_count": counts[NONCONFORMING, "ALLOW"],
+        "legitimate_approval_rate": ratio(counts[CONFORMANT, "ALLOW"], benign),
+        "legitimate_approval_ci95": wilson(counts[CONFORMANT, "ALLOW"], benign),
+        "review_count": reviewed,
+        "human_review_rate": ratio(reviewed, len(rows)),
+        "human_review_ci95": wilson(reviewed, len(rows)),
         "false_rejection_rate": ratio(counts[CONFORMANT, "REJECT"], benign),
+        "false_rejection_ci95": wilson(counts[CONFORMANT, "REJECT"], benign),
         "false_nonapproval_rate": ratio(counts[CONFORMANT, "REJECT"] + counts[CONFORMANT, "ESCALATE"], benign),
         "median_ms": median(times),
         "p95_ms": quantiles(times, n=100, method="inclusive")[94],
@@ -96,13 +135,43 @@ def set_metrics(rows):
     return result
 
 
+def matched_review(by_method):
+    """Compare at identical counts without converting hard rejections into reviews."""
+    total = len(next(iter(by_method.values())))
+    selected = {}
+    natural = {}
+    for method, rows in by_method.items():
+        natural[method] = sum(row["decision"] == "ESCALATE" for row in rows)
+        eligible = [row for row in rows if row["decision"] == "ALLOW"]
+        selected[method] = sorted(eligible, key=lambda row: (
+            -row["review_priority"], hashlib.sha256(("review-order-2805/" + row["id"]).encode()).digest(),
+        ))
+    minimum = max(natural.values())
+    maximum = min(natural[method] + len(selected[method]) for method in METHODS)
+    if minimum > maximum:
+        return []
+    proposed = [round(rate * total / 100) for rate in range(0, 101, 5)]
+    targets = sorted({minimum, maximum, *(target for target in proposed if minimum < target < maximum)})
+    results = []
+    for target in targets:
+        metrics = {}
+        for method, rows in by_method.items():
+            added = {row["id"] for row in selected[method][:target - natural[method]]}
+            routed = [{**row, "decision": "ESCALATE"} if row["id"] in added else row for row in rows]
+            metrics[method] = summarize(routed)
+        results.append({"target_review_count": target, "target_review_rate": target / total, "methods": metrics})
+    return results
+
+
 def metrics(results):
     by_method = {method: [row for row in results if row["method"] == method] for method in METHODS}
+    cohorts = dict.fromkeys(row["cohort"] for row in results)
     return {
+        "matched_review": matched_review(by_method),
         "overall": {method: summarize(rows) for method, rows in by_method.items()},
         "by_cohort": {
             cohort: {method: summarize([row for row in rows if row["cohort"] == cohort])
-                     for method, rows in by_method.items()} for cohort in ("Known", "Unseen")
+                     for method, rows in by_method.items()} for cohort in cohorts
         },
         "by_family": {
             family: {method: summarize([row for row in rows if row["family"] == family])
@@ -110,7 +179,7 @@ def metrics(results):
         },
         "scored_set_coverage": {
             cohort: set_metrics([row for row in by_method["PRAMITI"] if row["cohort"] == cohort])
-            for cohort in ("Known", "Unseen")
+            for cohort in cohorts
         },
     }
 
@@ -130,9 +199,15 @@ def main():
     known = list(create_split("known-test", 900, 2803))
     unseen = list(create_split("unseen-test", 300, 2804, ("benign", *UNSEEN)))
     verifier = load_verifier(args.model)
-    verify_splits(verifier, known + unseen)
-    results = run({"Known": known, "Unseen": unseen}, verifier)
+    ambiguous = [
+        replace(row, mandate=row.mandate.model_copy(update={"product_id": "authorized-equivalent-" + row.listing.id}))
+        for row in create_split("ambiguous-test", 120, 2806, ("benign",))
+    ]
+    verify_splits(verifier, known + unseen + ambiguous)
+    results = run({"Known": known, "Unseen": unseen, "Ambiguous benign": ambiguous}, verifier)
     summary = metrics(results)
+    summary["calibration_sizes"] = {label: len(scores) for label, scores in verifier.calibration.items()}
+    summary["training_size"] = len(verifier.training_ids)
     args.output.mkdir(parents=True, exist_ok=True)
     (args.output / "metrics.json").write_text(json.dumps(summary, indent=2) + "\n")
     with (args.output / "decisions.csv").open("w", newline="") as file:

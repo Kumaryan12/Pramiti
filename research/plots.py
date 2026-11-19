@@ -43,6 +43,26 @@ def grouped(ax, names, values, horizontal=False):
 
 def plot(metrics, directory):
     overall = metrics["overall"]
+    frontier = metrics["matched_review"]
+    fig, ax = plt.subplots(figsize=(8.5, 4.6), layout="constrained")
+    for method, color in zip(METHODS, COLORS):
+        line, = ax.plot(
+            [point["target_review_rate"] for point in frontier],
+            [point["methods"][method]["unsafe_approval_rate"] for point in frontier],
+            color=color, marker="o", markersize=4, label=f"{method} · matched budgets",
+        )
+        row = overall[method]
+        ax.scatter(row["human_review_rate"], row["unsafe_approval_rate"], marker="D",
+                   facecolor="none", edgecolor=line.get_color(), s=58, zorder=4)
+    ax.set(xlabel="Human review rate · all proposals", ylabel="Unsafe auto-approval · unsafe proposals",
+           title="Security–autonomy frontier · equal review counts")
+    ax.text(0.99, 0.45, "Open diamonds show native operating points", transform=ax.transAxes,
+            ha="right", va="top", fontsize=9, color="#4b5c58")
+    ax.xaxis.set_major_formatter(PercentFormatter(1))
+    ax.yaxis.set_major_formatter(PercentFormatter(1))
+    ax.legend(frameon=False)
+    style(ax)
+    save(fig, directory, "frontier.png")
     fig, (tradeoff, rejections) = plt.subplots(1, 2, figsize=(11, 4.1), layout="constrained")
     for method, color in zip(METHODS, COLORS):
         row = overall[method]
@@ -71,7 +91,7 @@ def plot(metrics, directory):
     ax.legend(frameon=False, ncols=4, loc="upper center", bbox_to_anchor=(0.5, -0.11), fontsize=9)
     save(fig, directory, "families.png")
 
-    by_cohort = metrics["by_cohort"]
+    by_cohort = {name: metrics["by_cohort"][name] for name in ("Known", "Unseen")}
     fig, ax = plt.subplots(figsize=(7.8, 4), layout="constrained")
     grouped(ax, list(by_cohort), lambda name, method: by_cohort[name][method]["unsafe_approval_rate"])
     ax.set(ylabel="Unsafe approval rate", title="Known vs held-out manipulation families")

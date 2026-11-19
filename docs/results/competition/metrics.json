@@ -1,0 +1,2131 @@
+{
+  "matched_review": [
+    {
+      "target_review_count": 241,
+      "target_review_rate": 0.18257575757575759,
+      "methods": {
+        "Spending limit": {
+          "total": 1320,
+          "nonconforming": 1000,
+          "conformant": 320,
+          "unsafe_approval_rate": 0.726,
+          "unsafe_approval_ci95": [
+            0.697531129939966,
+            0.7527391752245631
+          ],
+          "unsafe_approval_count": 726,
+          "legitimate_approval_rate": 0.790625,
+          "legitimate_approval_ci95": [
+            0.7427308242610478,
+            0.8316242959182536
+          ],
+          "review_count": 241,
+          "human_review_rate": 0.18257575757575759,
+          "human_review_ci95": [
+            0.16266630975059843,
+            0.20432737788741528
+          ],
+          "false_rejection_rate": 0.0,
+          "false_rejection_ci95": [
+            0.0,
+            0.011862158831309737
+          ],
+          "false_nonapproval_rate": 0.209375,
+          "median_ms": 0.139084,
+          "p95_ms": 0.15883930000000002
+        },
+        "Firewall": {
+          "total": 1320,
+          "nonconforming": 1000,
+          "conformant": 320,
+          "unsafe_approval_rate": 0.0,
+          "unsafe_approval_ci95": [
+            0.0,
+            0.0038267584855551234
+          ],
+          "unsafe_approval_count": 0,
+          "legitimate_approval_rate": 0.559375,
+          "legitimate_approval_ci95": [
+            0.5045946542795551,
+            0.6127467143592268
+          ],
+          "review_count": 241,
+          "human_review_rate": 0.18257575757575759,
+          "human_review_ci95": [
+            0.16266630975059843,
+            0.20432737788741528
+          ],
+          "false_rejection_rate": 0.0,
+          "false_rejection_ci95": [
+            0.0,
+            0.011862158831309737
+          ],
+          "false_nonapproval_rate": 0.440625,
+          "median_ms": 0.154917,
+          "p95_ms": 0.17833509999999997
+        },
+        "Firewall + ML": {
+          "total": 1320,
+          "nonconforming": 1000,
+          "conformant": 320,
+          "unsafe_approval_rate": 0.0,
+          "unsafe_approval_ci95": [
+            0.0,
+            0.0038267584855551234
+          ],
+          "unsafe_approval_count": 0,
+          "legitimate_approval_rate": 0.559375,
+          "legitimate_approval_ci95": [
+            0.5045946542795551,
+            0.6127467143592268
+          ],
+          "review_count": 241,
+          "human_review_rate": 0.18257575757575759,
+          "human_review_ci95": [
+            0.16266630975059843,
+            0.20432737788741528
+          ],
+          "false_rejection_rate": 0.0,
+          "false_rejection_ci95": [
+            0.0,
+            0.011862158831309737
+          ],
+          "false_nonapproval_rate": 0.440625,
+          "median_ms": 0.15375,
+          "p95_ms": 0.25198090000000006
+        },
+        "PRAMITI": {
+          "total": 1320,
+          "nonconforming": 1000,
+          "conformant": 320,
+          "unsafe_approval_rate": 0.0,
+          "unsafe_approval_ci95": [
+            0.0,
+            0.0038267584855551234
+          ],
+          "unsafe_approval_count": 0,
+          "legitimate_approval_rate": 0.559375,
+          "legitimate_approval_ci95": [
+            0.5045946542795551,
+            0.6127467143592268
+          ],
+          "review_count": 241,
+          "human_review_rate": 0.18257575757575759,
+          "human_review_ci95": [
+            0.16266630975059843,
+            0.20432737788741528
+          ],
+          "false_rejection_rate": 0.0,
+          "false_rejection_ci95": [
+            0.0,
+            0.011862158831309737
+          ],
+          "false_nonapproval_rate": 0.440625,
+          "median_ms": 0.154979,
+          "p95_ms": 0.2519601
+        }
+      }
+    },
+    {
+      "target_review_count": 264,
+      "target_review_rate": 0.2,
+      "methods": {
+        "Spending limit": {
+          "total": 1320,
+          "nonconforming": 1000,
+          "conformant": 320,
+          "unsafe_approval_rate": 0.708,
+          "unsafe_approval_ci95": [
+            0.679065763076869,
+            0.7353423053931402
+          ],
+          "unsafe_approval_count": 708,
+          "legitimate_approval_rate": 0.775,
+          "legitimate_approval_ci95": [
+            0.7261407002515256,
+            0.8173351123912541
+          ],
+          "review_count": 264,
+          "human_review_rate": 0.2,
+          "human_review_ci95": [
+            0.1793057847517699,
+            0.22243526609465836
+          ],
+          "false_rejection_rate": 0.0,
+          "false_rejection_ci95": [
+            0.0,
+            0.011862158831309737
+          ],
+          "false_nonapproval_rate": 0.225,
+          "median_ms": 0.139084,
+          "p95_ms": 0.15883930000000002
+        },
+        "Firewall": {
+          "total": 1320,
+          "nonconforming": 1000,
+          "conformant": 320,
+          "unsafe_approval_rate": 0.0,
+          "unsafe_approval_ci95": [
+            0.0,
+            0.0038267584855551234
+          ],
+          "unsafe_approval_count": 0,
+          "legitimate_approval_rate": 0.4875,
+          "legitimate_approval_ci95": [
+            0.43320832629130607,
+            0.5420882276794767
+          ],
+          "review_count": 264,
+          "human_review_rate": 0.2,
+          "human_review_ci95": [
+            0.1793057847517699,
+            0.22243526609465836
+          ],
+          "false_rejection_rate": 0.0,
+          "false_rejection_ci95": [
+            0.0,
+            0.011862158831309737
+          ],
+          "false_nonapproval_rate": 0.5125,
+          "median_ms": 0.154917,
+          "p95_ms": 0.17833509999999997
+        },
+        "Firewall + ML": {
+          "total": 1320,
+          "nonconforming": 1000,
+          "conformant": 320,
+          "unsafe_approval_rate": 0.0,
+          "unsafe_approval_ci95": [
+            0.0,
+            0.0038267584855551234
+          ],
+          "unsafe_approval_count": 0,
+          "legitimate_approval_rate": 0.4875,
+          "legitimate_approval_ci95": [
+            0.43320832629130607,
+            0.5420882276794767
+          ],
+          "review_count": 264,
+          "human_review_rate": 0.2,
+          "human_review_ci95": [
+            0.1793057847517699,
+            0.22243526609465836
+          ],
+          "false_rejection_rate": 0.0,
+          "false_rejection_ci95": [
+            0.0,
+            0.011862158831309737
+          ],
+          "false_nonapproval_rate": 0.5125,
+          "median_ms": 0.15375,
+          "p95_ms": 0.25198090000000006
+        },
+        "PRAMITI": {
+          "total": 1320,
+          "nonconforming": 1000,
+          "conformant": 320,
+          "unsafe_approval_rate": 0.0,
+          "unsafe_approval_ci95": [
+            0.0,
+            0.0038267584855551234
+          ],
+          "unsafe_approval_count": 0,
+          "legitimate_approval_rate": 0.4875,
+          "legitimate_approval_ci95": [
+            0.43320832629130607,
+            0.5420882276794767
+          ],
+          "review_count": 264,
+          "human_review_rate": 0.2,
+          "human_review_ci95": [
+            0.1793057847517699,
+            0.22243526609465836
+          ],
+          "false_rejection_rate": 0.0,
+          "false_rejection_ci95": [
+            0.0,
+            0.011862158831309737
+          ],
+          "false_nonapproval_rate": 0.5125,
+          "median_ms": 0.154979,
+          "p95_ms": 0.2519601
+        }
+      }
+    },
+    {
+      "target_review_count": 330,
+      "target_review_rate": 0.25,
+      "methods": {
+        "Spending limit": {
+          "total": 1320,
+          "nonconforming": 1000,
+          "conformant": 320,
+          "unsafe_approval_rate": 0.659,
+          "unsafe_approval_ci95": [
+            0.6290604090928602,
+            0.6877226817087334
+          ],
+          "unsafe_approval_count": 659,
+          "legitimate_approval_rate": 0.721875,
+          "legitimate_approval_ci95": [
+            0.6703706964091413,
+            0.7681154706094652
+          ],
+          "review_count": 330,
+          "human_review_rate": 0.25,
+          "human_review_ci95": [
+            0.22738867180451094,
+            0.2740622039008459
+          ],
+          "false_rejection_rate": 0.0,
+          "false_rejection_ci95": [
+            0.0,
+            0.011862158831309737
+          ],
+          "false_nonapproval_rate": 0.278125,
+          "median_ms": 0.139084,
+          "p95_ms": 0.15883930000000002
+        },
+        "Firewall": {
+          "total": 1320,
+          "nonconforming": 1000,
+          "conformant": 320,
+          "unsafe_approval_rate": 0.0,
+          "unsafe_approval_ci95": [
+            0.0,
+            0.0038267584855551234
+          ],
+          "unsafe_approval_count": 0,
+          "legitimate_approval_rate": 0.28125,
+          "legitimate_approval_ci95": [
+            0.23480761541640427,
+            0.3328820790722937
+          ],
+          "review_count": 330,
+          "human_review_rate": 0.25,
+          "human_review_ci95": [
+            0.22738867180451094,
+            0.2740622039008459
+          ],
+          "false_rejection_rate": 0.0,
+          "false_rejection_ci95": [
+            0.0,
+            0.011862158831309737
+          ],
+          "false_nonapproval_rate": 0.71875,
+          "median_ms": 0.154917,
+          "p95_ms": 0.17833509999999997
+        },
+        "Firewall + ML": {
+          "total": 1320,
+          "nonconforming": 1000,
+          "conformant": 320,
+          "unsafe_approval_rate": 0.0,
+          "unsafe_approval_ci95": [
+            0.0,
+            0.0038267584855551234
+          ],
+          "unsafe_approval_count": 0,
+          "legitimate_approval_rate": 0.28125,
+          "legitimate_approval_ci95": [
+            0.23480761541640427,
+            0.3328820790722937
+          ],
+          "review_count": 330,
+          "human_review_rate": 0.25,
+          "human_review_ci95": [
+            0.22738867180451094,
+            0.2740622039008459
+          ],
+          "false_rejection_rate": 0.0,
+          "false_rejection_ci95": [
+            0.0,
+            0.011862158831309737
+          ],
+          "false_nonapproval_rate": 0.71875,
+          "median_ms": 0.15375,
+          "p95_ms": 0.25198090000000006
+        },
+        "PRAMITI": {
+          "total": 1320,
+          "nonconforming": 1000,
+          "conformant": 320,
+          "unsafe_approval_rate": 0.0,
+          "unsafe_approval_ci95": [
+            0.0,
+            0.0038267584855551234
+          ],
+          "unsafe_approval_count": 0,
+          "legitimate_approval_rate": 0.28125,
+          "legitimate_approval_ci95": [
+            0.23480761541640427,
+            0.3328820790722937
+          ],
+          "review_count": 330,
+          "human_review_rate": 0.25,
+          "human_review_ci95": [
+            0.22738867180451094,
+            0.2740622039008459
+          ],
+          "false_rejection_rate": 0.0,
+          "false_rejection_ci95": [
+            0.0,
+            0.011862158831309737
+          ],
+          "false_nonapproval_rate": 0.71875,
+          "median_ms": 0.154979,
+          "p95_ms": 0.2519601
+        }
+      }
+    },
+    {
+      "target_review_count": 396,
+      "target_review_rate": 0.3,
+      "methods": {
+        "Spending limit": {
+          "total": 1320,
+          "nonconforming": 1000,
+          "conformant": 320,
+          "unsafe_approval_rate": 0.605,
+          "unsafe_approval_ci95": [
+            0.5743548264576065,
+            0.634841554260427
+          ],
+          "unsafe_approval_count": 605,
+          "legitimate_approval_rate": 0.684375,
+          "legitimate_approval_ci95": [
+            0.6315215631508707,
+            0.7328542657800837
+          ],
+          "review_count": 396,
+          "human_review_rate": 0.3,
+          "human_review_ci95": [
+            0.27588815307938563,
+            0.32527254748489975
+          ],
+          "false_rejection_rate": 0.0,
+          "false_rejection_ci95": [
+            0.0,
+            0.011862158831309737
+          ],
+          "false_nonapproval_rate": 0.315625,
+          "median_ms": 0.139084,
+          "p95_ms": 0.15883930000000002
+        },
+        "Firewall": {
+          "total": 1320,
+          "nonconforming": 1000,
+          "conformant": 320,
+          "unsafe_approval_rate": 0.0,
+          "unsafe_approval_ci95": [
+            0.0,
+            0.0038267584855551234
+          ],
+          "unsafe_approval_count": 0,
+          "legitimate_approval_rate": 0.075,
+          "legitimate_approval_ci95": [
+            0.05091491480619657,
+            0.1091679202004167
+          ],
+          "review_count": 396,
+          "human_review_rate": 0.3,
+          "human_review_ci95": [
+            0.27588815307938563,
+            0.32527254748489975
+          ],
+          "false_rejection_rate": 0.0,
+          "false_rejection_ci95": [
+            0.0,
+            0.011862158831309737
+          ],
+          "false_nonapproval_rate": 0.925,
+          "median_ms": 0.154917,
+          "p95_ms": 0.17833509999999997
+        },
+        "Firewall + ML": {
+          "total": 1320,
+          "nonconforming": 1000,
+          "conformant": 320,
+          "unsafe_approval_rate": 0.0,
+          "unsafe_approval_ci95": [
+            0.0,
+            0.0038267584855551234
+          ],
+          "unsafe_approval_count": 0,
+          "legitimate_approval_rate": 0.075,
+          "legitimate_approval_ci95": [
+            0.05091491480619657,
+            0.1091679202004167
+          ],
+          "review_count": 396,
+          "human_review_rate": 0.3,
+          "human_review_ci95": [
+            0.27588815307938563,
+            0.32527254748489975
+          ],
+          "false_rejection_rate": 0.0,
+          "false_rejection_ci95": [
+            0.0,
+            0.011862158831309737
+          ],
+          "false_nonapproval_rate": 0.925,
+          "median_ms": 0.15375,
+          "p95_ms": 0.25198090000000006
+        },
+        "PRAMITI": {
+          "total": 1320,
+          "nonconforming": 1000,
+          "conformant": 320,
+          "unsafe_approval_rate": 0.0,
+          "unsafe_approval_ci95": [
+            0.0,
+            0.0038267584855551234
+          ],
+          "unsafe_approval_count": 0,
+          "legitimate_approval_rate": 0.075,
+          "legitimate_approval_ci95": [
+            0.05091491480619657,
+            0.1091679202004167
+          ],
+          "review_count": 396,
+          "human_review_rate": 0.3,
+          "human_review_ci95": [
+            0.27588815307938563,
+            0.32527254748489975
+          ],
+          "false_rejection_rate": 0.0,
+          "false_rejection_ci95": [
+            0.0,
+            0.011862158831309737
+          ],
+          "false_nonapproval_rate": 0.925,
+          "median_ms": 0.154979,
+          "p95_ms": 0.2519601
+        }
+      }
+    },
+    {
+      "target_review_count": 420,
+      "target_review_rate": 0.3181818181818182,
+      "methods": {
+        "Spending limit": {
+          "total": 1320,
+          "nonconforming": 1000,
+          "conformant": 320,
+          "unsafe_approval_rate": 0.59,
+          "unsafe_approval_ci95": [
+            0.5592284411186709,
+            0.6200827423539291
+          ],
+          "unsafe_approval_count": 590,
+          "legitimate_approval_rate": 0.65625,
+          "legitimate_approval_ci95": [
+            0.6026338914664714,
+            0.7061591838987443
+          ],
+          "review_count": 420,
+          "human_review_rate": 0.3181818181818182,
+          "human_review_ci95": [
+            0.293613781468297,
+            0.3438050372265079
+          ],
+          "false_rejection_rate": 0.0,
+          "false_rejection_ci95": [
+            0.0,
+            0.011862158831309737
+          ],
+          "false_nonapproval_rate": 0.34375,
+          "median_ms": 0.139084,
+          "p95_ms": 0.15883930000000002
+        },
+        "Firewall": {
+          "total": 1320,
+          "nonconforming": 1000,
+          "conformant": 320,
+          "unsafe_approval_rate": 0.0,
+          "unsafe_approval_ci95": [
+            0.0,
+            0.0038267584855551234
+          ],
+          "unsafe_approval_count": 0,
+          "legitimate_approval_rate": 0.0,
+          "legitimate_approval_ci95": [
+            0.0,
+            0.011862158831309737
+          ],
+          "review_count": 420,
+          "human_review_rate": 0.3181818181818182,
+          "human_review_ci95": [
+            0.293613781468297,
+            0.3438050372265079
+          ],
+          "false_rejection_rate": 0.0,
+          "false_rejection_ci95": [
+            0.0,
+            0.011862158831309737
+          ],
+          "false_nonapproval_rate": 1.0,
+          "median_ms": 0.154917,
+          "p95_ms": 0.17833509999999997
+        },
+        "Firewall + ML": {
+          "total": 1320,
+          "nonconforming": 1000,
+          "conformant": 320,
+          "unsafe_approval_rate": 0.0,
+          "unsafe_approval_ci95": [
+            0.0,
+            0.0038267584855551234
+          ],
+          "unsafe_approval_count": 0,
+          "legitimate_approval_rate": 0.0,
+          "legitimate_approval_ci95": [
+            0.0,
+            0.011862158831309737
+          ],
+          "review_count": 420,
+          "human_review_rate": 0.3181818181818182,
+          "human_review_ci95": [
+            0.293613781468297,
+            0.3438050372265079
+          ],
+          "false_rejection_rate": 0.0,
+          "false_rejection_ci95": [
+            0.0,
+            0.011862158831309737
+          ],
+          "false_nonapproval_rate": 1.0,
+          "median_ms": 0.15375,
+          "p95_ms": 0.25198090000000006
+        },
+        "PRAMITI": {
+          "total": 1320,
+          "nonconforming": 1000,
+          "conformant": 320,
+          "unsafe_approval_rate": 0.0,
+          "unsafe_approval_ci95": [
+            0.0,
+            0.0038267584855551234
+          ],
+          "unsafe_approval_count": 0,
+          "legitimate_approval_rate": 0.0,
+          "legitimate_approval_ci95": [
+            0.0,
+            0.011862158831309737
+          ],
+          "review_count": 420,
+          "human_review_rate": 0.3181818181818182,
+          "human_review_ci95": [
+            0.293613781468297,
+            0.3438050372265079
+          ],
+          "false_rejection_rate": 0.0,
+          "false_rejection_ci95": [
+            0.0,
+            0.011862158831309737
+          ],
+          "false_nonapproval_rate": 1.0,
+          "median_ms": 0.154979,
+          "p95_ms": 0.2519601
+        }
+      }
+    }
+  ],
+  "overall": {
+    "Spending limit": {
+      "total": 1320,
+      "nonconforming": 1000,
+      "conformant": 320,
+      "unsafe_approval_rate": 0.9,
+      "unsafe_approval_ci95": [
+        0.8798480368046516,
+        0.9170905564069044
+      ],
+      "unsafe_approval_count": 900,
+      "legitimate_approval_rate": 1.0,
+      "legitimate_approval_ci95": [
+        0.9881378411686904,
+        1.0
+      ],
+      "review_count": 0,
+      "human_review_rate": 0.0,
+      "human_review_ci95": [
+        0.0,
+        0.0029017514107136195
+      ],
+      "false_rejection_rate": 0.0,
+      "false_rejection_ci95": [
+        0.0,
+        0.011862158831309737
+      ],
+      "false_nonapproval_rate": 0.0,
+      "median_ms": 0.139084,
+      "p95_ms": 0.15883930000000002
+    },
+    "Firewall": {
+      "total": 1320,
+      "nonconforming": 1000,
+      "conformant": 320,
+      "unsafe_approval_rate": 0.0,
+      "unsafe_approval_ci95": [
+        0.0,
+        0.0038267584855551234
+      ],
+      "unsafe_approval_count": 0,
+      "legitimate_approval_rate": 0.625,
+      "legitimate_approval_ci95": [
+        0.5707688455023089,
+        0.6762656147898637
+      ],
+      "review_count": 220,
+      "human_review_rate": 0.16666666666666666,
+      "human_review_ci95": [
+        0.14753524547089747,
+        0.1877325888029116
+      ],
+      "false_rejection_rate": 0.0,
+      "false_rejection_ci95": [
+        0.0,
+        0.011862158831309737
+      ],
+      "false_nonapproval_rate": 0.375,
+      "median_ms": 0.154917,
+      "p95_ms": 0.17833509999999997
+    },
+    "Firewall + ML": {
+      "total": 1320,
+      "nonconforming": 1000,
+      "conformant": 320,
+      "unsafe_approval_rate": 0.0,
+      "unsafe_approval_ci95": [
+        0.0,
+        0.0038267584855551234
+      ],
+      "unsafe_approval_count": 0,
+      "legitimate_approval_rate": 0.625,
+      "legitimate_approval_ci95": [
+        0.5707688455023089,
+        0.6762656147898637
+      ],
+      "review_count": 220,
+      "human_review_rate": 0.16666666666666666,
+      "human_review_ci95": [
+        0.14753524547089747,
+        0.1877325888029116
+      ],
+      "false_rejection_rate": 0.0,
+      "false_rejection_ci95": [
+        0.0,
+        0.011862158831309737
+      ],
+      "false_nonapproval_rate": 0.375,
+      "median_ms": 0.15375,
+      "p95_ms": 0.25198090000000006
+    },
+    "PRAMITI": {
+      "total": 1320,
+      "nonconforming": 1000,
+      "conformant": 320,
+      "unsafe_approval_rate": 0.0,
+      "unsafe_approval_ci95": [
+        0.0,
+        0.0038267584855551234
+      ],
+      "unsafe_approval_count": 0,
+      "legitimate_approval_rate": 0.559375,
+      "legitimate_approval_ci95": [
+        0.5045946542795551,
+        0.6127467143592268
+      ],
+      "review_count": 241,
+      "human_review_rate": 0.18257575757575759,
+      "human_review_ci95": [
+        0.16266630975059843,
+        0.20432737788741528
+      ],
+      "false_rejection_rate": 0.0,
+      "false_rejection_ci95": [
+        0.0,
+        0.011862158831309737
+      ],
+      "false_nonapproval_rate": 0.440625,
+      "median_ms": 0.154979,
+      "p95_ms": 0.2519601
+    }
+  },
+  "by_cohort": {
+    "Known": {
+      "Spending limit": {
+        "total": 900,
+        "nonconforming": 800,
+        "conformant": 100,
+        "unsafe_approval_rate": 0.875,
+        "unsafe_approval_ci95": [
+          0.8502753870966698,
+          0.8961404557490732
+        ],
+        "unsafe_approval_count": 700,
+        "legitimate_approval_rate": 1.0,
+        "legitimate_approval_ci95": [
+          0.9630065017930143,
+          1.0
+        ],
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.004250146730054126
+        ],
+        "false_rejection_rate": 0.0,
+        "false_rejection_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_nonapproval_rate": 0.0,
+        "median_ms": 0.138709,
+        "p95_ms": 0.15883930000000002
+      },
+      "Firewall": {
+        "total": 900,
+        "nonconforming": 800,
+        "conformant": 100,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.004778876205676033
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": 1.0,
+        "legitimate_approval_ci95": [
+          0.9630065017930143,
+          1.0
+        ],
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.004250146730054126
+        ],
+        "false_rejection_rate": 0.0,
+        "false_rejection_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_nonapproval_rate": 0.0,
+        "median_ms": 0.1540625,
+        "p95_ms": 0.17664165
+      },
+      "Firewall + ML": {
+        "total": 900,
+        "nonconforming": 800,
+        "conformant": 100,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.004778876205676033
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": 1.0,
+        "legitimate_approval_ci95": [
+          0.9630065017930143,
+          1.0
+        ],
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.004250146730054126
+        ],
+        "false_rejection_rate": 0.0,
+        "false_rejection_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_nonapproval_rate": 0.0,
+        "median_ms": 0.1534165,
+        "p95_ms": 0.25148394999999996
+      },
+      "PRAMITI": {
+        "total": 900,
+        "nonconforming": 800,
+        "conformant": 100,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.004778876205676033
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": 0.87,
+        "legitimate_approval_ci95": [
+          0.7901964855992357,
+          0.9224283257275948
+        ],
+        "review_count": 13,
+        "human_review_rate": 0.014444444444444444,
+        "human_review_ci95": [
+          0.008460578467446765,
+          0.02455567513485024
+        ],
+        "false_rejection_rate": 0.0,
+        "false_rejection_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_nonapproval_rate": 0.13,
+        "median_ms": 0.1528545,
+        "p95_ms": 0.24540000000000003
+      }
+    },
+    "Unseen": {
+      "Spending limit": {
+        "total": 300,
+        "nonconforming": 200,
+        "conformant": 100,
+        "unsafe_approval_rate": 1.0,
+        "unsafe_approval_ci95": [
+          0.9811546736227335,
+          1.0
+        ],
+        "unsafe_approval_count": 200,
+        "legitimate_approval_rate": 1.0,
+        "legitimate_approval_ci95": [
+          0.9630065017930143,
+          1.0
+        ],
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.012642971224546036
+        ],
+        "false_rejection_rate": 0.0,
+        "false_rejection_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_nonapproval_rate": 0.0,
+        "median_ms": 0.1400625,
+        "p95_ms": 0.16315385000000002
+      },
+      "Firewall": {
+        "total": 300,
+        "nonconforming": 200,
+        "conformant": 100,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.018845326377266575
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": 1.0,
+        "legitimate_approval_ci95": [
+          0.9630065017930143,
+          1.0
+        ],
+        "review_count": 100,
+        "human_review_rate": 0.3333333333333333,
+        "human_review_ci95": [
+          0.2823934472922627,
+          0.38848754311591926
+        ],
+        "false_rejection_rate": 0.0,
+        "false_rejection_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_nonapproval_rate": 0.0,
+        "median_ms": 0.1566255,
+        "p95_ms": 0.1908643
+      },
+      "Firewall + ML": {
+        "total": 300,
+        "nonconforming": 200,
+        "conformant": 100,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.018845326377266575
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": 1.0,
+        "legitimate_approval_ci95": [
+          0.9630065017930143,
+          1.0
+        ],
+        "review_count": 100,
+        "human_review_rate": 0.3333333333333333,
+        "human_review_ci95": [
+          0.2823934472922627,
+          0.38848754311591926
+        ],
+        "false_rejection_rate": 0.0,
+        "false_rejection_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_nonapproval_rate": 0.0,
+        "median_ms": 0.1562915,
+        "p95_ms": 0.25918090000000005
+      },
+      "PRAMITI": {
+        "total": 300,
+        "nonconforming": 200,
+        "conformant": 100,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.018845326377266575
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": 0.92,
+        "legitimate_approval_ci95": [
+          0.8500189229905127,
+          0.9589065385156194
+        ],
+        "review_count": 108,
+        "human_review_rate": 0.36,
+        "human_review_ci95": [
+          0.30776933517318583,
+          0.4157706967696869
+        ],
+        "false_rejection_rate": 0.0,
+        "false_rejection_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_nonapproval_rate": 0.08,
+        "median_ms": 0.2376045,
+        "p95_ms": 0.28238065
+      }
+    },
+    "Ambiguous benign": {
+      "Spending limit": {
+        "total": 120,
+        "nonconforming": 0,
+        "conformant": 120,
+        "unsafe_approval_rate": null,
+        "unsafe_approval_ci95": null,
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": 1.0,
+        "legitimate_approval_ci95": [
+          0.9689808335812966,
+          1.0
+        ],
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.031019166418703486
+        ],
+        "false_rejection_rate": 0.0,
+        "false_rejection_ci95": [
+          0.0,
+          0.031019166418703486
+        ],
+        "false_nonapproval_rate": 0.0,
+        "median_ms": 0.139521,
+        "p95_ms": 0.14620655
+      },
+      "Firewall": {
+        "total": 120,
+        "nonconforming": 0,
+        "conformant": 120,
+        "unsafe_approval_rate": null,
+        "unsafe_approval_ci95": null,
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": 0.0,
+        "legitimate_approval_ci95": [
+          0.0,
+          0.031019166418703486
+        ],
+        "review_count": 120,
+        "human_review_rate": 1.0,
+        "human_review_ci95": [
+          0.9689808335812966,
+          1.0
+        ],
+        "false_rejection_rate": 0.0,
+        "false_rejection_ci95": [
+          0.0,
+          0.031019166418703486
+        ],
+        "false_nonapproval_rate": 1.0,
+        "median_ms": 0.1564585,
+        "p95_ms": 0.1611375
+      },
+      "Firewall + ML": {
+        "total": 120,
+        "nonconforming": 0,
+        "conformant": 120,
+        "unsafe_approval_rate": null,
+        "unsafe_approval_ci95": null,
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": 0.0,
+        "legitimate_approval_ci95": [
+          0.0,
+          0.031019166418703486
+        ],
+        "review_count": 120,
+        "human_review_rate": 1.0,
+        "human_review_ci95": [
+          0.9689808335812966,
+          1.0
+        ],
+        "false_rejection_rate": 0.0,
+        "false_rejection_ci95": [
+          0.0,
+          0.031019166418703486
+        ],
+        "false_nonapproval_rate": 1.0,
+        "median_ms": 0.15281250000000002,
+        "p95_ms": 0.16187564999999998
+      },
+      "PRAMITI": {
+        "total": 120,
+        "nonconforming": 0,
+        "conformant": 120,
+        "unsafe_approval_rate": null,
+        "unsafe_approval_ci95": null,
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": 0.0,
+        "legitimate_approval_ci95": [
+          0.0,
+          0.031019166418703486
+        ],
+        "review_count": 120,
+        "human_review_rate": 1.0,
+        "human_review_ci95": [
+          0.9689808335812966,
+          1.0
+        ],
+        "false_rejection_rate": 0.0,
+        "false_rejection_ci95": [
+          0.0,
+          0.031019166418703486
+        ],
+        "false_nonapproval_rate": 1.0,
+        "median_ms": 0.2390205,
+        "p95_ms": 0.25710829999999996
+      }
+    }
+  },
+  "by_family": {
+    "prompt_influence": {
+      "Spending limit": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 1.0,
+        "unsafe_approval_ci95": [
+          0.9630065017930143,
+          1.0
+        ],
+        "unsafe_approval_count": 100,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1394795,
+        "p95_ms": 0.15070240000000001
+      },
+      "Firewall": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1585625,
+        "p95_ms": 0.16889824999999997
+      },
+      "Firewall + ML": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1549375,
+        "p95_ms": 0.17844614999999997
+      },
+      "PRAMITI": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.153229,
+        "p95_ms": 0.17223154999999998
+      }
+    },
+    "substitution": {
+      "Spending limit": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 1.0,
+        "unsafe_approval_ci95": [
+          0.9630065017930143,
+          1.0
+        ],
+        "unsafe_approval_count": 100,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.13827050000000002,
+        "p95_ms": 0.15910175000000001
+      },
+      "Firewall": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.15372950000000002,
+        "p95_ms": 0.166175
+      },
+      "Firewall + ML": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.152271,
+        "p95_ms": 0.18044790000000002
+      },
+      "PRAMITI": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.15181250000000002,
+        "p95_ms": 0.16795835
+      }
+    },
+    "misleading_specs": {
+      "Spending limit": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 1.0,
+        "unsafe_approval_ci95": [
+          0.9630065017930143,
+          1.0
+        ],
+        "unsafe_approval_count": 100,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.138771,
+        "p95_ms": 0.15190145
+      },
+      "Firewall": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.154458,
+        "p95_ms": 0.17334229999999998
+      },
+      "Firewall + ML": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.153333,
+        "p95_ms": 0.17076075
+      },
+      "PRAMITI": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.15243800000000002,
+        "p95_ms": 0.16753335
+      }
+    },
+    "review_manipulation": {
+      "Spending limit": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 1.0,
+        "unsafe_approval_ci95": [
+          0.9630065017930143,
+          1.0
+        ],
+        "unsafe_approval_count": 100,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.139229,
+        "p95_ms": 0.15911939999999997
+      },
+      "Firewall": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1539795,
+        "p95_ms": 0.1810316
+      },
+      "Firewall + ML": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1535625,
+        "p95_ms": 0.1660316
+      },
+      "PRAMITI": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.152958,
+        "p95_ms": 0.17525029999999997
+      }
+    },
+    "checkout_mismatch": {
+      "Spending limit": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1388125,
+        "p95_ms": 0.1587372
+      },
+      "Firewall": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1535,
+        "p95_ms": 0.17404615
+      },
+      "Firewall + ML": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1529585,
+        "p95_ms": 0.18058960000000002
+      },
+      "PRAMITI": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1528335,
+        "p95_ms": 0.17499230000000002
+      }
+    },
+    "split_budget": {
+      "Spending limit": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 1.0,
+        "unsafe_approval_ci95": [
+          0.9630065017930143,
+          1.0
+        ],
+        "unsafe_approval_count": 100,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.138667,
+        "p95_ms": 0.15761039999999998
+      },
+      "Firewall": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1534795,
+        "p95_ms": 0.16690414999999997
+      },
+      "Firewall + ML": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.152813,
+        "p95_ms": 0.17190065000000002
+      },
+      "PRAMITI": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.15189550000000002,
+        "p95_ms": 0.16891430000000004
+      }
+    },
+    "replay": {
+      "Spending limit": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 1.0,
+        "unsafe_approval_ci95": [
+          0.9630065017930143,
+          1.0
+        ],
+        "unsafe_approval_count": 100,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1383955,
+        "p95_ms": 0.15318605000000002
+      },
+      "Firewall": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1536255,
+        "p95_ms": 0.1791952
+      },
+      "Firewall + ML": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1525205,
+        "p95_ms": 0.18173720000000004
+      },
+      "PRAMITI": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.15229199999999998,
+        "p95_ms": 0.1700274
+      }
+    },
+    "concurrent_budget": {
+      "Spending limit": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 1.0,
+        "unsafe_approval_ci95": [
+          0.9630065017930143,
+          1.0
+        ],
+        "unsafe_approval_count": 100,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.138312,
+        "p95_ms": 0.1600899
+      },
+      "Firewall": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.15360400000000002,
+        "p95_ms": 0.16310205
+      },
+      "Firewall + ML": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.15179150000000002,
+        "p95_ms": 0.1688045
+      },
+      "PRAMITI": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1517495,
+        "p95_ms": 0.16827530000000002
+      }
+    },
+    "concealed_spec_gap": {
+      "Spending limit": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 1.0,
+        "unsafe_approval_ci95": [
+          0.9630065017930143,
+          1.0
+        ],
+        "unsafe_approval_count": 100,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1399375,
+        "p95_ms": 0.16748895
+      },
+      "Firewall": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 100,
+        "human_review_rate": 1.0,
+        "human_review_ci95": [
+          0.9630065017930143,
+          1.0
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.156125,
+        "p95_ms": 0.18560030000000002
+      },
+      "Firewall + ML": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 100,
+        "human_review_rate": 1.0,
+        "human_review_ci95": [
+          0.9630065017930143,
+          1.0
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1524165,
+        "p95_ms": 0.18053750000000002
+      },
+      "PRAMITI": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 100,
+        "human_review_rate": 1.0,
+        "human_review_ci95": [
+          0.9630065017930143,
+          1.0
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.2404375,
+        "p95_ms": 0.2867756
+      }
+    },
+    "checkout_understatement": {
+      "Spending limit": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 1.0,
+        "unsafe_approval_ci95": [
+          0.9630065017930143,
+          1.0
+        ],
+        "unsafe_approval_count": 100,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.140375,
+        "p95_ms": 0.15845415
+      },
+      "Firewall": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.159104,
+        "p95_ms": 0.1962003
+      },
+      "Firewall + ML": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.155042,
+        "p95_ms": 0.18790625
+      },
+      "PRAMITI": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "unsafe_approval_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "unsafe_approval_count": 0,
+        "legitimate_approval_rate": null,
+        "legitimate_approval_ci95": null,
+        "review_count": 0,
+        "human_review_rate": 0.0,
+        "human_review_ci95": [
+          0.0,
+          0.03699349820698568
+        ],
+        "false_rejection_rate": null,
+        "false_rejection_ci95": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.15410400000000002,
+        "p95_ms": 0.17979825
+      }
+    }
+  },
+  "scored_set_coverage": {
+    "Known": {
+      "conformant": {
+        "scored": 100,
+        "coverage": 0.87
+      },
+      "nonconforming": {
+        "scored": 0,
+        "coverage": null
+      }
+    },
+    "Unseen": {
+      "conformant": {
+        "scored": 100,
+        "coverage": 0.92
+      },
+      "nonconforming": {
+        "scored": 100,
+        "coverage": 0.0
+      }
+    },
+    "Ambiguous benign": {
+      "conformant": {
+        "scored": 120,
+        "coverage": 0.008333333333333333
+      },
+      "nonconforming": {
+        "scored": 0,
+        "coverage": null
+      }
+    }
+  },
+  "calibration_sizes": {
+    "conformant": 400,
+    "nonconforming": 400
+  },
+  "training_size": 2000
+}
