@@ -39,6 +39,12 @@ payments = Table(
     Column("body", JSON, nullable=False),
     UniqueConstraint("owner", "nonce"),
 )
+schema_revision = Table(
+    "schema_revision", metadata,
+    Column("id", Integer, primary_key=True),
+    Column("version", Integer, nullable=False),
+)
+SCHEMA_VERSION = 1
 GENESIS = "0" * 64
 
 
@@ -48,6 +54,8 @@ def open_database(url=None):
         if url.startswith(prefix):
             url = url.replace(prefix, "postgresql+psycopg://", 1)
     engine = create_engine(url, pool_pre_ping=True)
+    if os.getenv("PRAMITI_REQUIRE_POSTGRES") == "1" and engine.dialect.name != "postgresql":
+        raise RuntimeError("This deployment requires a PostgreSQL DATABASE_URL")
     if engine.dialect.name == "sqlite":
         @event.listens_for(engine, "connect")
         def configure_sqlite(connection, _):
@@ -60,7 +68,16 @@ def initialize(engine):
     with engine.begin() as connection:
         if engine.dialect.name == "postgresql":
             connection.execute(text("SELECT pg_advisory_xact_lock(615405)"))
-        metadata.create_all(connection)
+        elif connection.dialect.name == "sqlite":
+            connection.exec_driver_sql("BEGIN IMMEDIATE")
+        schema_revision.create(connection, checkfirst=True)
+        version = connection.execute(select(schema_revision.c.version).where(schema_revision.c.id == 1)).scalar_one_or_none()
+        if version is None:
+            # Adopt the original schema without changing existing mandates, payments or evidence bytes.
+            metadata.create_all(connection)
+            connection.execute(schema_revision.insert().values(id=1, version=SCHEMA_VERSION))
+        elif version != SCHEMA_VERSION:
+            raise RuntimeError(f"Unsupported database schema revision {version}")
 
 
 def lock_ledger(connection, owner):

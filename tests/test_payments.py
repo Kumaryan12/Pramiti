@@ -218,3 +218,23 @@ def test_llm_selection_uses_server_catalogue(client, monkeypatch):
     assert body["source"] == "llm"
     assert body["proposal"]["amount"] == CATALOG["compact-20"].amount
     assert body["decision"] == "ESCALATE"
+
+
+def test_schema_revision_adopts_existing_data(client):
+    from backend.pramiti.storage import initialize, schema_revision
+
+    mandate_id = approve(client)
+    assert submit(client, proposal(mandate_id))["status"] == "SETTLED"
+    before = client.get("/api/evidence").json()
+    engine = client.app.state.engine
+    with engine.begin() as connection:
+        connection.execute(delete(schema_revision))
+    initialize(engine)
+    initialize(engine)
+    assert client.get("/api/evidence").json() == before
+
+
+def test_production_requires_postgres(tmp_path, monkeypatch):
+    monkeypatch.setenv("PRAMITI_REQUIRE_POSTGRES", "1")
+    with pytest.raises(RuntimeError, match="requires a PostgreSQL"):
+        create_app(f"sqlite:///{tmp_path / 'production.db'}")

@@ -51,6 +51,8 @@ def settle():
 
 def create_app(database_url=None):
     engine = open_database(database_url)
+    deployed = os.getenv("PRAMITI_REQUIRE_POSTGRES") == "1"
+    secure_cookies = deployed or os.getenv("SECURE_COOKIES") == "1"
 
     @asynccontextmanager
     async def lifespan(_):
@@ -69,13 +71,13 @@ def create_app(database_url=None):
     def health():
         with engine.connect() as connection:
             connection.execute(text("SELECT 1"))
-        return {"status": "ok", "payments": "simulated"}
+        return {"status": "ok", "payments": "simulated", "database": engine.dialect.name}
 
     @app.post("/api/session")
     def session(response: Response, existing: Annotated[str | None, Cookie(alias=COOKIE)] = None):
         if not existing or len(existing) != 43:
             response.set_cookie(COOKIE, secrets.token_urlsafe(32), httponly=True, samesite="strict",
-                                secure=os.getenv("SECURE_COOKIES") == "1", max_age=30 * 86400)
+                                secure=secure_cookies, max_age=30 * 86400)
         return {"llm_enabled": bool(os.getenv("OPENAI_API_KEY") and os.getenv("LLM_OPERATOR_TOKEN"))}
 
     @app.get("/api/catalogue")
