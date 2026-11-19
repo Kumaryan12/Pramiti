@@ -26,6 +26,10 @@ The startup schema revision runs under a PostgreSQL advisory lock and adopts dat
 
 With authenticated Render CLI access, select the target workspace and run `render blueprints validate ./render.yaml` before applying. [Render CLI reference](https://render.com/docs/cli-reference)
 
+## Public overview
+
+The [published competition overview](https://pramiti-competition-overview.nitgoa2023.chatgpt.site/) is a static copy with no API, private source or credentials. Anonymous HTTPS access was verified. The full sandbox requires the Render rollout above.
+
 ## Optional live LLM validation
 
 Use a local operator-controlled process. Set `OPENAI_API_KEY` and a strong `LLM_OPERATOR_TOKEN` in the runtime environment without committing either. The default supported model alias is `gpt-5-mini`. Start the local backend and, in the same secret-configured environment, run:

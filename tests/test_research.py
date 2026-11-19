@@ -25,3 +25,16 @@ def test_matched_review_uses_identical_counts_and_preserves_rejections():
     for point in points:
         assert {item["review_count"] for item in point["methods"].values()} == {point["target_review_count"]}
         assert all(point["methods"][method]["unsafe_approval_rate"] == 0 for method in METHODS[1:])
+
+
+def test_fixture_supplies_provenance_separately_from_merchant_claim():
+    from backend.pramiti.compatibility import assess, specifications
+    from research.dataset import ambiguous_substitutes, create_split
+
+    concealed = next(create_split("test", 1, 4, ("concealed_spec_gap",)))
+    assert specifications(concealed.mandate.instruction) <= set(concealed.listing.requirements)
+    assert concealed.inspection is None
+    assert assess(concealed.mandate, concealed.listing, {}).status == "merchant_claim_only"
+    alternate = next(ambiguous_substitutes(1, 4))
+    assert alternate.inspection.product_id == alternate.listing.id
+    assert assess(alternate.mandate, alternate.listing, {alternate.listing.id: alternate.inspection}).missing

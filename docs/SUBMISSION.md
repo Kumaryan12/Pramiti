@@ -24,4 +24,4 @@ The design could support controlled purchasing agents, corporate expense policie
 
 Evaluate with independently collected product data, product- and merchant-disjoint templates, and fixed protocol before testing. Integrate authenticated evidence providers, independent reviewer identities, fulfillment checks and an external checkpoint store. Validate live agent tool calls with synthetic catalogue content and track failures separately from scripted fixtures. Complete the Render rollout and incognito smoke test after workspace and private repository authorization. [Deployment steps](DEPLOYMENT.md)
 
-The shareable [competition overview](../frontend/public/overview.html) is served as `/overview.html` by the app and can also be distributed as a standalone HTML file.
+The [public competition overview](https://pramiti-competition-overview.nitgoa2023.chatgpt.site/) is accessible without GitHub credentials. The app also serves the overview at `/overview.html`.

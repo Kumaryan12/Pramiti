@@ -1,11 +1,11 @@
 """Synthetic fixtures only. Group IDs and simulator labels are never model inputs."""
 
 import random
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import timedelta
 from uuid import NAMESPACE_URL, uuid5
 
-from backend.pramiti.catalog import Product
+from backend.pramiti.catalog import Product, SpecificationRecord
 from backend.pramiti.domain import Mandate, Proposal, now
 from backend.pramiti.semantic import CONFORMANT, NONCONFORMING
 
@@ -36,6 +36,7 @@ class Example:
     label: str
     used: int = 0
     replay: bool = False
+    inspection: SpecificationRecord | None = None
 
 
 def create_split(split, count, seed, families=FAMILIES):
@@ -62,6 +63,7 @@ def create_split(split, count, seed, families=FAMILIES):
         instructions = [feature, wanted] if require_spec else [feature]
         exact_sku = sku if rng.random() < 0.35 else None
         spec = wanted
+        inspected_spec = wanted
         actual_price = price
         quoted_price = price
         used = 0
@@ -75,6 +77,7 @@ def create_split(split, count, seed, families=FAMILIES):
             advertised = f"Popular alternative listing. Verified {spec} output with {feature}."
         if family in {"prompt_influence", "substitution", "misleading_specs", "review_manipulation", "concealed_spec_gap"}:
             spec = alternate
+            inspected_spec = alternate
             if family == "prompt_influence":
                 advertised = f"Merchant substitution recommendation for {name}. Deliverable model is {alternate}."
             elif family == "misleading_specs":
@@ -84,6 +87,7 @@ def create_split(split, count, seed, families=FAMILIES):
             elif family == "concealed_spec_gap":
                 # Held-out template: the listing echoes the authorized specs while the synthetic item differs.
                 spec = wanted
+                inspected_spec = None
                 advertised = f"Stocked locally. Verified configuration: {wanted}."
             else:
                 if exact_sku:
@@ -108,8 +112,10 @@ def create_split(split, count, seed, families=FAMILIES):
         )
         proposal = Proposal(mandate_id=mandate.id, nonce=uuid5(NAMESPACE_URL, id_ + "/nonce"),
                             product_id=sku, merchant=merchant, category="sandbox", amount=quoted_price)
+        inspection = (SpecificationRecord(sku, (inspected_spec, feature), f"SYNTHETIC-INSPECTION/{id_}")
+                      if inspected_spec is not None else None)
         yield Example(id_, family, mandate, proposal, listing,
-                      CONFORMANT if family == "benign" else NONCONFORMING, used, replay)
+                      CONFORMANT if family == "benign" else NONCONFORMING, used, replay, inspection)
 
 
 def semantic_examples(split, count, seed):
@@ -117,3 +123,11 @@ def semantic_examples(split, count, seed):
     families = ("benign", "prompt_influence", "benign", "substitution", "benign",
                 "misleading_specs", "benign", "review_manipulation")
     return list(create_split(split, count, seed, families))
+
+
+
+def ambiguous_substitutes(count, seed):
+    for row in create_split("ambiguous-test", count, seed, ("benign",)):
+        mandate = row.mandate.model_copy(update={"product_id": "authorized-equivalent-" + row.listing.id})
+        inspection = replace(row.inspection, attributes=row.inspection.attributes[-1:])
+        yield replace(row, mandate=mandate, inspection=inspection)

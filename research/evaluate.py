@@ -7,18 +7,16 @@ import hashlib
 import math
 import json
 from collections import Counter
-from dataclasses import replace
 from pathlib import Path
 from statistics import median, quantiles
 from time import perf_counter_ns
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
-from backend.pramiti.catalog import SpecificationRecord
 from backend.pramiti.domain import SignedMandate, now, valid_signature
 from backend.pramiti.firewall import verify
 from backend.pramiti.semantic import CONFORMANT, NONCONFORMING, calibrated_decision, load_verifier
-from research.dataset import FAMILIES, UNSEEN, create_split
+from research.dataset import FAMILIES, UNSEEN, ambiguous_substitutes, create_split
 
 METHODS = ("Spending limit", "Firewall", "Firewall + ML", "PRAMITI")
 
@@ -29,15 +27,6 @@ def sign(key, mandate):
         payload=payload, public_key=base64.b64encode(key.public_key().public_bytes_raw()).decode(),
         signature=base64.b64encode(key.sign(payload.encode())).decode(),
     )
-
-
-def trusted_record(row, cohort):
-    # The fixture generator models provenance separately from the shopper's listing.
-    # A missing inspection is observable before payment and also occurs for legitimate alternatives.
-    if row.family == "concealed_spec_gap":
-        return {}
-    attributes = row.listing.requirements[-1:] if cohort == "Ambiguous benign" else row.listing.requirements
-    return {row.listing.id: SpecificationRecord(row.listing.id, attributes, f"SYNTHETIC-INSPECTION/{row.id}")}
 
 
 def decide(method, row, envelope, verifier, attestations):
@@ -70,7 +59,7 @@ def run(rows, verifier):
     for cohort, examples in rows.items():
         for example in examples:
             envelope = sign(key, example.mandate)
-            attestations = trusted_record(example, cohort)
+            attestations = {example.inspection.product_id: example.inspection} if example.inspection else {}
             for method in METHODS:
                 start = perf_counter_ns()
                 decision, prediction_set, priority, evidence = decide(method, example, envelope, verifier, attestations)
@@ -199,10 +188,7 @@ def main():
     known = list(create_split("known-test", 900, 2803))
     unseen = list(create_split("unseen-test", 300, 2804, ("benign", *UNSEEN)))
     verifier = load_verifier(args.model)
-    ambiguous = [
-        replace(row, mandate=row.mandate.model_copy(update={"product_id": "authorized-equivalent-" + row.listing.id}))
-        for row in create_split("ambiguous-test", 120, 2806, ("benign",))
-    ]
+    ambiguous = list(ambiguous_substitutes(120, 2806))
     verify_splits(verifier, known + unseen + ambiguous)
     results = run({"Known": known, "Unseen": unseen, "Ambiguous benign": ambiguous}, verifier)
     summary = metrics(results)

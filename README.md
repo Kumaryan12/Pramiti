@@ -24,7 +24,7 @@ See the [demo walkthrough](docs/DEMO.md), [architecture](docs/ARCHITECTURE.md), 
 
 ## Competition demo and verification
 
-Open [the overview](frontend/public/overview.html) or `/overview.html` in the running app. Follow the [five-minute demo](docs/DEMO.md), including the merchant-only compatibility case. See the [submission brief](docs/SUBMISSION.md) and [matched-review research results](docs/RESEARCH.md).
+Open the [public competition overview](https://pramiti-competition-overview.nitgoa2023.chatgpt.site/) or `/overview.html` in the running app. Follow the [five-minute demo](docs/DEMO.md), including the merchant-only compatibility case. See the [submission brief](docs/SUBMISSION.md) and [matched-review research results](docs/RESEARCH.md).
 
 Use `docker compose up --build -d` for a production-style local build. To include the calibrated model, run `PRAMITI_BUILD_SEMANTIC=1 docker compose up --build -d`.
 
