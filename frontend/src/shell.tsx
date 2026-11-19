@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import {
-  ChevronRight, CircleHelp, FlaskConical, Menu, Moon, PanelLeftClose, PanelLeftOpen, ShieldCheck, Sun, X,
+  ChevronRight, CircleHelp, Menu, Moon, PanelLeftClose, PanelLeftOpen, Sun, X,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -9,7 +9,7 @@ export type NavGroup = { title: string; items: NavItem[] }
 
 export function Brand({ onClick }: { onClick?: () => void }) {
   return <a className="identity" href="#" onClick={onClick} aria-label="PRAMITI प्रमिति home">
-    <span className="identity-mark"><ShieldCheck size={21} aria-hidden="true" /></span>
+    <span className="identity-initial" aria-hidden="true">P</span>
     <span className="identity-name">PRAMITI <span lang="hi">प्रमिति</span></span>
   </a>
 }
@@ -62,7 +62,6 @@ export function AppShell({ groups, page, status, children }: {
     <aside className="desktop-rail">
       <Brand />
       {links()}
-      <div className="rail-footer"><FlaskConical size={17} aria-hidden="true" /><span>Simulated payments only</span></div>
     </aside>
     <dialog className="mobile-drawer" ref={drawer} aria-labelledby="drawer-title"
       onClick={event => { if (event.target === drawer.current) drawer.current.close() }}
@@ -71,7 +70,6 @@ export function AppShell({ groups, page, status, children }: {
         <div className="drawer-head"><h2 id="drawer-title">Workspace navigation</h2>
           <button className="icon-button" type="button" aria-label="Close navigation" onClick={() => drawer.current?.close()}><X size={20} aria-hidden="true" /></button></div>
         {links(() => drawer.current?.close())}
-        <div className="rail-footer"><FlaskConical size={17} aria-hidden="true" /><span>Simulated payments only</span></div>
       </div>
     </dialog>
     <div className="app-main">
@@ -86,7 +84,7 @@ export function AppShell({ groups, page, status, children }: {
           <nav aria-label="Breadcrumb" className="crumb"><span>{groupTitle}</span><ChevronRight size={14} aria-hidden="true" /><strong>{title}</strong></nav>
         </div>
         <div className="toolbar-right">
-          <span className="session-state"><FlaskConical size={15} aria-hidden="true" /><span className="session-full">{status}</span><span className="session-mobile">{status === 'Sandbox unavailable' ? 'Offline' : 'Simulated'}</span></span>
+          <span className="session-state">{status}</span>
           <a className="icon-button toolbar-doc" href="#documentation" aria-label="Documentation" title="Documentation"><CircleHelp size={18} aria-hidden="true" /></a>
           <ThemeButton />
         </div>

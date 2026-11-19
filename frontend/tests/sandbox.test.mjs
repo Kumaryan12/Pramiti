@@ -12,7 +12,7 @@ after(async () => browser?.close())
 test('public landing, mobile drawer, theme, and original deep links', { timeout: 30000 }, async () => {
   const page = await browser.newPage({viewport:{width:390,height:844}})
   try {
-    await go(page,'',/Autonomous payments/i)
+    await go(page,'','Check what an AI agent buys.')
     const overview = await page.request.get(base+'/overview.html')
     assert.match(await overview.text(), /Competition overview/)
     await page.getByRole('link',{name:'Launch Live Demo'}).first().click()
@@ -123,7 +123,7 @@ test('laboratory runs a real scenario and analytics uses recorded experiments', 
 test('demo preserves a reviewed case and enforces hard rejection across navigation', {timeout:55000},async()=>{
   const page=await browser.newPage({viewport:{width:390,height:844}})
   try {
-    await go(page,'',/Autonomous payments/i)
+    await go(page,'','Check what an AI agent buys.')
     const stage=page.getByRole('button',{name:'Ledger Decision record'})
     await stage.click()
     assert.equal(await stage.getAttribute('aria-pressed'),'true')
@@ -160,7 +160,7 @@ test('axe WCAG 2.2 A/AA checks on critical desktop and mobile views', {timeout:9
   const context=await browser.newContext({viewport:{width:1440,height:900}})
   const page=await context.newPage()
   try {
-    await go(page,'',/Autonomous payments/i)
+    await go(page,'','Check what an AI agent buys.')
     await check(page,'landing')
     await populate(page)
     for(const [route,title] of [['dashboard','Command Centre'],['demo','Live Demo'],['mandates','Intent mandates'],['agent','AI Agent'],['verification','Transactions'],['review','Human review'],['evidence','Evidence explorer'],['ledger','Ledger Integrity'],['analytics','Evaluation analytics'],['lab','Attack laboratory']]){
@@ -178,7 +178,7 @@ test('axe WCAG 2.2 A/AA checks on critical desktop and mobile views', {timeout:9
     await check(page,'mobile dark dashboard')
     await go(page,'demo','Live Demo')
     await check(page,'mobile dark demo')
-    await go(page,'',/Autonomous payments/i)
+    await go(page,'','Check what an AI agent buys.')
     await check(page,'mobile dark landing')
     assert.deepEqual(all,[])
   } finally { await page.context().close() }

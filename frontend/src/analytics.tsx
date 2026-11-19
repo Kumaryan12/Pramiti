@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { FlaskConical } from 'lucide-react'
 import source from '../../docs/results/competition/metrics.json'
-import { Card, ChartContainer, EmptyState, FilterToolbar, PageHeader } from './components'
+import { Card, ChartContainer, EmptyState, FilterToolbar, Metric, PageHeader } from './components'
 import { label } from './api'
 
 const policies = [
@@ -28,10 +28,6 @@ const displayInterval=(range:number[]|null)=>range ? range.map(n=>percent(n,2)).
 const total = dataset.overall.PRAMITI.total
 const unsafe = dataset.overall.PRAMITI.nonconforming
 const legitimate = dataset.overall.PRAMITI.conformant
-
-function RiskMetric({ label: title, value, note }: { label:string; value:string; note:string }) {
-  return <article className="stat-card research-stat"><p>{title}</p><strong>{value}</strong><small>{note}</small></article>
-}
 
 function Frontier() {
   const points=dataset.matched_review
@@ -103,15 +99,14 @@ export default function Analytics({ initialFamily }: { initialFamily?:string }) 
   const [cohort,setCohort] = useState('Known')
   const [family,setFamily] = useState(initialFamily && dataset.by_family[initialFamily] ? initialFamily : 'concealed_spec_gap')
   return <>
-    <PageHeader title="Evaluation analytics" description="Executed experiments on simulated payments, with matched review budgets and explicit denominators."
-      context={<p className="eyebrow">Synthetic evaluation</p>} actions={<a download className="btn secondary" href={new URL('../../docs/results/competition/metrics.json',import.meta.url).href}>Download metrics JSON</a>}/>
+    <PageHeader title="Evaluation analytics" description="Executed experiments on simulated payments, with matched review budgets and explicit denominators." actions={<a download className="btn secondary" href={new URL('../../docs/results/competition/metrics.json',import.meta.url).href}>Download metrics JSON</a>}/>
     <div className="callout neutral"><FlaskConical size={19} aria-hidden="true"/><div><strong>Research prototype · Not live financial traffic</strong>
       <p>19 Nov 2026 · Class-conditional split conformal verifier, artifact v2 · Alpha 0.10</p></div></div>
-    <div className="stats-grid research-stats">
-      <RiskMetric label="Test proposals" value={total.toLocaleString()} note={unsafe+' unsafe · '+legitimate+' legitimate'}/>
-      <RiskMetric label="Training" value={dataset.training_size.toLocaleString()} note="Disjoint synthetic fixture IDs"/>
-      <RiskMetric label="Calibration" value={Object.values(dataset.calibration_sizes).reduce((a,b)=>a+b,0).toLocaleString()} note={dataset.calibration_sizes.conformant+' conformant · '+dataset.calibration_sizes.nonconforming+' nonconforming'}/>
-    </div>
+    <dl className="metric-strip research-stats">
+      <Metric label="Test proposals" value={total.toLocaleString()} note={unsafe+' unsafe · '+legitimate+' legitimate'}/>
+      <Metric label="Training" value={dataset.training_size.toLocaleString()} note="Disjoint synthetic fixture IDs"/>
+      <Metric label="Calibration" value={Object.values(dataset.calibration_sizes).reduce((a,b)=>a+b,0).toLocaleString()} note={dataset.calibration_sizes.conformant+' conformant · '+dataset.calibration_sizes.nonconforming+' nonconforming'}/>
+    </dl>
     <Frontier/>
     <Card title="Native operating points" note="False rejection and legitimate approval use legitimate proposals. Review uses all proposals. Latency is measured inside policy verification.">
       <ResultsTable rows={dataset.overall} title="Native policy operating points" detail/>

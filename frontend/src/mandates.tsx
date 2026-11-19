@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
-import { ArrowLeft, ArrowRight, Check, FileSignature, LockKeyhole } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, LockKeyhole } from 'lucide-react'
 import { money, type Mandate, type Product } from './api'
 import { ActionLink, Card, CopyableIdentifier, EmptyState, instant, PageHeader, StatusBadge, StepIndicator } from './components'
 
@@ -115,7 +115,6 @@ export function Mandates({ catalogue, mandates, busy, next, onSign }: {
     <StepIndicator steps={descriptions} current={step}/>
     <div className="mandate-grid">
       <Card className="wizard">
-        <p className="eyebrow">{step===3 ? 'Authorisation receipt' : 'Mandate studio · Step '+(step+1)+' of 4'}</p>
         <h2 ref={heading} tabIndex={-1}>{descriptions[step]}</h2>
         {step < 3 && <form noValidate className="form-stack" onSubmit={submit}>
           {visibleErrors.length > 0 && <div className="callout danger error-summary" role="alert" tabIndex={-1} ref={errorSummary}>
@@ -182,7 +181,7 @@ export function Mandates({ catalogue, mandates, busy, next, onSign }: {
           <strong>{item.instruction}</strong><small>Valid until {instant(item.expires_at)}</small>
           <small>{money((item.spent ?? 0)+(item.reserved ?? 0))} of {money(item.cumulative_limit)} committed</small>
           <CopyableIdentifier value={item.id} name="mandate ID" compact/></div><StatusBadge value="SIGNED"/>
-        </li>)}</ul> : <EmptyState title="No signed mandates" description="After signing, your authorization receipt will appear here." icon={FileSignature}/>}
+        </li>)}</ul> : <EmptyState title="No signed mandates" description="After signing, your authorization receipt will appear here."/>}
       </Card>
     </div>
   </>

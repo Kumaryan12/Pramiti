@@ -50,7 +50,7 @@ export async function signDefault(page, { validation = false, receipt } = {}) {
 
 export async function runDemo(page, scenario, expected) {
   if (!page.url().endsWith('/#demo')) await go(page,'demo','Live Demo')
-  await page.getByRole('button',{name:new RegExp('^Run '+scenario)}).click()
+  await page.getByRole('button',{name:new RegExp('^Run '+scenario, 'i')}).click()
   await page.waitForURL(/#demo\?tx=[\w-]+$/)
   await page.getByRole('link',{name:'Inspect transaction',exact:true}).click()
   await page.waitForURL(/#verification\?tx=[\w-]+$/)

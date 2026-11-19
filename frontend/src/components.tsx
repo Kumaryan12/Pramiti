@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import {
-  AlertCircle, ArrowRight, Check, ChevronRight, Circle, Clock3, Copy, FileSearch,
+  AlertCircle, ArrowRight, Check, ChevronRight, Circle, Clock3, Copy,
   type LucideIcon,
 } from 'lucide-react'
 import { label, money, type Payment, type Product } from './api'
@@ -17,11 +17,11 @@ export function StatusBadge({ value, text }: { value: string; text?: string }) {
   return <span className={'status-tag ' + tone}><Icon size={13} aria-hidden="true" />{text ?? title}</span>
 }
 
-export function PageHeader({ title, description, actions, context }: {
-  title: string; description?: string; actions?: ReactNode; context?: ReactNode
+export function PageHeader({ title, description, actions }: {
+  title: string; description?: string; actions?: ReactNode
 }) {
   return <div className="page-header">
-    <div>{context}<h1>{title}</h1>{description && <p>{description}</p>}</div>
+    <div><h1>{title}</h1>{description && <p>{description}</p>}</div>
     {actions && <div className="page-actions">{actions}</div>}
   </div>
 }
@@ -35,10 +35,10 @@ export function Card({ title, note, action, children, className = '' }: {
   </section>
 }
 
-export function EmptyState({ title, description, action, icon: Icon = FileSearch }: {
-  title: string; description: string; action?: ReactNode; icon?: LucideIcon
+export function EmptyState({ title, description, action }: {
+  title: string; description: string; action?: ReactNode
 }) {
-  return <div className="blank-state"><span className="blank-icon"><Icon size={23} aria-hidden="true" /></span>
+  return <div className="blank-state">
     <h3>{title}</h3><p>{description}</p>{action}</div>
 }
 
@@ -110,13 +110,11 @@ export function TransactionTable({ rows, catalogue, compact = false }: { rows: P
   </div>
 }
 
-export function StatisticCard({ title, value, detail, icon: Icon, tone = 'neutral' }: {
-  title: string; value: number; detail: string; icon: LucideIcon; tone?: string
-}) {
-  return <article className="stat-card">
-    <div><span className={'stat-icon ' + tone}><Icon size={17} aria-hidden="true" /></span><p>{title}</p></div>
-    <strong>{value.toLocaleString('en-IN')}</strong><small>{detail}</small>
-  </article>
+export function Metric({ label, value, note }: { label: string; value: number | string; note?: string }) {
+  return <div className="metric">
+    <dt>{label}</dt>
+    <dd>{value.toLocaleString('en-IN')}{note && <small>{note}</small>}</dd>
+  </div>
 }
 
 export function ChartContainer({ title, note, children, action }: {

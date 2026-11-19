@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { Check, Download, FileSignature, FlaskConical, Layers3, Play, ShieldCheck, ShoppingBag, UserRoundCheck } from 'lucide-react'
+import { Check, Download, FileSignature, Layers3, ShieldCheck, ShoppingBag, UserRoundCheck } from 'lucide-react'
 import { label, money, type Evidence, type EvidenceEvent, type Mandate, type Payment, type Product } from './api'
 import {
   ActionLink, Card, CopyableIdentifier, EmptyState, FilterToolbar, instant, PageHeader, StatusBadge, TextLink, Timeline,
@@ -104,7 +104,7 @@ export function EvidenceExplorer({ evidence, payments, catalogue, initialId }: {
           {items.length ? <Timeline entries={(direction==='oldest' ? items : [...items].reverse()).map(event=>({
             id:String(event.position), title:eventTitle(event.action), meta:'#'+event.position+' · '+instant(event.at),
             icon:eventIcons[event.action as keyof typeof eventIcons], body:<EvidenceCard event={event}/>,
-          }))}/> : <EmptyState title="No matching evidence" description="Sign a mandate and run an agent proposal to create events, or clear the current filters." icon={Layers3}/>}
+          }))}/> : <EmptyState title="No matching evidence" description="Sign a mandate and run an agent proposal to create events, or clear the current filters."/>}
         </div>
       </Card>
       <div className="flow">
@@ -193,21 +193,19 @@ export function AttackLab({ mandates, mandateId, setMandateId, run, busy, paymen
   const observed = asRecord(entry?.detail)
   const selected = asRecord(observed.selected_listing)
   return <>
-    <PageHeader title="Attack laboratory" description="Run controlled scenarios against the synthetic catalogue. The real verifier records each outcome."
-      context={<p className="eyebrow">Controlled simulations</p>}/>
+    <PageHeader title="Attack laboratory" description="Run controlled scenarios against the synthetic catalogue. The real verifier records each outcome."/>
     <Card title="Execution setup" note="The scripted runner submits only the supported sandbox scenarios.">
       <div className="field-grid"><MandateSelect mandates={mandates} id={mandateId} setId={setMandateId}/>
         <label className="control">Search scenarios<input type="search" placeholder="Objective, scenario or surface" value={query} onChange={e=>setQuery(e.target.value)}/></label>
       </div>
       {!mandates.length && <TextLink href="#mandates?next=demo">Create a signed demo mandate</TextLink>}
     </Card>
-    <div className="scenario-list">
-      {scenarios.filter(s=> matches(s.title,s.surface,s.purpose,s.detail,s.key==='substitution' ? 'merchant manipulation prompt influence misleading' : '')).map(({key,title,surface,purpose,icon:Icon})=><Card key={key} className="scenario-card">
-        <span className="blank-icon"><Icon size={20} aria-hidden="true"/></span><h2>{title}</h2><p>{purpose}</p>
-        <p><strong>Surface</strong> · {surface}</p>
-        <button type="button" className="btn primary" onClick={()=>run(key)} disabled={busy || !mandateId}><Play size={15} aria-hidden="true"/> Run {title.toLowerCase()}</button>
-      </Card>)}
-    </div>
+    <ul className="work-index" aria-label="Available scenarios">
+      {scenarios.filter(s=> matches(s.title,s.surface,s.purpose,s.detail,s.key==='substitution' ? 'merchant manipulation prompt influence misleading' : '')).map(({key,title,surface,purpose})=><li key={key}>
+        <div><h2>{title}</h2><p>{purpose}</p><small>{surface}</small></div>
+        <button type="button" className="btn secondary" onClick={()=>run(key)} disabled={busy || !mandateId}>Run {title.toLowerCase()}</button>
+      </li>)}
+    </ul>
     {payment && <Card title="Latest recorded shopper run" note="Outcomes come from the verifier and the associated evidence event.">
       <dl className="detail-list"><div><dt>Recorded scenario</dt><dd>{scenarioName(payment.id)}</dd></div><div><dt>Agent observation</dt><dd>{text(selected.description) ?? 'Observation unavailable'}</dd></div>
         <div><dt>Proposed payment</dt><dd>{text(selected.title) ?? payment.proposal.product_id} · {money(payment.proposal.amount)}</dd></div>
@@ -236,12 +234,11 @@ export function AttackLab({ mandates, mandateId, setMandateId, run, busy, paymen
 export function Documentation() {
   return <>
     <PageHeader title="Technical Documentation" description="Understand the sandbox, evidence model and research assumptions."/>
-    <div className="scenario-list">
-      <Card title="Competition overview" note="Public summary of the verifier, available scenarios and research scope."><TextLink href="/overview.html">Read project overview</TextLink></Card>
-      <Card title="API reference" note="Inspect the FastAPI request and response contracts."><TextLink href="/docs">Open API documentation</TextLink></Card>
-      <Card title="Demo walkthrough" note="Start with signed intent and follow a proposal through the evidence ledger."><TextLink href="#demo">Launch the walkthrough</TextLink></Card>
-      <Card title="Evaluation and limitations" note="Explore matched review rates, cohort results and conformal diagnostics."><TextLink href="#analytics">Open evaluation analytics</TextLink></Card>
-    </div>
-    <div className="callout neutral"><FlaskConical size={19} aria-hidden="true"/><p>PRAMITI is a research prototype using synthetic catalogue data and simulated settlement.</p></div>
+    <ul className="work-index">
+      <li><div><h2>Competition overview</h2><p>Project goals, demo instructions and research scope.</p></div><TextLink href="/overview.html">Read project overview</TextLink></li>
+      <li><div><h2>API reference</h2><p>Request and response schemas for the sandbox.</p></div><TextLink href="/docs">Open API documentation</TextLink></li>
+      <li><div><h2>Demo walkthrough</h2><p>Sign a mandate and follow a proposal through the evidence ledger.</p></div><TextLink href="#demo">Launch the walkthrough</TextLink></li>
+      <li><div><h2>Evaluation and limitations</h2><p>Matched review rates, cohort results and conformal diagnostics.</p></div><TextLink href="#analytics">Open evaluation analytics</TextLink></li>
+    </ul>
   </>
 }

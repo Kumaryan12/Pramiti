@@ -1,14 +1,14 @@
 import { useState } from 'react'
-import { Activity, ArrowDownRight, Check, FlaskConical, GitBranch, ListFilter, ShieldCheck, ShoppingBag, TriangleAlert, UserRoundCheck, X } from 'lucide-react'
+import { Activity, Check } from 'lucide-react'
 import { money, type Evidence, type Mandate, type Payment, type Product } from './api'
 import {
-  ActionLink, Card, ChartContainer, EmptyState, instant, PageHeader, StatisticCard, StatusBadge, TextLink,
+  ActionLink, Card, ChartContainer, EmptyState, instant, PageHeader, Metric, StatusBadge, TextLink,
   TransactionTable,
 } from './components'
 export const scenarios = [
-  { key: 'legitimate', title: 'Legitimate payment', icon: ShieldCheck, detail: 'The agent proposes the authorized 65W charger.', surface: 'Synthetic catalogue', purpose: 'Establish a control using the product named by the signed mandate.' },
-  { key: 'over_budget', title: 'Policy violation', icon: TriangleAlert, detail: 'The agent proposes a charger above the default payment limit.', surface: 'Payment amount', purpose: 'Test how the firewall handles a proposal beyond the signed cap.' },
-  { key: 'substitution', title: 'Suspicious substitution', icon: GitBranch, detail: 'A merchant claim steers the agent toward a cheaper charger.', surface: 'Merchant listing description', purpose: 'Test whether an in-budget substitution has independent evidence of compatibility.' },
+  { key: 'legitimate', title: 'Legitimate payment', detail: 'The agent proposes the authorized 65W charger.', surface: 'Synthetic catalogue', purpose: 'Establish a control using the product named by the signed mandate.' },
+  { key: 'over_budget', title: 'Policy violation', detail: 'The agent proposes a charger above the default payment limit.', surface: 'Payment amount', purpose: 'Test how the firewall handles a proposal beyond the signed cap.' },
+  { key: 'substitution', title: 'Suspicious substitution', detail: 'A merchant claim steers the agent toward a cheaper charger.', surface: 'Merchant listing description', purpose: 'Test whether an in-budget substitution has independent evidence of compatibility.' },
 ] as const
 export type Scenario = typeof scenarios[number]['key']
 
@@ -49,27 +49,26 @@ export function Dashboard({ payments, catalogue, evidence, refreshed, busy, onRe
   const observedModel = payments.find(item => item.semantic)?.semantic
   const count = payments.length
   return <>
-    <PageHeader title="Command Centre" description="Monitor agent payment decisions, review exceptions, and trace settlement evidence."
-      context={<p className="eyebrow">Workspace overview</p>} actions={<><button className="btn secondary" onClick={onRefresh} disabled={busy}>Refresh</button><ActionLink href="#demo">Run Demo</ActionLink></>}/>
-    <div className="data-context"><span><FlaskConical size={16} aria-hidden="true"/> Synthetic payment workspace</span><span role="status">{busy ? 'Refreshing session data' : refreshed ? 'Updated ' + instant(refreshed) : 'Awaiting session data'}</span></div>
-    <div className="stats-grid command-counts">
-      <StatisticCard title="Transactions" value={count} detail="All proposals in this session" icon={ListFilter}/>
-      <StatisticCard title="Auto-approved" value={decisions('ALLOW')} detail={count + ' total proposals'} icon={Check} tone="success"/>
-      <StatisticCard title="Escalated" value={decisions('ESCALATE')} detail={count + ' total proposals'} icon={ArrowDownRight} tone="warning"/>
-      <StatisticCard title="Rejected" value={decisions('REJECT')} detail={count + ' total proposals'} icon={X} tone="danger"/>
-      <StatisticCard title="Pending review" value={pending.length} detail={decisions('ESCALATE') + ' escalated proposals'} icon={UserRoundCheck} tone="warning"/>
-    </div>
+    <PageHeader title="Command Centre" description="Review payment decisions from this session." actions={<><button className="btn secondary" onClick={onRefresh} disabled={busy}>Refresh</button><ActionLink href="#demo">Run Demo</ActionLink></>}/>
+    <div className="data-context" role="status">{busy ? 'Refreshing session data' : refreshed ? 'Updated ' + instant(refreshed) : 'Awaiting session data'}</div>
+    <dl className="metric-strip">
+      <Metric label="Transactions" value={count}/>
+      <Metric label="Auto-approved" value={decisions('ALLOW')}/>
+      <Metric label="Escalated" value={decisions('ESCALATE')}/>
+      <Metric label="Rejected" value={decisions('REJECT')}/>
+      <Metric label="Pending review" value={pending.length}/>
+    </dl>
     <div className="command-grid">
       <ChartContainer title="Decision trends" note="Decisions by local calendar day" action={<select className="period-control" aria-label="Trend period" value={period} onChange={e=>setPeriod(Number(e.target.value))}><option value={3}>Last 3 days</option><option value={7}>Last 7 days</option></select>}>
         <ActivityChart payments={payments} period={period}/>
       </ChartContainer>
-        <Card title="Needs attention" note="Outstanding human review">
+        <Card title="Waiting for review">
           {pending.length ? <ul className="compact-list">{pending.slice(0, 3).map(item => <li key={item.id}>
             <div><strong>{item.proposal.merchant}</strong><small>{money(item.proposal.amount)} · {item.reasons[0]}</small></div><a className="text-link" href={'#review?tx=' + item.id}>Review<span className="visually-hidden">{' ' + item.id}</span></a>
           </li>)}</ul> : <div className="inline-empty"><Check size={18} aria-hidden="true"/> No proposals waiting for review.</div>}
         </Card>
         <Card title="Recent transactions" note="Latest proposals in this sandbox session" action={<TextLink href="#verification">View transactions</TextLink>} className="table-card">
-          {count ? <TransactionTable rows={payments.slice(0, 5)} catalogue={catalogue} compact /> : <EmptyState title="No payment proposals yet" description="Sign a demo mandate, run the shopper, and inspect the verifier’s decision." icon={ShoppingBag} action={<ActionLink href="#demo">Start the demo</ActionLink>}/>}
+          {count ? <TransactionTable rows={payments.slice(0, 5)} catalogue={catalogue} compact /> : <EmptyState title="No payment proposals yet" description="Sign a demo mandate, run the shopper, and inspect the verifier’s decision." action={<ActionLink href="#demo">Start the demo</ActionLink>}/>}
         </Card>
       <div className="flow">
         <Card title="Verification and outcome">

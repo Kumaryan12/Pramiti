@@ -15,7 +15,7 @@ try {
       if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)) throw new Error(device+' overflow on '+name)
       await page.screenshot({path:output+'/'+device+'-'+name+'.png',animations:'disabled'})
     }
-    await go(page,'',/Autonomous payments/i)
+    await go(page,'','Check what an AI agent buys.')
     await capture('landing')
     await page.locator('.architecture').scrollIntoViewIfNeeded()
     await capture('architecture')

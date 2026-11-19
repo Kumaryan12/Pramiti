@@ -151,7 +151,7 @@ function App() {
   const offlinePage = route.id==='documentation' || route.id==='analytics'
   if (!route.id) return <Landing/>
 
-  return <AppShell groups={groups} page={route.id} status={session==='ready' ? 'Sandbox connected' : session==='error' ? 'Sandbox unavailable' : 'Simulated payments'}>
+  return <AppShell groups={groups} page={route.id} status={session==='error' ? 'Sandbox unavailable' : 'Simulated payments'}>
     <div className="product-content">
       {!offlinePage && error && <ErrorState message={error} retry={session==='error' ? ()=>void connect() : undefined}/>}
       {!offlinePage && (session==='idle' || session==='loading') && <LoadingSkeleton label="Connecting to the synthetic sandbox…"/>}

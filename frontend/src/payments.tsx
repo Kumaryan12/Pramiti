@@ -72,7 +72,7 @@ export function Agent({ mandates, mandateId, setMandateId, catalogue, payment, e
             { id:'proposal', title:'Payment proposed', icon:ShoppingBag, body:<p>{productTitle(payment,catalogue)} · {money(payment.proposal.amount)} · {payment.rationale}</p> },
             { id:'verify', title:'Independent verifier decision', icon:ShieldCheck, body:<div className="row-actions activity-result"><StatusBadge value={payment.decision}/>
               <TextLink href={'#verification?tx='+payment.id}>Inspect transaction</TextLink></div> },
-          ]}/> : <EmptyState title="No shopper run selected" description="Run the shopper with a signed mandate to view its activity." icon={Terminal}/>}
+          ]}/> : <EmptyState title="No shopper run selected" description="Run the shopper with a signed mandate to view its activity."/>}
         </Card>
       </div>
     </div>
@@ -171,7 +171,7 @@ export function Transactions({ payment, payments, catalogue, mandates, evidence 
     {payment && <>
       <Card className="decision-hero">
         <div>
-          <p className="eyebrow">Payment verification</p><h2>{productTitle(payment,catalogue)}</h2>
+          <h2>{productTitle(payment,catalogue)}</h2>
           <p>{payment.proposal.merchant} · {sourceName(payment.source)} · {instant(payment.created_at)}</p>
           <CopyableIdentifier value={payment.id} name="transaction ID" compact/>
         </div>
@@ -256,7 +256,7 @@ export function Reviews({ payments, catalogue, mandates, selectedId, busy, onRev
               <td data-label="Amount" className="amount">{money(p.proposal.amount)}</td><td data-label="Reason">{p.reasons[0] ?? 'Reason unavailable'}</td><td data-label="Received" className="cell-time">{instant(p.created_at)}</td><td data-label="Status"><StatusBadge value={p.status}/></td>
             </tr>)}</tbody>
           </table></div> : <EmptyState title={reviewCases.length ? 'No matching review cases' : 'No escalations yet'} description="Escalated proposals appear here when the verifier needs a human decision."
-            icon={UserRoundCheck} action={!reviewCases.length ? <ActionLink href="#demo">Run a scenario</ActionLink> : undefined}/>}
+            action={!reviewCases.length ? <ActionLink href="#demo">Run a scenario</ActionLink> : undefined}/>}
       </div>
     </Card>
     {active && <div className="investigation-grid review-detail" aria-label="Selected review case">
