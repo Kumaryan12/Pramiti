@@ -6,6 +6,7 @@ from datetime import timedelta
 from threading import Barrier
 from uuid import uuid4
 
+import httpx
 import pytest
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from fastapi.testclient import TestClient
@@ -174,3 +175,46 @@ def test_llm_mode_requires_operator_token(client, monkeypatch):
     monkeypatch.setenv("LLM_OPERATOR_TOKEN", "test-operator-token")
     request = {"mandate_id": approve(client), "mode": "llm"}
     assert client.post("/api/agent/runs", json=request).status_code == 403
+
+
+def test_concurrent_duplicate_nonce_and_split_total(client):
+    mandate_id = approve(client, cumulative_limit=300000)
+    same_request = proposal(mandate_id)
+    barrier = Barrier(4)
+
+    def attempt(_):
+        barrier.wait(timeout=10)
+        return submit(client, same_request)
+
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        outcomes = list(pool.map(attempt, range(4)))
+    assert sum(row["status"] == "SETTLED" for row in outcomes) == 1
+    assert sum(not row["checks"]["nonce_unique"] for row in outcomes) == 3
+    split = submit(client, proposal(mandate_id, "compact-20"))
+    assert not split["checks"]["cumulative_limit"]
+    assert split["checks"]["single_payment_limit"]
+    assert client.get("/api/mandates").json()[0]["spent"] == 239900
+
+
+def test_llm_selection_uses_server_catalogue(client, monkeypatch):
+    def response(url, *, headers, json, timeout):
+        assert url == "https://api.openai.com/v1/chat/completions"
+        assert "mandate" in json["messages"][1]["content"]
+        assert timeout > 0
+        return httpx.Response(200, request=httpx.Request("POST", url), json={
+            "choices": [{"message": {
+                "content": '{"product_id":"compact-20","rationale":"Merchant recommendation","amount":5}',
+            }}],
+        })
+
+    monkeypatch.setenv("OPENAI_API_KEY", "synthetic-test-key")
+    monkeypatch.setenv("LLM_OPERATOR_TOKEN", "test-operator-token")
+    monkeypatch.setattr("backend.pramiti.agent.httpx.post", response)
+    mandate_id = approve(client)
+    result = client.post("/api/agent/runs", json={"mandate_id": mandate_id, "mode": "llm"},
+                         headers={"X-LLM-Token": "test-operator-token"})
+    assert result.status_code == 201
+    body = result.json()
+    assert body["source"] == "llm"
+    assert body["proposal"]["amount"] == CATALOG["compact-20"].amount
+    assert body["decision"] == "ESCALATE"

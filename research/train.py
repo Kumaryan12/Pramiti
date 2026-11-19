@@ -13,7 +13,11 @@ def train(training, calibration):
     model.fit([features(row.mandate, row.proposal, row.listing) for row in training],
               [row.label for row in training])
     scores = {str(label): [] for label in model.classes_}
-    verifier = SemanticVerifier(model, scores)
+    training_ids = tuple(row.id for row in training)
+    calibration_ids = tuple(row.id for row in calibration)
+    if len(set(training_ids + calibration_ids)) != len(training) + len(calibration):
+        raise ValueError("Training and calibration require disjoint unique fixtures")
+    verifier = SemanticVerifier(model, scores, training_ids, calibration_ids)
     for row in calibration:
         probability = verifier.probabilities(row.mandate, row.proposal, row.listing)[row.label]
         scores[row.label].append(1 - probability)

@@ -8,7 +8,7 @@ CONFORMANT = "conformant"
 NONCONFORMING = "nonconforming"
 WORD = re.compile(r"[a-z0-9]+(?:[.-][a-z0-9]+)*")
 CONTENT_WORDS = {"buy", "get", "please", "find", "order", "need", "the", "a", "an", "for", "with", "and"}
-VERSION = 1
+VERSION = 2
 
 
 def words(text):
@@ -49,6 +49,8 @@ def features(mandate, proposal, product):
 class SemanticVerifier:
     model: object
     calibration: dict[str, list[float]]
+    training_ids: tuple[str, ...] = ()
+    calibration_ids: tuple[str, ...] = ()
     version: int = VERSION
 
     def probabilities(self, mandate, proposal, product):

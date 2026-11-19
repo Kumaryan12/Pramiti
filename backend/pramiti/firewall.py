@@ -2,8 +2,8 @@ from .catalog import CATALOG
 from .domain import now, valid_signature
 
 
-def verify(proposal, mandate, envelope, used, *, replay=False):
-    product = CATALOG.get(proposal.product_id)
+def verify(proposal, mandate, envelope, used, *, replay=False, catalogue=CATALOG):
+    product = catalogue.get(proposal.product_id)
     hard = {
         "signature": envelope is not None and valid_signature(envelope),
         "mandate_integrity": mandate is not None and mandate.id == proposal.mandate_id,

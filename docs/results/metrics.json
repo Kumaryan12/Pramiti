@@ -1,0 +1,626 @@
+{
+  "overall": {
+    "Spending limit": {
+      "total": 1200,
+      "nonconforming": 1000,
+      "conformant": 200,
+      "unsafe_approval_rate": 0.9,
+      "human_review_rate": 0.0,
+      "false_rejection_rate": 0.0,
+      "false_nonapproval_rate": 0.0,
+      "median_ms": 0.00025,
+      "p95_ms": 0.000708
+    },
+    "Firewall": {
+      "total": 1200,
+      "nonconforming": 1000,
+      "conformant": 200,
+      "unsafe_approval_rate": 0.314,
+      "human_review_rate": 0.155,
+      "false_rejection_rate": 0.0,
+      "false_nonapproval_rate": 0.0,
+      "median_ms": 0.1427705,
+      "p95_ms": 0.17877085
+    },
+    "Firewall + ML": {
+      "total": 1200,
+      "nonconforming": 1000,
+      "conformant": 200,
+      "unsafe_approval_rate": 0.118,
+      "human_review_rate": 0.155,
+      "false_rejection_rate": 0.0,
+      "false_nonapproval_rate": 0.0,
+      "median_ms": 0.15281250000000002,
+      "p95_ms": 0.31022675
+    },
+    "PRAMITI": {
+      "total": 1200,
+      "nonconforming": 1000,
+      "conformant": 200,
+      "unsafe_approval_rate": 0.103,
+      "human_review_rate": 0.34833333333333333,
+      "false_rejection_rate": 0.0,
+      "false_nonapproval_rate": 0.105,
+      "median_ms": 0.2212085,
+      "p95_ms": 0.2784851
+    }
+  },
+  "by_cohort": {
+    "Known": {
+      "Spending limit": {
+        "total": 900,
+        "nonconforming": 800,
+        "conformant": 100,
+        "unsafe_approval_rate": 0.875,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": 0.0,
+        "false_nonapproval_rate": 0.0,
+        "median_ms": 0.00025,
+        "p95_ms": 0.000625
+      },
+      "Firewall": {
+        "total": 900,
+        "nonconforming": 800,
+        "conformant": 100,
+        "unsafe_approval_rate": 0.2675,
+        "human_review_rate": 0.20666666666666667,
+        "false_rejection_rate": 0.0,
+        "false_nonapproval_rate": 0.0,
+        "median_ms": 0.1414585,
+        "p95_ms": 0.17770655
+      },
+      "Firewall + ML": {
+        "total": 900,
+        "nonconforming": 800,
+        "conformant": 100,
+        "unsafe_approval_rate": 0.0225,
+        "human_review_rate": 0.20666666666666667,
+        "false_rejection_rate": 0.0,
+        "false_nonapproval_rate": 0.0,
+        "median_ms": 0.1443955,
+        "p95_ms": 0.31555205000000003
+      },
+      "PRAMITI": {
+        "total": 900,
+        "nonconforming": 800,
+        "conformant": 100,
+        "unsafe_approval_rate": 0.00375,
+        "human_review_rate": 0.45555555555555555,
+        "false_rejection_rate": 0.0,
+        "false_nonapproval_rate": 0.13,
+        "median_ms": 0.219208,
+        "p95_ms": 0.28509435
+      }
+    },
+    "Unseen": {
+      "Spending limit": {
+        "total": 300,
+        "nonconforming": 200,
+        "conformant": 100,
+        "unsafe_approval_rate": 1.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": 0.0,
+        "false_nonapproval_rate": 0.0,
+        "median_ms": 0.000292,
+        "p95_ms": 0.000958
+      },
+      "Firewall": {
+        "total": 300,
+        "nonconforming": 200,
+        "conformant": 100,
+        "unsafe_approval_rate": 0.5,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": 0.0,
+        "false_nonapproval_rate": 0.0,
+        "median_ms": 0.144896,
+        "p95_ms": 0.1831354
+      },
+      "Firewall + ML": {
+        "total": 300,
+        "nonconforming": 200,
+        "conformant": 100,
+        "unsafe_approval_rate": 0.5,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": 0.0,
+        "false_nonapproval_rate": 0.0,
+        "median_ms": 0.2297085,
+        "p95_ms": 0.30655865
+      },
+      "PRAMITI": {
+        "total": 300,
+        "nonconforming": 200,
+        "conformant": 100,
+        "unsafe_approval_rate": 0.5,
+        "human_review_rate": 0.02666666666666667,
+        "false_rejection_rate": 0.0,
+        "false_nonapproval_rate": 0.08,
+        "median_ms": 0.22581299999999999,
+        "p95_ms": 0.27716455
+      }
+    }
+  },
+  "by_family": {
+    "prompt_influence": {
+      "Spending limit": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 1.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.00025,
+        "p95_ms": 0.000584
+      },
+      "Firewall": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.62,
+        "human_review_rate": 0.38,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.14170850000000002,
+        "p95_ms": 0.16496845000000002
+      },
+      "Firewall + ML": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.05,
+        "human_review_rate": 0.38,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.22420800000000002,
+        "p95_ms": 0.2701952
+      },
+      "PRAMITI": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "human_review_rate": 1.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.225854,
+        "p95_ms": 0.317025
+      }
+    },
+    "substitution": {
+      "Spending limit": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 1.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.00025,
+        "p95_ms": 0.00059435
+      },
+      "Firewall": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.4,
+        "human_review_rate": 0.6,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1422295,
+        "p95_ms": 0.1637226
+      },
+      "Firewall + ML": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.01,
+        "human_review_rate": 0.6,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1531665,
+        "p95_ms": 0.24010805000000002
+      },
+      "PRAMITI": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.01,
+        "human_review_rate": 0.99,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.22627049999999999,
+        "p95_ms": 0.300558
+      }
+    },
+    "misleading_specs": {
+      "Spending limit": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 1.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.00025,
+        "p95_ms": 0.0006270500000000001
+      },
+      "Firewall": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.49,
+        "human_review_rate": 0.51,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1416665,
+        "p95_ms": 0.1685024
+      },
+      "Firewall + ML": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.05,
+        "human_review_rate": 0.51,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.195333,
+        "p95_ms": 0.27623185
+      },
+      "PRAMITI": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "human_review_rate": 1.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.225687,
+        "p95_ms": 0.3196396
+      }
+    },
+    "review_manipulation": {
+      "Spending limit": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 1.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.00025,
+        "p95_ms": 0.0005893
+      },
+      "Firewall": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.63,
+        "human_review_rate": 0.37,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.142375,
+        "p95_ms": 0.19610655
+      },
+      "Firewall + ML": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.07,
+        "human_review_rate": 0.37,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.22175,
+        "p95_ms": 0.32006455
+      },
+      "PRAMITI": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.02,
+        "human_review_rate": 0.98,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.225688,
+        "p95_ms": 0.38225204999999995
+      }
+    },
+    "checkout_mismatch": {
+      "Spending limit": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.000333,
+        "p95_ms": 0.0009181
+      },
+      "Firewall": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1421875,
+        "p95_ms": 0.17786069999999998
+      },
+      "Firewall + ML": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.13975,
+        "p95_ms": 0.17239165
+      },
+      "PRAMITI": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1389165,
+        "p95_ms": 0.1694277
+      }
+    },
+    "split_budget": {
+      "Spending limit": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 1.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.000208,
+        "p95_ms": 0.0006353999999999999
+      },
+      "Firewall": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.14075,
+        "p95_ms": 0.19881429999999997
+      },
+      "Firewall + ML": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1395205,
+        "p95_ms": 0.17301665
+      },
+      "PRAMITI": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.139042,
+        "p95_ms": 0.1654694
+      }
+    },
+    "replay": {
+      "Spending limit": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 1.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.000167,
+        "p95_ms": 0.0005503
+      },
+      "Firewall": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.14047900000000002,
+        "p95_ms": 0.18215175000000003
+      },
+      "Firewall + ML": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.139083,
+        "p95_ms": 0.16801490000000002
+      },
+      "PRAMITI": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1388125,
+        "p95_ms": 0.17158925
+      }
+    },
+    "concurrent_budget": {
+      "Spending limit": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 1.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.000167,
+        "p95_ms": 0.00041904999999999997
+      },
+      "Firewall": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1403545,
+        "p95_ms": 0.1800753
+      },
+      "Firewall + ML": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.13929200000000003,
+        "p95_ms": 0.18566905000000003
+      },
+      "PRAMITI": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.138875,
+        "p95_ms": 0.17898329999999998
+      }
+    },
+    "concealed_spec_gap": {
+      "Spending limit": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 1.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.000333,
+        "p95_ms": 0.00063125
+      },
+      "Firewall": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 1.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.145312,
+        "p95_ms": 0.1831354
+      },
+      "Firewall + ML": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 1.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.2330625,
+        "p95_ms": 0.3215622
+      },
+      "PRAMITI": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 1.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.230791,
+        "p95_ms": 0.27716455
+      }
+    },
+    "checkout_understatement": {
+      "Spending limit": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 1.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.000292,
+        "p95_ms": 0.000958
+      },
+      "Firewall": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.145208,
+        "p95_ms": 0.17347465
+      },
+      "Firewall + ML": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.142083,
+        "p95_ms": 0.15609965
+      },
+      "PRAMITI": {
+        "total": 100,
+        "nonconforming": 100,
+        "conformant": 0,
+        "unsafe_approval_rate": 0.0,
+        "human_review_rate": 0.0,
+        "false_rejection_rate": null,
+        "false_nonapproval_rate": null,
+        "median_ms": 0.1418125,
+        "p95_ms": 0.16612535
+      }
+    }
+  },
+  "scored_set_coverage": {
+    "Known": {
+      "conformant": {
+        "scored": 100,
+        "coverage": 0.87
+      },
+      "nonconforming": {
+        "scored": 400,
+        "coverage": 0.94
+      }
+    },
+    "Unseen": {
+      "conformant": {
+        "scored": 100,
+        "coverage": 0.92
+      },
+      "nonconforming": {
+        "scored": 100,
+        "coverage": 0.0
+      }
+    }
+  }
+}

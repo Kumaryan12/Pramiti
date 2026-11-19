@@ -1,8 +1,12 @@
 # Progress
 
-- Repository initialized and pushed to GitHub.
-- Milestone 1 implemented with a React workspace, browser Ed25519 signing, eight synthetic listings, scripted shopping and an operator-gated LLM integration, atomic verification and reservations, human review, simulated settlement, and evidence verification.
-- Initial verification passed 12 API tests and the TypeScript/Vite production build.
-- Docker, local Compose, and Render/PostgreSQL configuration are ready. Deployment and research evaluation are pending.
-- Milestone 1 browser workflow verified in Chrome, including a persisted non-exportable key, all three scenarios, human approval, and trusted checkpoint verification. The Docker image built and the Compose health endpoint passed. GitHub CI passed with SQLite and PostgreSQL.
-- Milestone 2 implemented and trained locally. The application supports optional class-conditional inference, and the finite-sample and decision-gate tests pass. The four-way research comparison is pending.
+| Milestone | Status | Verification |
+| --- | --- | --- |
+| End-to-end MVP | Complete | Chrome flow verified signing, all three scenarios, human review, checkpoint verification, reload, and a mobile-width layout. Docker Compose builds and serves the sandbox. |
+| Semantic verification | Complete | Trained gradient boosting on 2,000 synthetic proposals with 800 held-out calibration samples. Verified finite-sample ranks and the singleton decision gate. The trained artifact can be loaded by FastAPI. |
+| Synthetic evaluation | Complete | Evaluated four policies on 1,200 held-out proposals, generated charts and metrics, and exercised split spending, replay, and concurrent submissions through the API tests. |
+| Render deployment | Configuration complete | Docker and the PostgreSQL-backed test suite were verified. Render account access was unavailable, so public deployment and URL verification are pending. |
+
+The test suite covers Ed25519 signatures, mandate tampering, expiry, replay, spending limits, concurrency, approval logic, ledger integrity, and conformal quantiles. Live OpenAI calls require credentials. The automated test uses a stubbed API response to verify operator authorization and catalogue pricing.
+
+See [research results](RESEARCH.md), [demo steps](DEMO.md), and the [Render setup](DEPLOYMENT.md). The repository uses milestone pushes to `main`.
