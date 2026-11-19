@@ -16,7 +16,7 @@ test('public landing, mobile drawer, theme, and original deep links', { timeout:
     const overview = await page.request.get(base+'/overview.html')
     assert.match(await overview.text(), /Competition overview/)
     await page.getByRole('link',{name:'Launch Interactive Demo'}).first().click()
-    await page.getByRole('heading',{level:1,name:'Live demonstration'}).waitFor()
+    await page.getByRole('heading',{level:1,name:'Live Demo'}).waitFor()
     const toggle = page.getByRole('button',{name:'Open navigation'})
     await toggle.focus()
     await toggle.press('Enter')
@@ -25,14 +25,14 @@ test('public landing, mobile drawer, theme, and original deep links', { timeout:
     await page.keyboard.press('Escape')
     await page.getByRole('dialog').waitFor({state:'hidden'})
     await toggle.click()
-    await page.getByRole('link',{name:'Dashboard',exact:true}).click()
-    await page.getByRole('heading',{level:1,name:'Risk dashboard'}).waitFor()
+    await page.getByRole('link',{name:'Command Centre',exact:true}).click()
+    await page.getByRole('heading',{level:1,name:'Command Centre'}).waitFor()
     await page.getByRole('button',{name:'Use dark theme'}).click()
     assert.equal(await page.locator('html').getAttribute('data-theme'),'dark')
     await page.reload()
     assert.equal(await page.locator('html').getAttribute('data-theme'),'dark')
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth))
-    await go(page,'agent','AI agent workspace')
+    await go(page,'agent','AI Agent')
     await go(page,'transactions','Transactions')
     assert.equal((await (await page.request.get(base+'/health')).json()).status,'ok')
   } finally { await page.context().close() }
@@ -133,7 +133,7 @@ test('axe WCAG 2.2 A/AA checks on critical desktop and mobile views', {timeout:9
     await go(page,'',/Autonomous payments/i)
     await check(page,'landing')
     await populate(page)
-    for(const [route,title] of [['dashboard','Risk dashboard'],['mandates','Intent mandates'],['agent','AI agent workspace'],['verification','Transactions'],['review','Human review'],['evidence','Evidence explorer'],['ledger','Ledger verification'],['analytics','Evaluation analytics'],['lab','Attack laboratory']]){
+    for(const [route,title] of [['dashboard','Command Centre'],['mandates','Intent mandates'],['agent','AI Agent'],['verification','Transactions'],['review','Human review'],['evidence','Evidence explorer'],['ledger','Ledger Integrity'],['analytics','Evaluation analytics'],['lab','Attack laboratory']]){
       await go(page,route,title)
       await check(page,route)
     }
@@ -144,7 +144,7 @@ test('axe WCAG 2.2 A/AA checks on critical desktop and mobile views', {timeout:9
     await check(page,'mobile drawer')
     await page.keyboard.press('Escape')
     await page.getByRole('button',{name:'Use dark theme'}).click()
-    await go(page,'dashboard','Risk dashboard')
+    await go(page,'dashboard','Command Centre')
     await check(page,'mobile dark dashboard')
     assert.deepEqual(all,[])
   } finally { await page.context().close() }

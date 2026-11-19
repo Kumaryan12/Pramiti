@@ -18,15 +18,15 @@ const Analytics = lazy(()=>import('./analytics'))
 
 const groups: NavGroup[] = [
   { title: 'Overview', items: [
-    {id:'dashboard',title:'Dashboard',icon:Grid2X2}, {id:'demo',title:'Live demonstration',icon:Play},
+    {id:'dashboard',title:'Command Centre',icon:Grid2X2}, {id:'demo',title:'Live Demo',icon:Play},
   ] },
   { title: 'Payment assurance', items: [
-    {id:'mandates',title:'Intent mandates',icon:FileSignature}, {id:'agent',title:'AI agent workspace',icon:ShoppingBag},
+    {id:'mandates',title:'Intent mandates',icon:FileSignature}, {id:'agent',title:'AI Agent',icon:ShoppingBag},
     {id:'verification',title:'Transactions',icon:ScanLine}, {id:'review',title:'Human review',icon:UserRoundCheck},
   ] },
-  {title:'Investigation',items:[{id:'evidence',title:'Evidence explorer',icon:Layers3},{id:'ledger',title:'Ledger verification',icon:ShieldCheck}]},
+  {title:'Investigation',items:[{id:'evidence',title:'Evidence explorer',icon:Layers3},{id:'ledger',title:'Ledger Integrity',icon:ShieldCheck}]},
   {title:'Research',items:[{id:'lab',title:'Attack laboratory',icon:FlaskConical},{id:'analytics',title:'Evaluation analytics',icon:Activity}]},
-  {title:'System',items:[{id:'documentation',title:'Documentation',icon:BookOpen}]},
+  {title:'System',items:[{id:'documentation',title:'Technical Documentation',icon:BookOpen}]},
 ]
 const aliases: Record<string,string> = {transactions:'verification','intent-mandates':'mandates','human-review':'review'}
 const routeNames = new Set(groups.flatMap(group=>group.items.map(item=>item.id)))

@@ -45,11 +45,11 @@ export async function signDefault(page, { validation = false, receipt } = {}) {
   await page.getByText('Mandate signed',{exact:true}).waitFor()
   if (receipt) await receipt()
   await page.getByRole('link',{name:'Continue to demonstration'}).click()
-  await page.getByRole('heading',{level:1,name:'Live demonstration'}).waitFor()
+  await page.getByRole('heading',{level:1,name:'Live Demo'}).waitFor()
 }
 
 export async function runDemo(page, scenario, expected) {
-  if (!page.url().endsWith('/#demo')) await go(page,'demo','Live demonstration')
+  if (!page.url().endsWith('/#demo')) await go(page,'demo','Live Demo')
   await page.getByRole('button',{name:'Run '+scenario,exact:true}).click()
   await page.waitForURL(/#verification\?tx=[\w-]+$/)
   await page.getByRole('heading',{level:1,name:'Transactions'}).waitFor()

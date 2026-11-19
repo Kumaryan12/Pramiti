@@ -1,0 +1,31 @@
+{
+  "instruction": "Buy the Assemble 65W USB-C charger with Power Delivery.",
+  "limit": 300000,
+  "requirements": [
+    "65w",
+    "usb-c",
+    "pd"
+  ],
+  "product": "Compact 20W USB-C Charger",
+  "merchant": "Circuit House",
+  "amount": 119900,
+  "decision": "ESCALATE",
+  "reasons": [
+    "Required product attributes lack independent evidence"
+  ],
+  "checks": {
+    "signature": true,
+    "mandate_integrity": true,
+    "nonce_unique": true,
+    "catalog_integrity": true,
+    "mandate_current": true,
+    "single_payment_limit": true,
+    "permitted_merchant": true,
+    "permitted_category": true,
+    "cumulative_limit": true,
+    "substitution_policy": true,
+    "no_verified_spec_conflict": true,
+    "required_evidence_policy": true
+  },
+  "compatibility": "merchant_claim_only"
+}

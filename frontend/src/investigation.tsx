@@ -130,7 +130,7 @@ export function Ledger({ evidence, busy, verify }: { evidence?:Evidence; busy:bo
   const [result,setResult] = useState<Evidence>()
   const input = useRef<HTMLInputElement>(null)
   return <>
-    <PageHeader title="Ledger verification" description="Recompute the session’s SHA-256 chain and compare it with an external checkpoint."/>
+    <PageHeader title="Ledger Integrity" description="Recompute the session’s SHA-256 chain and compare it with an external checkpoint."/>
     <div className="investigation-grid">
       <Card title="Run integrity check" note="Paste a digest saved independently from the application to check historical continuity.">
         <form noValidate className="form-stack" onSubmit={async event=>{
@@ -218,7 +218,7 @@ export function AttackLab({ mandates, mandateId, setMandateId, run, busy, paymen
 
 export function Documentation() {
   return <>
-    <PageHeader title="Documentation" description="Understand the sandbox, evidence model and research assumptions."/>
+    <PageHeader title="Technical Documentation" description="Understand the sandbox, evidence model and research assumptions."/>
     <div className="scenario-list">
       <Card title="Competition overview" note="Public summary of the verifier, available scenarios and research scope."><TextLink href="/overview.html">Read project overview</TextLink></Card>
       <Card title="API reference" note="Inspect the FastAPI request and response contracts."><TextLink href="/docs">Open API documentation</TextLink></Card>

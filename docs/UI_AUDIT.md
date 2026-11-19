@@ -29,3 +29,14 @@ React 19, TypeScript and Vite serve a single-page application. The original hash
 - Use labelled steps for process state, semantic rows and readable data tables. [USWDS step indicator](https://designsystem.digital.gov/components/step-indicator/), [USWDS table](https://designsystem.digital.gov/components/table/)
 - Give repeatable operations precedence over decorative summary space, and put an exception next to its investigation action. [Modern Treasury design article](https://www.moderntreasury.com/journal/behind-the-scenes-designing-our-new-ui), [Stripe Radar](https://stripe.com/radar)
 - Keep the location bar stable and distinguish page-specific actions from navigation. [Linear design refresh](https://linear.app/now/behind-the-latest-design-refresh)
+
+## Second visual audit · baseline 678b8a5
+
+The running Docker application supplied 41 fresh viewport captures at 1440×900, 768×1024 and 390×844. The same signed test mandate produced an allowed purchase, a policy rejection and a substitution requiring review in each session. [Before captures](ui-screenshots/assurance-before/)
+
+- The desktop landing placed a heavily weighted sans-serif headline beside a conventional summary card. On mobile the two calls to action stacked and the product comparison started low in the first viewport.
+- The demo showed a long mandate select and three disconnected scenario cards. The run handler then navigated to Transactions, taking the original instruction out of view.
+- The dashboard gave each count an individual box and repeated denominators. Recent transactions preceded the trend. At tablet width the five boxes wrapped to two rows.
+- Human Review placed the decision under compatibility details. Mobile exposed only the first part of the horizontally scrollable review table.
+- The signing flow already collected explicit consent. Evidence already exposed per-event hashes and exported the selected events. Analytics already used the executed experiment file, including tied operating points.
+- Mercury’s editorial pacing, Linear’s quieter rail, Radar’s rules-and-outcomes pairing and Modern Treasury’s adjacency of detail and action informed the redesign. UX4G informed explicit consent and receipts. The supplied reference images served as visual references where direct image URLs were unavailable. [Mercury](https://mercury.com/) · [Linear](https://linear.app/now/behind-the-latest-design-refresh) · [Stripe Radar](https://stripe.com/radar) · [Modern Treasury](https://www.moderntreasury.com/journal/behind-the-scenes-designing-our-new-ui) · [UX4G](https://www.ux4g.gov.in/patterns/payment-transactions)

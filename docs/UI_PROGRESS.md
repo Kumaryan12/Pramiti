@@ -8,3 +8,7 @@
 - Added evidence timeline filtering and export, separate checkpoint verification, a controlled attack lab, and lazy-loaded analytics from the executed experiment results. Added a persisted theme selection and self-hosted fonts. The backend, trust rules and Render resources were reused.
 - Captured 41 redesigned views, including the signing receipt, dark dashboard, mobile navigation, investigation screens and evaluated research. Compared them with the baseline across the three requested viewports.
 - The four browser tests passed, including the axe accessibility scan after the bilingual name correction. Confirmed evidence export and both review decisions through the API. The production frontend bundle and Docker configuration passed verification. The deployment uses the existing Render service and PostgreSQL database.
+
+## Proof of Intent redesign
+
+- Phase A. Branched from 678b8a5, captured the running baseline and reviewed all three viewport sheets. Applied the requested brand palette, added self-hosted Instrument Serif for public display text and aligned workspace navigation with task names.

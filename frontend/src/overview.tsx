@@ -128,7 +128,7 @@ export function Dashboard({ payments, catalogue, evidence, refreshed, busy, onRe
   const observedModel = payments.some(item => item.semantic)
   const count = payments.length
   return <>
-    <PageHeader title="Risk dashboard" description="Monitor agent payment decisions, review exceptions, and trace settlement evidence."
+    <PageHeader title="Command Centre" description="Monitor agent payment decisions, review exceptions, and trace settlement evidence."
       context={<p className="eyebrow">Workspace overview</p>} actions={<><button className="btn secondary" onClick={onRefresh} disabled={busy}>Refresh</button><ActionLink href="#demo">Run Demo</ActionLink></>}/>
     <div className="data-context"><span><FlaskConical size={16} aria-hidden="true"/> Synthetic payment workspace</span><span role="status">{busy ? 'Refreshing session data' : refreshed ? 'Updated ' + instant(refreshed) : 'Awaiting session data'}</span></div>
     <div className="stats-grid">
@@ -172,7 +172,7 @@ export function Demo({ mandates, mandateId, setMandateId, busy, run }: {
   mandates: Mandate[]; mandateId: string; setMandateId: (id: string) => void; busy: boolean; run: (scenario: Scenario) => void
 }) {
   return <>
-    <PageHeader title="Live demonstration" description="Run three scripted proposals through the actual verifier and follow the evidence for each decision."/>
+    <PageHeader title="Live Demo" description="Run three scripted proposals through the actual verifier and follow the evidence for each decision."/>
     <Card title="Choose the signed intent" note="Use the default 65W charger policy to reproduce the competition walkthrough.">
       {mandates.length ? <MandateSelect mandates={mandates} id={mandateId} setId={setMandateId} /> :
         <EmptyState title="Start with a signed mandate" description="Review the default limits and product requirements, then sign in your browser."

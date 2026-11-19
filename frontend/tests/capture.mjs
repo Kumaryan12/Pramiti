@@ -17,7 +17,7 @@ try {
     }
     await go(page,'',/Autonomous payments/i)
     await capture('landing')
-    await go(page,'dashboard','Risk dashboard')
+    await go(page,'dashboard','Command Centre')
     await capture('dashboard')
     await go(page,'mandates','Intent mandates')
     await capture('mandates')
@@ -27,9 +27,9 @@ try {
     await runDemo(page,'Policy violation','Rejected')
     const tx=await runDemo(page,'Suspicious substitution','Human review')
     await capture('verification')
-    for(const [route,title,name] of [['agent','AI agent workspace','agent'],['review?tx='+tx,'Human review','review'],
-      ['evidence?tx='+tx,'Evidence explorer','evidence'],['ledger','Ledger verification','ledger'],['analytics','Evaluation analytics','analytics'],
-      ['lab','Attack laboratory','lab'],['dashboard','Risk dashboard','dashboard-with-data']]){
+    for(const [route,title,name] of [['agent','AI Agent','agent'],['review?tx='+tx,'Human review','review'],
+      ['evidence?tx='+tx,'Evidence explorer','evidence'],['ledger','Ledger Integrity','ledger'],['analytics','Evaluation analytics','analytics'],
+      ['lab','Attack laboratory','lab'],['dashboard','Command Centre','dashboard-with-data']]){
       await go(page,route,title)
       await capture(name)
     }

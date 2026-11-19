@@ -62,3 +62,10 @@ button, input, select, textarea { font: inherit; }
 @media (prefers-reduced-motion: reduce) {
   *,*::before,*::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+.desktop-rail { border-right:1px solid #263449; }
+.desktop-rail .identity-mark,.public-header .identity-mark { background:transparent; color:#a8ded3; border:1px solid #40525e; }
+.nav-group > a { font-weight:480; transition:background-color 150ms,color 150ms; }
+.nav-group > p { font-size:.65rem; letter-spacing:.13em; }
+.nav-group > a[aria-current=page] { box-shadow:inset 2px 0 #8bc6b6; }
+@media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; transition-duration:0s!important; animation-duration:0s!important; } }

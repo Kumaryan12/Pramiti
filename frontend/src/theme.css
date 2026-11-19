@@ -1,5 +1,8 @@
 @import '@fontsource/noto-sans-devanagari/devanagari-500.css';
 
+@import '@fontsource/instrument-serif/latin-400.css';
+@import '@fontsource/instrument-serif/latin-400-italic.css';
+
 @font-face {
   font-family: Inter;
   font-style: normal;
@@ -9,24 +12,30 @@
 }
 
 :root {
-  --navy: #101c35;
-  --midnight: #0d182c;
-  --teal: #087f70;
+  --navy: #192B43;
+  --midnight: #0D172A;
+  --teal: #0B8176;
   --teal-deep: #07675c;
-  --teal-soft: #e8f6f2;
-  --warm-white: #f8fafc;
+  --teal-light: #E7F4F1;
+  --teal-soft: var(--teal-light);
+  --warm-white: #F5F7FA;
   --white: #fff;
   --neutral: #334155;
   --slate: #64748b;
-  --border: #e2e8f0;
-  --amber: #b7791f;
-  --red: #b42332;
-  --green: #16794b;
+  --border: #E3E8EF;
+  --review: #D4A65C;
+  --amber: var(--review);
+  --danger: #B84959;
+  --red: var(--danger);
+  --success: #16825D;
+  --green: var(--success);
 
   --canvas: var(--warm-white);
   --surface: var(--white);
   --surface-raised: #f1f5f9;
-  --ink: var(--navy);
+  --text-primary: #17243A;
+  --text-muted: #65748A;
+  --ink: var(--text-primary);
   --body: var(--neutral);
   --muted-ink: #52637a;
   --edge: var(--border);
@@ -51,7 +60,9 @@
   --aqua: #75dfce;
   --light-hero: #f1f7f9;
   --light-hero-ink: #172844;
-  --radius: 12px;
+  --space: 8px;
+  --display: "Instrument Serif", Georgia, serif;
+  --radius: 8px;
   --shadow-float: 0 15px 40px #101c351a;
   --font: Inter, 'Noto Sans Devanagari', system-ui, sans-serif;
   --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;

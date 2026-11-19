@@ -32,7 +32,7 @@ export function Agent({ mandates, mandateId, setMandateId, catalogue, payment, e
   const observedProducts = Array.isArray(observed.observed_products) ? observed.observed_products.filter(item=>typeof item==='string') : []
   const visible = catalogue.filter(p=>[p.title,p.merchant,p.category].join(' ').toLowerCase().includes(query.trim().toLowerCase()))
   return <>
-    <PageHeader title="AI agent workspace" description="Follow the signed instructions, merchant inputs and proposal from selection through verification."
+    <PageHeader title="AI Agent" description="Follow the signed instructions, merchant inputs and proposal from selection through verification."
       actions={<a href="#demo" className="btn secondary">Run a guided scenario <ArrowRight size={16} aria-hidden="true"/></a>}/>
     <div className="investigation-grid">
       <div className="flow">
