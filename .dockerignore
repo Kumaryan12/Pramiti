@@ -3,7 +3,10 @@
 !backend/**
 !frontend/
 !frontend/**
+!research/
+!research/*.py
 !requirements.txt
+!requirements-semantic.txt
 frontend/node_modules
 frontend/dist
 **/__pycache__

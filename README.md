@@ -21,3 +21,18 @@ Open http://localhost:8000. Open `/health` for the health check and `/docs` for 
 ```
 
 See the [demo walkthrough](docs/DEMO.md), [architecture](docs/ARCHITECTURE.md), [deployment](docs/DEPLOYMENT.md), [research](docs/RESEARCH.md), and [progress](docs/PROGRESS.md). Local state uses SQLite. The sandbox settles synthetic transactions only.
+
+## Competition demo and verification
+
+Open [the overview](frontend/public/overview.html) or `/overview.html` in the running app. Follow the [five-minute demo](docs/DEMO.md), including the merchant-only compatibility case. See the [submission brief](docs/SUBMISSION.md) and [matched-review research results](docs/RESEARCH.md).
+
+Use `docker compose up --build -d` for a production-style local build. To include the calibrated model, run `PRAMITI_BUILD_SEMANTIC=1 docker compose up --build -d`.
+
+To run the browser tests from the repository root against a running instance:
+
+```sh
+(cd frontend && npx playwright install chromium)
+npm --prefix frontend test
+```
+
+Set `PRAMITI_BASE_URL` to test a different instance. Set `PRAMITI_EXPECT_SEMANTIC=1` to require a calibrated prediction in the legitimate scenario.

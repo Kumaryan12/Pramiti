@@ -1,12 +1,15 @@
 services:
   app:
-    build: .
+    build:
+      context: .
+      args:
+        PRAMITI_BUILD_SEMANTIC: ${PRAMITI_BUILD_SEMANTIC:-0}
     ports:
       - "127.0.0.1:8000:8000"
     environment:
       DATABASE_URL: sqlite:////app/data/pramiti.db
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-5-mini}
       LLM_OPERATOR_TOKEN: ${LLM_OPERATOR_TOKEN:-}
     volumes:
       - sandbox:/app/data

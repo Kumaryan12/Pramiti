@@ -57,7 +57,7 @@ function Landing() {
       <article><ScanLine /><h2>Verify before settlement</h2><p>Send each agent proposal through policy checks and review eligible exceptions.</p></article>
       <article><BookOpen /><h2>Trace every decision</h2><p>Inspect the evidence trail and verify it against a trusted checkpoint.</p></article>
     </section>
-    <footer className="landing-nav"><Brand /><span>Simulated payments only</span></footer>
+    <footer className="landing-nav"><Brand /><a href="/overview.html">Project overview</a><span>Simulated payments only</span></footer>
   </div>
 }
 

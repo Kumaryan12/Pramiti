@@ -37,7 +37,7 @@ small { display: block; color: var(--muted); margin-top: 4px; font-size: .8125re
 .landing-nav { max-width: 1220px; margin: auto; padding: 28px 40px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .landing-nav .secondary { color: #eef6ea; border-color: #496257; }
 .landing-nav .secondary:hover { background: #263e34; }
-.landing footer { color: #b5c7bb; font-size: .875rem; }
+.landing footer { color: #b5c7bb; font-size: .875rem; flex-wrap: wrap; }
 .hero { display: grid; grid-template-columns: 1.1fr 1fr; gap: 26px; align-items: center; max-width: 1220px; margin: auto; padding: 105px 40px 110px; }
 .hero h1 { font-family: 'Instrument Serif', Georgia, serif; font-weight: 400; font-size: clamp(3.5rem, 7.3vw, 7rem); letter-spacing: -.055em; line-height: .9; margin: 24px 0; }
 .hero h1 em { color: var(--accent); font-weight: 400; }

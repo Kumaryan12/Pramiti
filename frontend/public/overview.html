@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PRAMITI · Competition overview</title>
+<style>
+  :root { font-family: system-ui, sans-serif; color: #20352e; background: #f4f7f2; line-height: 1.6; }
+  body { margin: 0; }
+  main { max-width: 820px; margin: auto; padding: 3rem 1.35rem; }
+  header { background: #112c23; color: #fff; border-radius: 16px; padding: clamp(1.3rem, 5vw, 3rem); }
+  header p:first-child { color: #d7f3a4; font-weight: 700; letter-spacing: .08em; margin-top: 0; }
+  h1 { font-family: Georgia, serif; font-size: clamp(2rem, 7vw, 3.7rem); font-weight: normal; line-height: 1.1; margin: .3em 0; }
+  h2 { margin-bottom: .25rem; }
+  section { padding: 1rem 0; border-bottom: 1px solid #d1dfd5; }
+  section p { margin-top: .4rem; }
+  a { color: #1e583c; font-weight: 700; }
+  a:focus-visible { outline: 2px solid #246443; outline-offset: 3px; }
+  footer { margin: 1.5rem 0; }
+</style>
+<main>
+  <header>
+    <p>PRAMITI · प्रमिति</p>
+    <h1>Proof of Intent for Agentic Finance</h1>
+    <p>Competition overview for the GIFT FutureLab Grand Challenge 2026–27</p>
+  </header>
+  <section>
+    <h2>The problem</h2>
+    <p>An AI shopping agent can stay within an authorized amount while buying a product the customer never intended. Merchant descriptions can also claim compatibility the agent has no independent way to confirm.</p>
+  </section>
+  <section>
+    <h2>How PRAMITI works</h2>
+    <p>The customer signs a spending mandate in the browser. A separate verifier checks the payment, cumulative limits, and product specifications against independent synthetic records. Unresolved compatibility goes to review under the customer’s signed policy. An optional calibrated verifier adds another review gate, and the evidence chain records what happened.</p>
+  </section>
+  <section>
+    <h2>What to try</h2>
+    <ol>
+      <li>Sign the default 65W charger mandate and run the legitimate payment.</li>
+      <li>Run the policy violation and inspect the failed amount check.</li>
+      <li>Run the suspicious substitution and compare the merchant’s claim with the independent record. Inspect the decision, record a review, and verify the evidence checkpoint.</li>
+    </ol>
+    <p>The sandbox uses synthetic listings, verification records, and payment references. Its evaluation measures automatic decisions on synthetic cases. It does not move money.</p>
+  </section>
+  <section>
+    <h2>Financial-sector applications</h2>
+    <p>The architecture could support purchasing agents, corporate spend controls, and auditable authorization for embedded payments. Real deployment would require trusted product data and independent review identities.</p>
+  </section>
+  <footer><a href="/#dashboard">Open the PRAMITI sandbox</a></footer>
+</main>
+</html>

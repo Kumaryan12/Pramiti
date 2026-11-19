@@ -38,3 +38,12 @@ jobs:
         working-directory: frontend
       - run: npm run build
         working-directory: frontend
+      - run: npx playwright install --with-deps chromium
+        working-directory: frontend
+      - name: Browser smoke tests
+        run: |
+          python -m uvicorn backend.pramiti.main:app --port 8000 &
+          app=$!
+          trap 'kill "$app"' EXIT
+          curl --fail --retry 6 --retry-all-errors --retry-delay 1 http://127.0.0.1:8000/health
+          npm --prefix frontend test
