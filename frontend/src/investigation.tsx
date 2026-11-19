@@ -42,14 +42,15 @@ function eventFields(event: EvidenceEvent) {
   }
   if (event.action === 'verification') return [['Decision',text(detail.decision)],
     ['Recorded reason',Array.isArray(detail.reasons) ? detail.reasons.filter(v=>typeof v==='string').join(' · ') || undefined : undefined]]
-  if (event.action === 'human_review') return [['Decision',text(detail.decision)],['Reviewer note',text(detail.note)]]
+  if (event.action === 'human_review') return [['Recorded outcome',typeof detail.approved==='boolean' ? (detail.approved?'Approved':'Rejected') : undefined],['Requested decision',text(detail.decision)],['Reviewer note',text(detail.note)]]
   if (event.action === 'simulated_settlement') return [['Status',text(detail.status)],['Reference',text(detail.reference)],['Rail',text(detail.rail)]]
   return []
 }
 
 function EvidenceCard({ event }: { event:EvidenceEvent }) {
   const fields = eventFields(event).filter(([,value])=>value)
-  return <details className="record-disclosure evidence-event">
+  const readable = event.action==='mandate_approved' ? fields.find(([name])=>name==='Expiry') : fields[0]
+  return <>{readable && <p className="event-summary">{readable[0]} · {readable[1]}</p>}<details className="record-disclosure evidence-event">
     <summary>Inspect event <code>{event.digest.slice(0,12)}</code></summary>
     <div className="record-body">
       {fields.length ? <dl className="detail-list">{fields.map(([name,value])=><div key={name}><dt>{name}</dt><dd>{value}</dd></div>)}</dl> :
@@ -61,7 +62,7 @@ function EvidenceCard({ event }: { event:EvidenceEvent }) {
       </dl>
       <details className="record-disclosure"><summary>Raw JSON</summary><pre>{JSON.stringify(event,null,2)}</pre></details>
     </div>
-  </details>
+  </details></>
 }
 
 export function EvidenceExplorer({ evidence, payments, catalogue, initialId }: {
@@ -110,7 +111,7 @@ export function EvidenceExplorer({ evidence, payments, catalogue, initialId }: {
         <Card title="Ledger snapshot" note="Session evidence returned by the verifier">
           {evidence ? <div className="form-stack"><StatusBadge value={evidence.valid ? 'VERIFIED' : 'INVALID'}/>
             <div><strong className="small-label">Current head</strong><CopyableIdentifier value={evidence.head} name="ledger head"/></div>
-            <p className="muted">Hash checking establishes record integrity relative to a trusted checkpoint.</p>
+            <p className="muted">External checkpoint · {evidence.checkpoint_found===null ? 'Not supplied for this snapshot' : evidence.checkpoint_found ? 'Found' : 'Unavailable'}.</p>
           </div> : <p className="muted">Verification not run.</p>}
         </Card>
         {active && <Card title="Selected transaction">
@@ -174,12 +175,20 @@ const offline = [
   {name:'Split transactions',surface:'Cumulative spending cap',slug:'split_budget',purpose:'Evaluate individual proposals against a cumulative mandate.'},
   {name:'Concurrent spending',surface:'Reservation state',slug:'concurrent_budget',purpose:'Evaluate simultaneous commitments against the same spending cap.'},
 ]
-export function AttackLab({ mandates, mandateId, setMandateId, run, busy, payment, evidence }: {
-  mandates:Mandate[];mandateId:string;setMandateId:(id:string)=>void;run:(scenario:Scenario)=>void;busy:boolean;payment?:Payment;evidence?:Evidence;
+export function AttackLab({ mandates, mandateId, setMandateId, run, busy, payments, evidence }: {
+  mandates:Mandate[];mandateId:string;setMandateId:(id:string)=>void;run:(scenario:Scenario)=>void;busy:boolean;payments:Payment[];evidence?:Evidence;
 }) {
   const [query,setQuery]=useState('')
   const keyword=query.toLowerCase().trim()
   const matches=(...values:string[])=>values.join(' ').toLowerCase().includes(keyword)
+  const runs=payments.filter(p=>p.source==='scripted' && p.proposal.mandate_id===mandateId)
+  const payment=runs[0]
+  const [comparisonId,setComparisonId]=useState('')
+  const previous=runs.slice(1).find(p=>p.id===comparisonId)
+  const scenarioName=(id:string)=>{
+    const detail=asRecord(evidence?.events.find(e=>e.entity===id && e.action==='agent_observations')?.detail)
+    return scenarios.find(s=>s.key===detail.scenario)?.title ?? 'Scripted proposal'
+  }
   const entry = payment && evidence?.events.find(event=>event.entity===payment.id && event.action==='agent_observations')
   const observed = asRecord(entry?.detail)
   const selected = asRecord(observed.selected_listing)
@@ -200,12 +209,20 @@ export function AttackLab({ mandates, mandateId, setMandateId, run, busy, paymen
       </Card>)}
     </div>
     {payment && <Card title="Latest recorded shopper run" note="Outcomes come from the verifier and the associated evidence event.">
-      <dl className="detail-list"><div><dt>Agent observation</dt><dd>{text(selected.description) ?? 'Observation unavailable'}</dd></div>
+      <dl className="detail-list"><div><dt>Recorded scenario</dt><dd>{scenarioName(payment.id)}</dd></div><div><dt>Agent observation</dt><dd>{text(selected.description) ?? 'Observation unavailable'}</dd></div>
         <div><dt>Proposed payment</dt><dd>{text(selected.title) ?? payment.proposal.product_id} · {money(payment.proposal.amount)}</dd></div>
         <div><dt>Policy checks</dt><dd>{Object.values(payment.checks).filter(Boolean).length}/{Object.keys(payment.checks).length} passed</dd></div>
         <div><dt>Verifier outcome</dt><dd><StatusBadge value={payment.decision}/></dd></div>
         <div><dt>Settlement</dt><dd><StatusBadge value={payment.status}/></dd></div></dl>
       <TextLink href={'#verification?tx='+payment.id}>Inspect recorded outcome</TextLink>
+    </Card>}
+    {payment && runs.length>1 && <Card title="Compare recorded runs" note="Compare two scripted proposals under the same signed mandate.">
+      <label className="control">Earlier proposal<select value={previous?.id ?? ''} onChange={e=>setComparisonId(e.target.value)}>
+        <option value="">Select a recorded run</option>{runs.slice(1).map(p=><option key={p.id} value={p.id}>{scenarioName(p.id)} · {money(p.proposal.amount)} · {p.id.slice(0,8)}</option>)}
+      </select></label>
+      {previous && <div className="run-comparison">{[previous,payment].map(p=><article key={p.id}><h3>{scenarioName(p.id)}</h3>
+        <p>{p.proposal.product_id} · {money(p.proposal.amount)}</p><StatusBadge value={p.decision}/><p>{p.reasons.join(' · ')}</p>
+        <TextLink href={'#verification?tx='+p.id}>Inspect transaction</TextLink></article>)}</div>}
     </Card>}
     <Card title="Offline experiment families" note="These cases are available as recorded research results. The browser runner covers the scenarios above.">
       <div className="offline-list">{offline.filter(s=>matches(s.name,s.surface,s.purpose)).map(item=><article key={item.slug}><h3>{item.name}</h3><p>{item.purpose}</p>

@@ -183,7 +183,7 @@ function App() {
       {session==='ready' && route.id==='ledger' && <Ledger evidence={evidence} busy={busy}
         verify={checkpoint=>perform(()=>api<Evidence>('/evidence'+(checkpoint ? '?checkpoint='+encodeURIComponent(checkpoint) : '')))}/>}
       {session==='ready' && route.id==='lab' && <AttackLab mandates={mandates} mandateId={mandateId} setMandateId={setMandateId}
-        run={scenario=>void run('scripted','',scenario,true)} busy={busy} payment={latestAgentPayment} evidence={evidence}/>}
+        run={scenario=>void run('scripted','',scenario,true)} busy={busy} payments={payments} evidence={evidence}/>}
       {route.id==='analytics' && <Suspense fallback={<LoadingSkeleton label="Loading executed research results…"/>}>
         <Analytics key={route.params.get('family')} initialFamily={route.params.get('family') ?? undefined}/></Suspense>}
       {route.id==='documentation' && <Documentation/>}

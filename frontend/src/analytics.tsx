@@ -37,7 +37,7 @@ function Frontier() {
   const points=dataset.matched_review
   const [index,setIndex]=useState(0)
   const selected=points[index]
-  if (!selected) return <ChartContainer title="Security–autonomy frontier" note="Matched human-review budgets">
+  if (!selected) return <ChartContainer title="Safety–Autonomy Frontier" note="Matched human-review budgets">
     <EmptyState title="No matched review points" description="The recorded experiment contains no comparable review budgets."/>
   </ChartContainer>
   const maxX=Math.max(.1,Math.ceil(Math.max(...points.map(point=>point.target_review_rate))*10)/10)
@@ -47,9 +47,9 @@ function Frontier() {
   const zeroTie=points.every(point=>policies.slice(1).every(policy=>point.methods[policy.id].unsafe_approval_rate===0))
   const description=zeroTie ? 'The three evidence-aware curves overlap at 0% across the recorded budgets.' :
     'Each line shows the recorded unsafe auto-approval rates at matched review budgets.'
-  return <ChartContainer title="Security–autonomy frontier" note="Measured unsafe auto-approval at identical human-review budgets.">
+  return <ChartContainer title="Safety–Autonomy Frontier" note="Unsafe automatic approvals among unsafe cases, compared at matched human-review budgets.">
     <div className="frontier-legend" aria-hidden="true">{policies.map(item=><span key={item.id}><i style={{backgroundColor:item.stroke}}/>{item.name}</span>)}</div>
-    <div className="chart-scroll" tabIndex={0} role="region" aria-label="Security–autonomy chart">
+    <div className="chart-scroll" tabIndex={0} role="region" aria-label="Safety–Autonomy chart">
       <svg className="frontier" viewBox="0 0 640 240" role="img" aria-labelledby="frontier-title frontier-desc">
         <title id="frontier-title">Unsafe auto-approval by human-review rate</title>
         <desc id="frontier-desc">{description} Exact rates appear below.</desc>
@@ -105,7 +105,7 @@ export default function Analytics({ initialFamily }: { initialFamily?:string }) 
   return <>
     <PageHeader title="Evaluation analytics" description="Executed experiments on simulated payments, with matched review budgets and explicit denominators."
       context={<p className="eyebrow">Synthetic evaluation</p>} actions={<a download className="btn secondary" href={new URL('../../docs/results/competition/metrics.json',import.meta.url).href}>Download metrics JSON</a>}/>
-    <div className="callout neutral"><FlaskConical size={19} aria-hidden="true"/><div><strong>Evidence-aware policy comparison</strong>
+    <div className="callout neutral"><FlaskConical size={19} aria-hidden="true"/><div><strong>Research prototype · Not live financial traffic</strong>
       <p>19 Nov 2026 · Class-conditional split conformal verifier, artifact v2 · Alpha 0.10</p></div></div>
     <div className="stats-grid research-stats">
       <RiskMetric label="Test proposals" value={total.toLocaleString()} note={unsafe+' unsafe · '+legitimate+' legitimate'}/>
