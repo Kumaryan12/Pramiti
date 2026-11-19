@@ -16,3 +16,4 @@ See [research results](RESEARCH.md), [demo steps](DEMO.md), and the [Render setu
 - Re-ran the original 21-test suite, frontend build, training and 1,200-case evaluation from `70c2851`. The original unsafe approval rates and the 100% concealed-family failure reproduced.
 - Render now requires PostgreSQL explicitly and reports the active database backend at `/health`. Startup records and checks a schema revision under a database lock and adopts the original schema without rewriting previous evidence.
 - Render account authorization is pending. No paid or public resources were provisioned.
+- Added an independent, SKU-bound synthetic specification registry. Merchant text and listing attributes cannot satisfy a signed requirement. Missing evidence escalates or rejects per signed policy, and verified conflicts reject even if the reviewer or classifier would approve. The user sees the evidence source and failed requirements in the verification screen.

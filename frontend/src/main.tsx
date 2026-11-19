@@ -102,6 +102,7 @@ function MandateForm({ catalogue, onApprove, busy }: {
       merchants: list(data.get('merchants')), categories: list(data.get('categories')),
       requirements: list(data.get('requirements')), max_amount: Math.round(Number(data.get('max')) * 100),
       cumulative_limit: Math.round(Number(data.get('total')) * 100), allow_substitutions: data.has('substitution'),
+      missing_evidence: data.get("missing_evidence") === "reject" ? "reject" : "review",
       expires_at: new Date(String(data.get('expires'))).toISOString(),
       consent: data.get('consent') === 'review' ? 'review' : 'automatic',
     })
@@ -127,10 +128,14 @@ function MandateForm({ catalogue, onApprove, busy }: {
       <label className="field">Cumulative limit (₹)<input name="total" type="number" min=".01" max="1000000" step=".01" defaultValue="6000" required /></label>
       <label className="field">Approved merchants<input name="merchants" value={merchants} onChange={e => setMerchants(e.target.value)} required /></label>
       <label className="field">Approved categories<input name="categories" value={categories} onChange={e => setCategories(e.target.value)} required /></label>
-      <label className="field">Product requirements<input name="requirements" value={requirements} onChange={e => setRequirements(e.target.value)} placeholder="Comma-separated catalogue attributes" /></label>
+      <label className="field">Required product attributes<input name="requirements" value={requirements} onChange={e => setRequirements(e.target.value)} placeholder="Comma-separated catalogue attributes" /></label>
       <label className="field">Expires (local time)<input name="expires" type="datetime-local" defaultValue={expiry} required /></label>
     </div>
     <label className="field">Consent mode<select name="consent"><option value="automatic">Allow if verified</option><option value="review">Always require human approval</option></select></label>
+    <label className="field">When independent evidence is missing<select name="missing_evidence">
+      <option value="review">Send for human review</option><option value="reject">Reject the proposal</option>
+    </select></label>
+    <p className="muted">Include every required attribute in the signed product fields. Merchant descriptions alone cannot verify compatibility.</p>
     <label className="checkbox"><input name="substitution" type="checkbox" defaultChecked /> Permit substitutions to be considered for verification</label>
     <label className="checkbox" onChange={e => e.stopPropagation()}><input type="checkbox" checked={confirmed} onChange={e => setConfirmed(e.target.checked)} required /> I authorize the simulated spending terms above.</label>
     <button className="button primary" disabled={busy || !confirmed}><LockKeyhole size={16} /> Sign and approve mandate</button>
@@ -140,7 +145,7 @@ function MandateForm({ catalogue, onApprove, busy }: {
 const scenarios = [
   { key: 'legitimate', title: 'Legitimate payment', detail: 'The shopper proposes the authorized 65W charger.' },
   { key: 'over_budget', title: 'Policy violation', detail: 'The shopper selects a ₹4,899 charger above the default limit.' },
-  { key: 'substitution', title: 'Suspicious substitution', detail: 'A merchant recommendation steers the shopper to a 20W charger.' },
+  { key: 'substitution', title: 'Suspicious substitution', detail: 'A merchant compatibility claim steers the shopper toward a cheaper charger.' },
 ]
 
 function App() {
@@ -298,6 +303,14 @@ function App() {
             <div className="reason-list">{payment.reasons.map(reason => <p key={reason}>{label(reason)}</p>)}</div>
             <div className="check-grid">{Object.entries(payment.checks).map(([name, passed]) => <div key={name} className={passed ? 'passed' : 'failed'}>
               {passed ? <Check size={17} /> : <CircleAlert size={17} />}{label(name)}</div>)}</div>
+            {payment.compatibility && <section className="reason-list" aria-label="Product compatibility evidence">
+              <h3>Product evidence · {label(payment.compatibility.status)}</h3>
+              {payment.compatibility.confirmed.length > 0 && <p>Independently recorded · {payment.compatibility.confirmed.join(', ')}</p>}
+              {payment.compatibility.contradictions.length > 0 && <p>Verified conflicts · {payment.compatibility.contradictions.join(', ')}</p>}
+              {payment.compatibility.missing.length > 0 && <p>Unverified requirements · {payment.compatibility.missing.join(', ')}</p>}
+              {payment.compatibility.merchant_only.length > 0 && <p>Merchant claims only · {payment.compatibility.merchant_only.join(', ')}</p>}
+              {payment.compatibility.evidence_reference && <p className="muted">Synthetic evidence reference · {payment.compatibility.evidence_reference}</p>}
+            </section>}
             {payment.semantic && <p className="muted">Prediction set {'{'}{payment.semantic.prediction_set.join(', ')}{'}'}</p>}
             <div className="section-line settlement"><span><Badge value={payment.status} /> {payment.settlement?.reference}</span>
               {payment.status === 'PENDING' && <a className="button secondary" href="#review">Open human review</a>}</div>
@@ -314,8 +327,8 @@ function App() {
             <p className="muted">{money(item.proposal.amount)} · {item.proposal.merchant}</p>
             <p>Signed instruction: {mandates.find(policy => policy.id === item.proposal.mandate_id)?.instruction}</p>
             <p>{item.reasons.join(' · ')}</p>
-            <label className="field">Reviewer note (optional)<input maxLength={1000} value={notes[item.id] ?? ''} onChange={e => setNotes(previous => ({ ...previous, [item.id]: e.target.value }))} /></label>
-            <div className="actions"><button className="button primary" disabled={busy} onClick={() => review(item, 'approve')}>Approve simulated settlement</button>
+            <label className="field">Reviewer note {item.compatibility?.missing.length ? '(required to approve)' : '(optional)'}<input maxLength={1000} value={notes[item.id] ?? ''} onChange={e => setNotes(previous => ({ ...previous, [item.id]: e.target.value }))} /></label>
+            <div className="actions"><button className="button primary" disabled={busy || Boolean(item.compatibility?.missing.length && !notes[item.id]?.trim())} onClick={() => review(item, 'approve')}>Approve simulated settlement</button>
               <button className="button secondary" disabled={busy} onClick={() => review(item, 'reject')}>Reject</button></div>
           </article>)}
         </section>}

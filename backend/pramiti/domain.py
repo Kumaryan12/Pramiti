@@ -29,6 +29,7 @@ class Mandate(Input):
     product_id: ShortText | None = None
     requirements: Annotated[list[ShortText], Field(max_length=20)]
     allow_substitutions: bool
+    missing_evidence: Literal["review", "reject"] = "review"
     expires_at: datetime
     consent: Literal["automatic", "review"]
 

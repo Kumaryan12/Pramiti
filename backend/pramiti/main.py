@@ -128,21 +128,24 @@ def create_app(database_url=None):
                 payments.c.owner == owner, payments.c.nonce == nonce
             )).scalar_one_or_none()
             used = row.reserved + row.spent if row else 0
-            decision, reasons, checks = verify(proposal, mandate, envelope, used, replay=previous is not None)
+            decision, reasons, checks, compatibility = verify(proposal, mandate, envelope, used, replay=previous is not None)
             prediction = None
             if decision != "REJECT" and app.state.semantic is not None:
                 prediction = app.state.semantic.predict(mandate, proposal, CATALOG[proposal.product_id])
                 decision, reasons = calibrated_decision(decision, reasons, prediction)
+            evidence_record = compatibility.record() if compatibility else None
             record = {
                 "id": payment_id, "created_at": now().isoformat(), "proposal": proposal.model_dump(mode="json"), "source": source,
                 "rationale": rationale, "decision": decision, "reasons": reasons, "checks": checks,
                 "status": "REJECTED", "settlement": None, "review": None, "semantic": prediction,
+                "compatibility": evidence_record,
             }
             append_event(connection, owner, "agent_proposal", payment_id, {
                 "proposal": record["proposal"], "source": source, "rationale": rationale,
             })
             append_event(connection, owner, "verification", payment_id, {
                 "decision": decision, "checks": checks, "reasons": reasons, "semantic": prediction,
+                "compatibility": evidence_record,
             })
             if previous:
                 return record
@@ -199,7 +202,9 @@ def create_app(database_url=None):
             row = fetch_mandate(connection, owner, proposal.mandate_id)
             envelope, mandate = unpack(row)
             used = row.reserved + row.spent - proposal.amount if row else 0
-            decision, reasons, checks = verify(proposal, mandate, envelope, used)
+            decision, reasons, checks, compatibility = verify(proposal, mandate, envelope, used)
+            if review.decision == "approve" and decision != "REJECT" and compatibility.missing and not review.note:
+                raise HTTPException(422, "Record how you resolved the missing evidence before approving")
             approved = review.decision == "approve" and decision != "REJECT"
             record.update(
                 status="SETTLED" if approved else "REJECTED",

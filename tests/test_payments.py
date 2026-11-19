@@ -238,3 +238,54 @@ def test_production_requires_postgres(tmp_path, monkeypatch):
     monkeypatch.setenv("PRAMITI_REQUIRE_POSTGRES", "1")
     with pytest.raises(RuntimeError, match="requires a PostgreSQL"):
         create_app(f"sqlite:///{tmp_path / 'production.db'}")
+
+
+def test_merchant_claim_escalates_even_with_singleton_model(client):
+    from types import SimpleNamespace
+
+    client.app.state.semantic = SimpleNamespace(
+        predict=lambda *_: {"prediction_set": ["conformant"], "p_values": {"conformant": 1}},
+    )
+    # 65 W is expressed only in the signed instruction, with a space before the unit.
+    mandate_id = approve(client, instruction="Buy the 65 W charger", requirements=["usb-c"], product_id=None)
+    payment = submit(client, proposal(mandate_id, "compact-20"))
+    assert payment["decision"] == "ESCALATE"
+    assert payment["compatibility"]["status"] == "merchant_claim_only"
+    assert payment["compatibility"]["missing"] == ["65w"]
+    assert payment["compatibility"]["confirmed"] == ["usb-c"]
+    assert all(payment["checks"].values())
+    route = f'/api/payments/{payment["id"]}/review'
+    assert client.post(route, json={"decision": "approve"}).status_code == 422
+    assert client.post(route, json={"decision": "approve", "note": "Independent specification inspected."}).json()["status"] == "SETTLED"
+
+
+def test_missing_evidence_can_be_a_signed_rejection(client):
+    mandate_id = approve(client, missing_evidence="reject")
+    payment = submit(client, proposal(mandate_id, "compact-20"))
+    assert payment["status"] == "REJECTED"
+    assert not payment["checks"]["required_evidence_policy"]
+    assert client.post(f'/api/payments/{payment["id"]}/review', json={"decision": "approve"}).status_code == 409
+
+
+def test_trusted_conflict_cannot_be_overridden(client):
+    mandate_id = approve(client, max_amount=600000, cumulative_limit=600000)
+    payment = submit(client, proposal(mandate_id, "travel-100"))
+    assert payment["compatibility"]["status"] == "verified_incompatible"
+    assert payment["compatibility"]["contradictions"] == ["65w"]
+    assert payment["decision"] == "REJECT"
+
+
+def test_missing_claim_is_insufficient_evidence(client):
+    mandate_id = approve(client, instruction="Buy a waterproof charger", requirements=["waterproof"])
+    payment = submit(client, proposal(mandate_id))
+    assert payment["compatibility"]["status"] == "insufficient_evidence"
+    assert payment["decision"] == "ESCALATE"
+
+
+def test_attestation_cannot_be_reused_across_skus(client, monkeypatch):
+    from backend.pramiti.catalog import ATTESTATIONS
+
+    monkeypatch.setitem(ATTESTATIONS, "compact-20", ATTESTATIONS["assemble-65"])
+    payment = submit(client, proposal(approve(client), "compact-20"))
+    assert payment["decision"] == "ESCALATE"
+    assert payment["compatibility"]["evidence_reference"] is None

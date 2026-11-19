@@ -8,6 +8,7 @@ export interface Mandate {
   product_id: string | null
   requirements: string[]
   allow_substitutions: boolean
+  missing_evidence?: "review" | "reject"
   expires_at: string
   consent: 'automatic' | 'review'
   spent?: number
@@ -35,6 +36,11 @@ export interface Payment {
   status: 'SETTLED' | 'PENDING' | 'REJECTED'
   settlement: { reference: string } | null
   review: { approved: boolean; note: string; failed_checks: string[] } | null
+  compatibility?: {
+    status: 'verified_compatible' | 'verified_incompatible' | 'insufficient_evidence' | 'merchant_claim_only'
+    required: string[]; confirmed: string[]; contradictions: string[]; missing: string[]; merchant_only: string[]
+    evidence_reference: string | null
+  } | null
   semantic?: { prediction_set: string[]; p_values: Record<string, number> } | null
 }
 
