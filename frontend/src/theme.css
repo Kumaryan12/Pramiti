@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700;750;800&family=Noto+Sans+Devanagari:wght@500;700&display=swap');
+
+:root {
+  --navy: #101c35;
+  --midnight: #0d182c;
+  --teal: #087f70;
+  --teal-deep: #07675c;
+  --teal-soft: #e8f6f2;
+  --warm-white: #f8fafc;
+  --white: #fff;
+  --neutral: #334155;
+  --slate: #64748b;
+  --border: #e2e8f0;
+  --amber: #b7791f;
+  --red: #b42332;
+  --green: #16794b;
+
+  --canvas: var(--warm-white);
+  --surface: var(--white);
+  --surface-raised: #f1f5f9;
+  --ink: var(--navy);
+  --body: var(--neutral);
+  --muted-ink: #52637a;
+  --edge: var(--border);
+  --control-edge: #8393a7;
+  --accent: var(--teal-deep);
+  --accent-soft: var(--teal-soft);
+  --accent-ink: #07564d;
+  --focus: #087f70;
+  --success-surface: #e9f7ef;
+  --success-text: #126641;
+  --warning-surface: #fff4db;
+  --warning-text: #825018;
+  --danger-surface: #fcebef;
+  --danger-text: #a32636;
+  --neutral-surface: #edf2f8;
+  --neutral-text: #40516b;
+  --rail: var(--midnight);
+  --rail-line: #2b3953;
+  --rail-text: #c7d3e6;
+  --rail-muted: #9babca;
+  --rail-active: #223451;
+  --aqua: #75dfce;
+  --light-hero: #f1f7f9;
+  --light-hero-ink: #172844;
+  --radius: 12px;
+  --shadow-float: 0 15px 40px #101c351a;
+  --font: Inter, 'Noto Sans Devanagari', system-ui, sans-serif;
+  --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+}
+:root[data-theme=dark] {
+  color-scheme: dark;
+  --canvas: #101a2d;
+  --surface: #142239;
+  --surface-raised: #1b2d46;
+  --ink: #f1f6fe;
+  --body: #d3dff0;
+  --muted-ink: #aabbd3;
+  --edge: #344662;
+  --control-edge: #8097b7;
+  --accent: #79dfcf;
+  --accent-soft: #173a3d;
+  --accent-ink: #a5f1e3;
+  --focus: #79dfcf;
+  --success-surface: #1b3e37;
+  --success-text: #9ae8b7;
+  --warning-surface: #493a27;
+  --warning-text: #ffd79c;
+  --danger-surface: #4e2b38;
+  --danger-text: #ffc1ca;
+  --neutral-surface: #253853;
+  --neutral-text: #d1deee;
+  --shadow-float: 0 15px 40px #050b1680;
+  --light-hero: #172840;
+  --light-hero-ink: #e8f2ff;
+}

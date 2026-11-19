@@ -7,6 +7,9 @@ import {
 } from 'lucide-react'
 import { api, label, money, sign, type Evidence, type Mandate, type Payment, type Product } from './api'
 import './style.css'
+import './theme.css'
+import './institution.css'
+import { AppShell } from './shell'
 
 const pages = [
   ['dashboard', 'Dashboard', Grid2X2],
@@ -232,16 +235,12 @@ function App() {
 
   if (!page) return <Landing />
   const title = pages.find(([id]) => id === page)?.[1]
-  return <div className="app-shell">
-    <aside className="sidebar">
-      <Brand />
-      <p className="sidebar-label">WORKSPACE</p>
-      <nav aria-label="Workspace">{pages.map(([id, name, Icon]) =>
-        <a key={id} href={'#' + id} aria-current={page === id ? 'page' : undefined}><Icon size={18} />{name}</a>)}</nav>
-      <div className="sidebar-bottom"><FlaskConical size={16} /> Synthetic payment sandbox</div>
-    </aside>
-    <main className="workspace">
-      <header className="workspace-header"><span>Workspace <b>/</b> {title}</span><span className="system-label"><span /> {ready ? 'Sandbox connected' : 'Sandbox session'}</span></header>
+  const navItems = pages.map(([id, title, icon]) => ({ id, title, icon }))
+  return <AppShell page={page} status={ready ? 'Sandbox connected' : 'Connecting to sandbox'} groups={[
+    { title: 'Overview', items: navItems.slice(0, 1) },
+    { title: 'Payment assurance', items: navItems.slice(1, 5) },
+    { title: 'Investigation', items: navItems.slice(5) },
+  ]}>
       <div className="content">
         <div className="page-heading"><h1>{title}</h1><p>{descriptions[page]}</p></div>
         {error && <div role="alert" className="message error"><CircleAlert size={18} />{error}</div>}
@@ -355,8 +354,7 @@ function App() {
           {evidence?.count === 0 && <p className="empty">The chain will populate as you approve mandates and submit proposals.</p>}
         </section>}
       </div>
-    </main>
-  </div>
+  </AppShell>
 }
 
 createRoot(document.getElementById('root')!).render(<App />)
