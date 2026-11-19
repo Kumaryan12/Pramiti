@@ -32,7 +32,7 @@ React 19, TypeScript and Vite serve a single-page application. The original hash
 
 ## Second visual audit · baseline 678b8a5
 
-The running Docker application supplied 41 fresh viewport captures at 1440×900, 768×1024 and 390×844. The same signed test mandate produced an allowed purchase, a policy rejection and a substitution requiring review in each session. [Before captures](ui-screenshots/assurance-before/)
+The running Docker application supplied 44 fresh viewport captures at 1440×900, 768×1024 and 390×844. The same signed test mandate produced an allowed purchase, a policy rejection and a substitution requiring review in each session. [Before captures](ui-screenshots/assurance-before/)
 
 - The desktop landing placed a heavily weighted sans-serif headline beside a conventional summary card. On mobile the two calls to action stacked and the product comparison started low in the first viewport.
 - The demo showed a long mandate select and three disconnected scenario cards. The run handler then navigated to Transactions, taking the original instruction out of view.

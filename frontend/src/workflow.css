@@ -24,7 +24,7 @@
 .record-disclosure { min-width:0; border:1px solid var(--edge); border-radius:7px; background:var(--surface); margin-top:7px; overflow:hidden; }
 .record-disclosure summary { display:flex; justify-content:space-between; align-items:center; gap:9px; padding:8px 10px; min-height:38px; color:var(--ink); font-size:.83rem; font-weight:650; }
 .record-disclosure summary:focus-visible { outline-offset:-3px; }
-.record-disclosure summary::after { content:'+'; font-family:var(--mono); margin-left:3px; color:var(--accent-ink); }
+.record-disclosure summary::after { content:'+'; margin-left:3px; color:var(--accent-ink); }
 .record-disclosure[open] summary::after { content:'−'; }
 .record-disclosure summary > div { flex:1; min-width:0; }
 .record-disclosure summary::marker { content:''; }
@@ -51,7 +51,7 @@
 .check-list strong { text-transform:capitalize; }
 .check-list p { margin-top:1px; line-height:1.45; font-size:.77rem; }
 .record-disclosure .check-list { padding-inline:7px; }
-.prediction-set { font-family:var(--mono); overflow-wrap:anywhere; }
+.prediction-set { overflow-wrap:anywhere; }
 .case-select { text-align:left; background:transparent; border:0; padding:0; }
 .selected-row { background:var(--accent-soft); }
 .confirm-dialog { inset:0; margin:auto; }
@@ -129,3 +129,8 @@
 .event-summary { padding-block:1px 4px; overflow-wrap:anywhere; }.evidence-event summary code { font-size:.75rem; color:var(--muted-ink); }
 .run-comparison { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px; }.run-comparison article { border-top:2px solid var(--edge); padding:12px 0; }.run-comparison p { font-size:.82rem; color:var(--muted-ink); margin:6px 0; }
 @media(max-width:550px){.run-comparison { grid-template-columns:1fr; }}
+
+.demo-decision { display:flex; align-items:center; flex-wrap:wrap; gap:7px 12px; padding:14px 18px; border:1px solid var(--edge); border-left:3px solid var(--accent); border-radius:6px; background:var(--surface); animation:decision-enter 180ms ease-out; }
+.demo-decision strong { font-size:.9rem; }.demo-decision p { color:var(--muted-ink); font-size:.82rem; }.demo-decision .text-link { margin-left:auto; }
+#demo-verification { scroll-margin-block:90px; } @keyframes decision-enter { from { transform:translateY(3px); } to { transform:translateY(0); } }
+@media(max-width:680px){.demo-decision strong { flex-basis:100%; }.demo-decision .text-link { margin-left:0; }}

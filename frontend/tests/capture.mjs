@@ -3,7 +3,7 @@ import { resolve } from 'node:path'
 import { chromium } from 'playwright'
 import { go, runDemo, signDefault } from './flow.mjs'
 
-const output=resolve(process.env.PRAMITI_SCREENSHOT_DIR || '../docs/ui-screenshots/after')
+const output=resolve(process.env.PRAMITI_SCREENSHOT_DIR || '../docs/ui-screenshots/assurance-after')
 await mkdir(output,{recursive:true})
 const browser=await chromium.launch({channel:process.env.PRAMITI_CHROME_CHANNEL || undefined})
 try {
@@ -17,6 +17,8 @@ try {
     }
     await go(page,'',/Autonomous payments/i)
     await capture('landing')
+    await page.locator('.architecture').scrollIntoViewIfNeeded()
+    await capture('architecture')
     await go(page,'dashboard','Command Centre')
     await capture('dashboard')
     await go(page,'mandates','Intent mandates')
@@ -27,11 +29,19 @@ try {
     await runDemo(page,'Policy violation','Rejected')
     const tx=await runDemo(page,'Suspicious substitution','Human review')
     await capture('verification')
+    await go(page,'demo?tx='+tx,'Live Demo')
+    await capture('demo-with-decision')
+    await page.locator('.journey-grid').scrollIntoViewIfNeeded()
+    await capture('demo-record')
     for(const [route,title,name] of [['agent','AI Agent','agent'],['review?tx='+tx,'Human review','review'],
       ['evidence?tx='+tx,'Evidence explorer','evidence'],['ledger','Ledger Integrity','ledger'],['analytics','Evaluation analytics','analytics'],
-      ['lab','Attack laboratory','lab'],['dashboard','Command Centre','dashboard-with-data']]){
+      ['lab','Attack laboratory','lab'],['documentation','Technical Documentation','documentation'],['dashboard','Command Centre','dashboard-with-data']]){
       await go(page,route,title)
       await capture(name)
+      if(name==='review'){
+        await page.locator('.review-controls').scrollIntoViewIfNeeded()
+        await capture('review-controls')
+      }
     }
     if(device==='mobile'){
       await page.getByRole('button',{name:'Open navigation'}).click()

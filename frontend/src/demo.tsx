@@ -19,13 +19,19 @@ export function Demo({ mandates, mandateId, setMandateId, catalogue, payment, ev
   return <>
     <PageHeader title="Live Demo" description="Follow one payment from the user’s signed instruction to the verifier’s decision and its evidence." context={<p className="eyebrow">Interactive walkthrough</p>}/>
     <div className="journey-progress"><StepIndicator current={stage} steps={['Authorise intent','Run the agent','Inspect decision','Trace outcome']}/></div>
+    {result && <div className="demo-decision" role="status" key={result.id}>
+      <span className="actor"><ScanLine size={16}/> Latest decision</span><StatusBadge value={result.decision}/>
+      <strong>{money(result.proposal.amount)} · {product?.title ?? result.proposal.product_id}</strong>
+      <p>{result.reasons.map(label).join(' · ')}</p>
+      <button className="text-link" onClick={()=>document.getElementById('demo-verification')?.focus()}>View verification details</button>
+    </div>}
     <section className="journey-control">
       <div className="journey-emblem"><Fingerprint size={32}/></div><div><p className="kicker">Scripted agent · Simulated payments</p><h2>{!mandate ? 'What may the agent buy?' : 'Choose a payment scenario.'}</h2>
         <p>{!mandate ? 'Start with the sample charger instruction. Review the spending limits and sign before the shopper can act.' : 'Each run submits a fresh proposal against your selected mandate.'}</p></div>
       {!mandate && <ActionLink href="#mandates?next=demo">Create demo mandate</ActionLink>}
       {mandates.length>0 && <MandateSelect mandates={mandates} id={mandateId} setId={setMandateId}/>}
-      {mandate && <div className="run-options">{scenarios.map(({key,title,detail,icon:Icon})=><button type="button" key={key} disabled={busy} onClick={()=>run(key)} aria-label={'Run '+title}>
-        <Icon size={18}/><span><strong>{title}</strong><small>{detail}</small></span><Play size={14}/></button>)}</div>}
+      {mandate && <div className="run-options">{scenarios.map(({key,title,detail,icon:Icon})=><button type="button" key={key} disabled={busy} onClick={()=>run(key)}>
+        <Icon size={18}/><span><strong><span className="visually-hidden">Run </span>{title}</strong><small>{detail}</small></span><Play size={14}/></button>)}</div>}
     </section>
     <div className="journey-grid">
       <Card className="journey-panel"><div className="actor"><FileKey2 size={16}/> User</div><h2>Signed intent</h2>
@@ -41,7 +47,7 @@ export function Demo({ mandates, mandateId, setMandateId, catalogue, payment, ev
           {Array.isArray(observation.observed_products) && <details className="record-disclosure"><summary>Observed catalogue ({observation.observed_products.length})</summary><ul className="plain-list">{observation.observed_products.map(id=><li key={String(id)}>{catalogue.find(p=>p.id===id)?.title ?? String(id)}</li>)}</ul></details>}</> :
           <p>The scripted shopper reads merchant listings and submits a proposed item, merchant and amount.</p>}
       </Card>
-      <Card className="journey-panel"><div className="actor"><ScanLine size={16}/> Verifier</div><h2>Independent decision</h2>
+      <Card className="journey-panel"><div className="actor"><ScanLine size={16}/> Verifier</div><h2 id="demo-verification" tabIndex={-1}>Independent decision</h2>
         {result ? <><div role="status"><StatusBadge value={result.decision}/></div><p>{result.reasons.map(label).join(' · ')}</p>
           <details className="record-disclosure"><summary>Policy checks · {passed}/{Object.keys(result.checks).length}</summary><ul className="plain-list">{Object.entries(result.checks).map(([key,ok])=><li key={key}>{label(key)} · {ok?'passed':'failed'}</li>)}</ul></details>
           <dl className="journey-fields"><div><dt>Calibrated prediction set</dt><dd>{result.semantic ? '{'+result.semantic.prediction_set.join(', ')+'}' : 'No score recorded'}</dd></div>

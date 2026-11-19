@@ -43,3 +43,11 @@ PRAMITI_BASE_URL=http://127.0.0.1:8000 npm --prefix frontend run screenshots
 ```
 
 Set `PRAMITI_EXPECT_SEMANTIC=1` where the calibrated model is enabled. Screenshots go to `docs/ui-screenshots/after/` by default. For release smoke tests use the existing [Render service](https://pramiti-aqd7.onrender.com/) as the base URL and verify that `/health` reports PostgreSQL. The deployed UI should load the new landing and the existing sandbox workflows without GitHub authentication.
+
+## Proof of Intent release
+
+Tested the production Docker image with the calibrated artifact enabled. The 35 backend tests exercise mandate signatures, payment policy, concurrent spending, review and ledger integrity. The browser suite now has five tests. The new regression follows a reviewed case back to its demo, reloads the case, opens settlement evidence and compares it with a hard rejection. A direct attempt to approve the rejected case received HTTP 409.
+
+Compared the running Render OpenAPI schema and the new Docker schema before deployment. They matched across all eight documented paths. Scanned production assets for common provider-key, private-key and credentialed-database-URL patterns. The scripted scenario suite runs without provider credentials.
+
+Captured 44 baseline and 56 release screenshots across 1440×900, 768×1024 and 390×844. The responsive review panel exposes merchant, amount, reason, time and status in one phone-width record. A completed demo shows the decision immediately and provides a keyboard-accessible jump to the verifier. Review caught a wrapping mobile header action and competing legacy heading styles. Both were corrected. Browser checks include document overflow in captured states and axe A/AA rules on selected light and dark workflows. These checks cover the exercised states only. [Baseline captures](ui-screenshots/assurance-before/) · [Release captures](ui-screenshots/assurance-after/)

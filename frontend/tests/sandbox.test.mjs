@@ -120,6 +120,36 @@ test('laboratory runs a real scenario and analytics uses recorded experiments', 
   } finally { await page.context().close() }
 })
 
+test('demo preserves a reviewed case and enforces hard rejection across navigation', {timeout:55000},async()=>{
+  const page=await browser.newPage({viewport:{width:390,height:844}})
+  try {
+    await go(page,'',/Autonomous payments/i)
+    const stage=page.getByRole('button',{name:'Ledger Decision record'})
+    await stage.click()
+    assert.equal(await stage.getAttribute('aria-pressed'),'true')
+    await page.locator('#stage-detail').getByText(/hash chain/).waitFor()
+    await signDefault(page)
+    const blocked=await runDemo(page,'Policy violation','Rejected')
+    const blockedReview=await page.request.post(base+'/api/payments/'+blocked+'/review',{data:{decision:'approve',note:'Synthetic regression case'}})
+    assert.equal(blockedReview.status(),409)
+    const tx=await runDemo(page,'Suspicious substitution','Human review')
+    await go(page,'demo?tx='+tx,'Live Demo')
+    await page.getByRole('link',{name:'Open human review'}).click()
+    await page.getByLabel('Reviewer note').fill('Reviewed the missing wattage evidence in this sandbox.')
+    await page.getByRole('button',{name:'Approve simulated settlement'}).click()
+    await page.getByRole('button',{name:'Confirm approval'}).click()
+    await page.getByRole('link',{name:'Return to demo outcome'}).click()
+    await page.getByRole('heading',{name:'Simulated settlement recorded.'}).waitFor()
+    await page.reload()
+    await page.getByRole('link',{name:'Trace evidence'}).click()
+    await page.locator('.timeline').getByText('Simulated settlement',{exact:true}).waitFor()
+    await go(page,'lab','Attack laboratory')
+    await page.getByLabel('Earlier proposal').selectOption(blocked)
+    await page.locator('.run-comparison').getByText('Rejected',{exact:true}).waitFor()
+    await page.locator('.run-comparison').getByText('Human review',{exact:true}).waitFor()
+  } finally { await page.context().close() }
+})
+
 test('axe WCAG 2.2 A/AA checks on critical desktop and mobile views', {timeout:95000},async()=>{
   const all=[]
   const check=async(page,name)=>{
@@ -133,7 +163,7 @@ test('axe WCAG 2.2 A/AA checks on critical desktop and mobile views', {timeout:9
     await go(page,'',/Autonomous payments/i)
     await check(page,'landing')
     await populate(page)
-    for(const [route,title] of [['dashboard','Command Centre'],['mandates','Intent mandates'],['agent','AI Agent'],['verification','Transactions'],['review','Human review'],['evidence','Evidence explorer'],['ledger','Ledger Integrity'],['analytics','Evaluation analytics'],['lab','Attack laboratory']]){
+    for(const [route,title] of [['dashboard','Command Centre'],['demo','Live Demo'],['mandates','Intent mandates'],['agent','AI Agent'],['verification','Transactions'],['review','Human review'],['evidence','Evidence explorer'],['ledger','Ledger Integrity'],['analytics','Evaluation analytics'],['lab','Attack laboratory']]){
       await go(page,route,title)
       await check(page,route)
     }
@@ -146,6 +176,10 @@ test('axe WCAG 2.2 A/AA checks on critical desktop and mobile views', {timeout:9
     await page.getByRole('button',{name:'Use dark theme'}).click()
     await go(page,'dashboard','Command Centre')
     await check(page,'mobile dark dashboard')
+    await go(page,'demo','Live Demo')
+    await check(page,'mobile dark demo')
+    await go(page,'',/Autonomous payments/i)
+    await check(page,'mobile dark landing')
     assert.deepEqual(all,[])
   } finally { await page.context().close() }
 })
