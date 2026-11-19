@@ -1,8 +1,15 @@
-import { defineConfig } from 'vite'
+import { fileURLToPath } from 'node:url'
+import { defineConfig, searchForWorkspaceRoot } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwind from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [react(), tailwind()],
-  server: { proxy: { '/api': 'http://127.0.0.1:8000', '/health': 'http://127.0.0.1:8000' } },
+  server: {
+    fs: { allow: [
+      searchForWorkspaceRoot(process.cwd()),
+      fileURLToPath(new URL('../docs/results/competition', import.meta.url)),
+    ] },
+    proxy: { '/api': 'http://127.0.0.1:8000', '/health': 'http://127.0.0.1:8000' },
+  },
 })

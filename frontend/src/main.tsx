@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { BookOpen, FileSignature, Grid2X2, Layers3, Play, ScanLine, ShoppingBag, UserRoundCheck } from 'lucide-react'
+import { Activity, BookOpen, FileSignature, FlaskConical, Grid2X2, Layers3, Play, ScanLine, ShieldCheck, ShoppingBag, UserRoundCheck } from 'lucide-react'
 import { api, sign, type Evidence, type Mandate, type Payment, type Product } from './api'
 import { ErrorState, LoadingSkeleton } from './components'
 import { Mandates } from './mandates'
+import { AttackLab, Documentation, EvidenceExplorer, Ledger } from './investigation'
 import { Dashboard, Demo, Landing, type Scenario } from './overview'
 import { Agent, Reviews, Transactions } from './payments'
 import { AppShell, type NavGroup } from './shell'
@@ -13,6 +14,8 @@ import './institution.css'
 import './product.css'
 import './workflow.css'
 
+const Analytics = lazy(()=>import('./analytics'))
+
 const groups: NavGroup[] = [
   { title: 'Overview', items: [
     {id:'dashboard',title:'Dashboard',icon:Grid2X2}, {id:'demo',title:'Live demonstration',icon:Play},
@@ -21,7 +24,8 @@ const groups: NavGroup[] = [
     {id:'mandates',title:'Intent mandates',icon:FileSignature}, {id:'agent',title:'AI agent workspace',icon:ShoppingBag},
     {id:'verification',title:'Transactions',icon:ScanLine}, {id:'review',title:'Human review',icon:UserRoundCheck},
   ] },
-  {title:'Investigation',items:[{id:'evidence',title:'Evidence explorer',icon:Layers3}]},
+  {title:'Investigation',items:[{id:'evidence',title:'Evidence explorer',icon:Layers3},{id:'ledger',title:'Ledger verification',icon:ShieldCheck}]},
+  {title:'Research',items:[{id:'lab',title:'Attack laboratory',icon:FlaskConical},{id:'analytics',title:'Evaluation analytics',icon:Activity}]},
   {title:'System',items:[{id:'documentation',title:'Documentation',icon:BookOpen}]},
 ]
 const aliases: Record<string,string> = {transactions:'verification','intent-mandates':'mandates','human-review':'review'}
@@ -98,7 +102,7 @@ function App() {
   }
 
   useEffect(()=>{
-    if (route.id && route.id!=='documentation' && session==='idle') void connect()
+    if (route.id && route.id!=='documentation' && route.id!=='analytics' && session==='idle') void connect()
   },[route.id,session])
 
   async function perform<T>(action:()=>Promise<T>) {
@@ -117,14 +121,14 @@ function App() {
   function savePayment(result: Payment) {
     setPayments(previous=>[result,...previous.filter(item=>item.id!==result.id)])
   }
-  function run(mode:'scripted'|'llm', token='', scenario?:Scenario) {
+  function run(mode:'scripted'|'llm', token='', scenario?:Scenario, keepContext=false) {
     return perform(async()=>{
       const result = await api<Payment>('/agent/runs',{mandate_id:mandateId,mode,scenario},
         mode==='llm' ? {'X-LLM-Token':token} : undefined)
       savePayment(result)
       setAgentPaymentId(result.id)
       await refreshAfterSave()
-      if (scenario) navigate('verification',result.id)
+      if (scenario && !keepContext) navigate('verification',result.id)
       return result
     })
   }
@@ -139,7 +143,7 @@ function App() {
   const transactionId = route.params.get('tx') ?? undefined
   const payment = transactionId ? payments.find(item=>item.id===transactionId) : payments[0]
   const latestAgentPayment = payments.find(item=>item.id===agentPaymentId) ?? payments.find(item=>item.source==='scripted' || item.source==='llm')
-  const offlinePage = route.id==='documentation'
+  const offlinePage = route.id==='documentation' || route.id==='analytics'
   if (!route.id) return <Landing/>
 
   return <AppShell groups={groups} page={route.id} status={session==='ready' ? 'Sandbox connected' : session==='error' ? 'Sandbox unavailable' : 'Simulated payments'}>
@@ -168,30 +172,17 @@ function App() {
       </>}
       {session==='ready' && route.id==='review' && <Reviews key={transactionId} payments={payments} catalogue={catalogue} mandates={mandates}
         selectedId={transactionId} busy={busy} onReview={decide}/>}
-      {session==='ready' && route.id==='evidence' && <LegacyEvidence evidence={evidence} busy={busy}
+      {session==='ready' && route.id==='evidence' && <EvidenceExplorer key={transactionId} evidence={evidence}
+        payments={payments} catalogue={catalogue} initialId={transactionId}/>}
+      {session==='ready' && route.id==='ledger' && <Ledger evidence={evidence} busy={busy}
         verify={checkpoint=>perform(()=>api<Evidence>('/evidence'+(checkpoint ? '?checkpoint='+encodeURIComponent(checkpoint) : '')))}/>}
+      {session==='ready' && route.id==='lab' && <AttackLab mandates={mandates} mandateId={mandateId} setMandateId={setMandateId}
+        run={scenario=>void run('scripted','',scenario,true)} busy={busy} payment={latestAgentPayment} evidence={evidence}/>}
+      {route.id==='analytics' && <Suspense fallback={<LoadingSkeleton label="Loading executed research results…"/>}>
+        <Analytics key={route.params.get('family')} initialFamily={route.params.get('family') ?? undefined}/></Suspense>}
       {route.id==='documentation' && <Documentation/>}
     </div>
   </AppShell>
-}
-
-function Documentation() {
-  return <section className="card"><h1>Documentation</h1><div className="row-actions">
-    <a className="btn secondary" href="/overview.html">Project overview</a><a className="btn secondary" href="/docs">API reference</a>
-  </div></section>
-}
-
-function LegacyEvidence({evidence,busy,verify}:{evidence?:Evidence;busy:boolean;verify:(value:string)=>Promise<Evidence|undefined>}) {
-  const [checkpoint,setCheckpoint]=useState('')
-  const [result,setResult]=useState<Evidence>()
-  return <section className="card form-stack"><h1>Evidence explorer</h1><p>Chain integrity is relative to a trusted checkpoint.</p>
-    <form className="form-stack" onSubmit={async event=>{event.preventDefault();setResult(await verify(checkpoint))}}>
-      <label className="control">Trusted checkpoint (optional)<input value={checkpoint} pattern="[0-9a-f]{64}" onChange={event=>setCheckpoint(event.target.value.trim())}/></label>
-      <button className="btn primary" disabled={busy}>Verify chain</button>
-    </form>{result && <p role="status">{result.valid ? result.checkpoint_found===false ? 'Checkpoint unavailable' : 'Chain verified' : 'Chain invalid'}</p>}
-    {[...(result?.events ?? evidence?.events ?? [])].reverse().map(event=><details className="record-disclosure" key={event.position}>
-      <summary>{event.action.replaceAll('_',' ')}</summary><pre>{JSON.stringify(event,null,2)}</pre></details>)}
-  </section>
 }
 
 createRoot(document.getElementById('root')!).render(<App />)

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import {
-  ArrowRight, Check, CircleAlert, Fingerprint, FlaskConical, GitBranch, Layers3, Play, ScanLine, Search,
+  ArrowRight, Check, CircleAlert, Fingerprint, GitBranch, Layers3, Play, ScanLine, Search,
   ShieldCheck, ShoppingBag, Terminal, UserRoundCheck,
 } from 'lucide-react'
 import { label, money, type Evidence, type Mandate, type Payment, type Product } from './api'
@@ -135,7 +135,7 @@ function DecisionExplanation({ payment, mandate, evidence }: { payment: Payment;
   const firewallChecks = Object.entries(payment.checks).filter(([key])=>!cryptoChecks.includes(key))
   const proof = evidence?.events.find(event=>event.entity===payment.id && event.action==='verification')
   const prediction = payment.semantic
-  return <Card title="Verification pipeline" note="Signed authorization, policy controls and independent evidence">
+  return <Card className="pipeline-card" title="Verification pipeline" note="Signed authorization, policy controls and independent evidence">
     <Timeline entries={[
       { id:'mandate',title:'Mandate received',icon:ScanLine,meta:mandate ? 'Found' : 'Unavailable',
         body:<CopyableIdentifier value={payment.proposal.mandate_id} name="mandate ID" compact/> },
@@ -178,9 +178,9 @@ export function Transactions({ payment, payments, catalogue, mandates, evidence 
         <div className="decision-side"><StatusBadge value={payment.decision}/><strong className="amount">{money(payment.proposal.amount)}</strong>
           <StatusBadge value={payment.status} text={payment.status === 'SETTLED' ? 'Simulated settlement' : payment.status === 'REJECTED' ? 'Settlement blocked' : 'Awaiting review'}/></div>
       </Card>
-      <div className="investigation-grid">
+      <div className="investigation-grid transaction-grid">
         <div className="flow">
-          <Card title="Why this decision">
+          <Card className="cause-card" title="Why this decision">
             <ul className="decision-reasons">{payment.reasons.map(reason=><li key={reason}>{decisionReason(reason)}</li>)}</ul>
             {payment.status==='PENDING' && <ActionLink href={'#review?tx='+payment.id}>Open human review</ActionLink>}
             {payment.review && <p className="muted review-outcome">Review {payment.review.approved ? 'approved' : 'declined'}{payment.review.note ? ' · '+payment.review.note : ''}</p>}
@@ -190,8 +190,8 @@ export function Transactions({ payment, payments, catalogue, mandates, evidence 
           <DecisionExplanation payment={payment} mandate={mandates.find(item=>item.id===payment.proposal.mandate_id)} evidence={evidence}/>
         </div>
         <div className="flow">
-          <Card title="Product evidence" note="Independent records and merchant claims"><CompatibilityEvidence payment={payment}/></Card>
-          <Card title="Agent rationale"><p className="muted">{payment.rationale || 'No rationale recorded.'}</p><TextLink href={'#evidence?tx='+payment.id}>Read observations</TextLink></Card>
+          <Card className="compatibility-card" title="Product evidence" note="Independent records and merchant claims"><CompatibilityEvidence payment={payment}/></Card>
+          <Card className="rationale-card" title="Agent rationale"><p className="muted">{payment.rationale || 'No rationale recorded.'}</p><TextLink href={'#evidence?tx='+payment.id}>Read observations</TextLink></Card>
         </div>
       </div>
     </>}
@@ -208,7 +208,7 @@ export function Reviews({ payments, catalogue, mandates, selectedId, busy, onRev
   onReview:(id:string,decision:'approve'|'reject',note:string)=>Promise<Payment|undefined>;
 }) {
   const [query,setQuery] = useState('')
-  const [scope,setScope] = useState('pending')
+  const [scope,setScope] = useState(selectedId && payments.some(p=>p.id===selectedId && p.status!=='PENDING') ? 'all' : 'pending')
   const [order,setOrder] = useState('newest')
   const [activeId,setActive] = useState(selectedId)
   const [notes,setNotes] = useState<Record<string,string>>({})

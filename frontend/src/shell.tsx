@@ -8,7 +8,7 @@ export type NavItem = { id: string; title: string; icon: LucideIcon }
 export type NavGroup = { title: string; items: NavItem[] }
 
 export function Brand({ onClick }: { onClick?: () => void }) {
-  return <a className="identity" href="#" onClick={onClick} aria-label="PRAMITI home">
+  return <a className="identity" href="#" onClick={onClick} aria-label="PRAMITI प्रमिति home">
     <span className="identity-mark"><ShieldCheck size={21} aria-hidden="true" /></span>
     <span className="identity-name">PRAMITI <span lang="hi">प्रमिति</span></span>
   </a>
@@ -86,7 +86,7 @@ export function AppShell({ groups, page, status, children }: {
           <nav aria-label="Breadcrumb" className="crumb"><span>{groupTitle}</span><ChevronRight size={14} aria-hidden="true" /><strong>{title}</strong></nav>
         </div>
         <div className="toolbar-right">
-          <span className="session-state"><FlaskConical size={15} aria-hidden="true" /><span>{status}</span></span>
+          <span className="session-state"><FlaskConical size={15} aria-hidden="true" /><span className="session-full">{status}</span><span className="session-mobile">{status === 'Sandbox unavailable' ? 'Offline' : 'Simulated'}</span></span>
           <a className="icon-button toolbar-doc" href="#documentation" aria-label="Documentation" title="Documentation"><CircleHelp size={18} aria-hidden="true" /></a>
           <ThemeButton />
         </div>

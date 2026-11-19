@@ -3,6 +3,10 @@
 !backend/**
 !frontend/
 !frontend/**
+!docs/
+!docs/results/
+!docs/results/competition/
+!docs/results/competition/metrics.json
 !research/
 !research/*.py
 !requirements.txt

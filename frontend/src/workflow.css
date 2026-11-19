@@ -69,3 +69,36 @@
   .decision-side { grid-template-columns:auto auto; justify-items:start; align-items:center; text-align:left; }
   .review-actions { position:sticky; bottom:0; z-index:2; background:var(--surface); border-top:1px solid var(--edge); padding:9px 0 2px; }
 }
+.record-disclosure pre { background:var(--surface-raised); color:var(--ink); padding:11px; margin:0; overflow:auto; max-height:380px; font: .77rem/1.5 var(--mono); }
+.evidence-ids { margin-top:8px; border-top:1px solid var(--edge); }
+.small-label { display:block; color:var(--ink); font-size:.84rem; margin-bottom:4px; }
+.ledger-result { display:grid; justify-items:start; gap:7px; min-width:0; font-size:.87rem; color:var(--muted-ink); }
+.offline-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px; }
+.offline-list > article { padding:10px; border:1px solid var(--edge); border-radius:8px; min-width:0; }
+.offline-list p { color:var(--muted-ink); font-size:.82rem; margin-top:4px; }
+.research-stats { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.research-stat { padding:15px; }
+.chart-scroll { overflow:auto; max-width:100%; margin-bottom:9px; }
+.frontier { width:100%; min-width:465px; max-height:340px; display:block; }
+.frontier text { fill:var(--muted-ink); font:12px var(--font); }
+.chart-grid { stroke:var(--edge); stroke-width:1; }
+.chart-cursor { stroke:var(--control-edge); stroke-dasharray:3 3; }
+.frontier-legend { display:flex; flex-wrap:wrap; gap:9px 15px; font-size:.8rem; color:var(--body); }
+.frontier-legend span { display:flex; align-items:center; gap:6px; }
+.frontier-legend i { width:10px; height:10px; border-radius:3px; display:inline-block; }
+.chart-caption { font-size:.82rem; }
+.research-table { min-width:485px; }
+.research-table th[scope=row] { background:transparent; color:var(--ink); font-size:.8rem; }
+.research-note { margin-top:12px; }
+@media (max-width:510px) {
+  .offline-list { grid-template-columns:1fr; }
+  .research-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+
+@media (max-width: 680px) {
+  .transaction-grid > .flow { display:contents; }
+  .transaction-grid .cause-card { order:1; }
+  .transaction-grid .compatibility-card { order:2; }
+  .transaction-grid .pipeline-card { order:3; }
+  .transaction-grid .rationale-card { order:4; }
+}

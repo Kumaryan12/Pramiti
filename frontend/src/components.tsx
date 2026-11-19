@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import {
-  AlertCircle, ArrowRight, Check, ChevronRight, Circle, Clock3, Copy, FileSearch, ShieldCheck,
+  AlertCircle, ArrowRight, Check, ChevronRight, Circle, Clock3, Copy, FileSearch,
   type LucideIcon,
 } from 'lucide-react'
 import { label, money, type Payment, type Product } from './api'
@@ -150,7 +150,4 @@ export function TextLink({ href, children }: { href: string; children: ReactNode
 }
 export function ActionLink({ href, children }: { href: string; children: ReactNode }) {
   return <a href={href} className="btn primary">{children}<ArrowRight aria-hidden="true" size={16} /></a>
-}
-export function VerifiedLine({ children }: { children: ReactNode }) {
-  return <div className="verified-line"><ShieldCheck size={17} aria-hidden="true" />{children}</div>
 }

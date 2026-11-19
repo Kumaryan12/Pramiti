@@ -5,3 +5,4 @@
 - Established the institutional palette, semantic design tokens and responsive workspace shell. The existing endpoints and signing implementation continue to serve the workspace.
 - Rebuilt the landing experience, dashboard and demo entry point. The dashboard derives its counts, trend, queue and ledger state from the existing APIs. The landing page preview is labelled as a sample and uses catalogue data when available.
 - Replaced the single mandate form with a four-step signing flow and a receipt. Added an investigation pipeline, a filtered case queue with confirmation, and an agent activity view. Browser signing and every transaction decision still use the existing service.
+- Added evidence timeline filtering and export, separate checkpoint verification, a controlled attack lab, and lazy-loaded analytics from the executed experiment results. Added a persisted theme selection and self-hosted fonts. The backend, trust rules and Render resources were reused.

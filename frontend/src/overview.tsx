@@ -45,7 +45,7 @@ export function Landing() {
         <div className="public-container hero-layout">
           <div className="hero-copy">
             <p className="hero-eyebrow"><span/> Agentic AI · Financial security · Research prototype</p>
-            <h1>Autonomous payments.<br/><em>Verifiable intent.</em></h1>
+            <h1>Autonomous Payments.<br/><em>Verifiable Intent.</em></h1>
             <p className="hero-description">PRAMITI independently checks whether AI-agent transactions match user-approved intentions, escalates uncertain decisions, and preserves verifiable evidence for financial investigations.</p>
             <div className="row-actions hero-actions"><ActionLink href="#demo">Launch Interactive Demo</ActionLink>
               <a className="btn hero-secondary" href="#analytics">Explore the Research</a></div>
