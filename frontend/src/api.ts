@@ -27,7 +27,8 @@ export interface Product {
 
 export interface Payment {
   id: string
-  proposal: { mandate_id: string; product_id: string; amount: number; merchant: string; nonce: string }
+  created_at?: string
+  proposal: { mandate_id: string; product_id: string; amount: number; merchant: string; category?: string; nonce: string }
   source: string
   rationale: string
   decision: 'ALLOW' | 'ESCALATE' | 'REJECT'
@@ -41,7 +42,7 @@ export interface Payment {
     required: string[]; confirmed: string[]; contradictions: string[]; missing: string[]; merchant_only: string[]
     evidence_reference: string | null
   } | null
-  semantic?: { prediction_set: string[]; p_values: Record<string, number> } | null
+  semantic?: { alpha?: number; prediction_set: string[]; p_values: Record<string, number> } | null
 }
 
 export interface Evidence {
@@ -49,19 +50,22 @@ export interface Evidence {
   head: string
   count: number
   checkpoint_found: boolean | null
-  events: {
-    position: number; at: string; action: string; entity: string
-    previous: string; digest: string; detail: unknown
-  }[]
+  events: EvidenceEvent[]
+}
+
+export interface EvidenceEvent {
+  position: number; at: string; action: string; entity: string
+  previous: string; digest: string; detail: unknown
 }
 
 export async function api<T>(path: string, body?: unknown, headers?: Record<string, string>): Promise<T> {
   const response = await fetch('/api' + path, body === undefined ? undefined : {
     method: 'POST', headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(body),
   })
-  const data = await response.json()
+  const data = await response.json().catch(() => null)
+  if (data === null) throw new Error('The sandbox returned an unreadable response. Try again shortly.')
   if (!response.ok) {
-    const detail = typeof data.detail === 'string' ? data.detail : data.detail?.map(
+    const detail = typeof data.detail === 'string' ? data.detail : (Array.isArray(data.detail) ? data.detail : []).map(
       (item: { loc: string[]; msg: string }) => item.loc.slice(1).join('.') + ' ' + item.msg,
     ).join(', ')
     throw new Error(detail || 'Request failed')

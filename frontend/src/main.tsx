@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
-  ArrowRight, BadgeCheck, BookOpen, Check, CircleAlert, FileSignature, Fingerprint,
+  ArrowRight, BadgeCheck, BookOpen, Check, Play, CircleAlert, FileSignature, Fingerprint,
   FlaskConical, Grid2X2, KeyRound, Layers3, LockKeyhole, ScanLine, ShieldCheck,
   ShoppingBag, UserRoundCheck,
 } from 'lucide-react'
@@ -9,10 +9,13 @@ import { api, label, money, sign, type Evidence, type Mandate, type Payment, typ
 import './style.css'
 import './theme.css'
 import './institution.css'
+import './product.css'
+import { Dashboard, Demo, Landing as PublicLanding } from './overview'
 import { AppShell } from './shell'
 
 const pages = [
   ['dashboard', 'Dashboard', Grid2X2],
+  ['demo', 'Live demonstration', Play],
   ['mandates', 'Mandate Builder', FileSignature],
   ['agent', 'AI Shopping Agent', ShoppingBag],
   ['verification', 'Payment Verification', ScanLine],
@@ -21,6 +24,7 @@ const pages = [
 ] as const
 type Page = typeof pages[number][0] | ''
 const descriptions: Record<Exclude<Page, ''>, string> = {
+  demo: 'Run three scenarios through the verifier.',
   dashboard: 'Monitor authorization, payment decisions, and settlement in your sandbox.',
   mandates: 'Define what your agent can purchase, then sign your authorization in this browser.',
   agent: 'Give the shopper a signed mandate and inspect the payment it proposes.',
@@ -29,7 +33,7 @@ const descriptions: Record<Exclude<Page, ''>, string> = {
   evidence: 'Inspect the ordered record of approvals, proposals, decisions, and settlement.',
 }
 const currentPage = () => {
-  const hash = window.location.hash.slice(1)
+  const hash = window.location.hash.slice(1).split('?')[0]
   return pages.some(([page]) => page === hash) ? hash as Page : ''
 }
 
@@ -168,9 +172,12 @@ function App() {
   const [checkpoint, setCheckpoint] = useState('')
   const [notes, setNotes] = useState<Record<string, string>>({})
   const [ready, setReady] = useState(false)
+  const [refreshed, setRefreshed] = useState<string>()
 
   async function refresh() {
-    const [policies, transactions] = await Promise.all([api<Mandate[]>('/mandates'), api<Payment[]>('/payments')])
+    const [policies, transactions, ledger] = await Promise.all([api<Mandate[]>('/mandates'), api<Payment[]>('/payments'), api<Evidence>('/evidence')])
+    setEvidence(ledger)
+    setRefreshed(new Date().toISOString())
     setMandates(policies)
     setPayments(transactions)
     setMandateId(existing => existing || policies.at(-1)?.id || '')
@@ -233,31 +240,22 @@ function App() {
     })
   }
 
-  if (!page) return <Landing />
+  if (!page) return <PublicLanding />
   const title = pages.find(([id]) => id === page)?.[1]
   const navItems = pages.map(([id, title, icon]) => ({ id, title, icon }))
   return <AppShell page={page} status={ready ? 'Sandbox connected' : 'Connecting to sandbox'} groups={[
-    { title: 'Overview', items: navItems.slice(0, 1) },
-    { title: 'Payment assurance', items: navItems.slice(1, 5) },
-    { title: 'Investigation', items: navItems.slice(5) },
+    { title: 'Overview', items: navItems.slice(0, 2) },
+    { title: 'Payment assurance', items: navItems.slice(2, 6) },
+    { title: 'Investigation', items: navItems.slice(6) },
   ]}>
-      <div className="content">
-        <div className="page-heading"><h1>{title}</h1><p>{descriptions[page]}</p></div>
+      <div className={page === 'dashboard' || page === 'demo' ? 'product-content' : 'content'}>
+        {page !== 'dashboard' && page !== 'demo' && <div className="page-heading"><h1>{title}</h1><p>{descriptions[page]}</p></div>}
         {error && <div role="alert" className="message error"><CircleAlert size={18} />{error}</div>}
         {notice && <div role="status" className="message"><Check size={18} />{notice}</div>}
-        {page === 'dashboard' && <>
-          <section className="dashboard-hero">
-            <div><p className="eyebrow">PROOF OF INTENT</p><h2>Authorize before agents spend.</h2><p>Create a signed mandate, run an agent, and trace its payment decision.</p>
-              <a className="button primary" href="#mandates">Create a mandate <ArrowRight size={16} /></a></div>
-            <div className="dashboard-shield"><ShieldCheck size={106} strokeWidth={1.1} /></div>
-          </section>
-          <div className="metrics">
-            <article className="panel"><FileSignature /><span>Signed mandates</span><strong>{mandates.length}</strong></article>
-            <article className="panel"><UserRoundCheck /><span>Pending review</span><strong>{pending.length}</strong></article>
-            <article className="panel"><BadgeCheck /><span>Simulated settlement</span><strong>{money(total)}</strong></article>
-          </div>
-          <section className="panel"><h2>Recent proposals</h2><PaymentTable rows={payments.slice(0, 5)} catalogue={catalogue} onSelect={selectPayment} /></section>
-        </>}
+        {page === 'dashboard' && <Dashboard payments={payments} catalogue={catalogue} evidence={evidence} refreshed={refreshed}
+          busy={busy || !ready} onRefresh={() => void work(refresh)} />}
+        {page === 'demo' && <Demo mandates={mandates} mandateId={mandateId} setMandateId={setMandateId}
+          busy={busy || !ready} run={scenario => run(scenario)} />}
         {page === 'mandates' && <>
           <MandateForm catalogue={catalogue} busy={busy || !ready} onApprove={policy => void work(async () => {
             await api<Mandate>('/mandates', await sign(policy))
