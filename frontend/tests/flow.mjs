@@ -24,7 +24,7 @@ export async function signDefault(page, { validation = false, receipt } = {}) {
     await page.getByRole('button',{name:'Use sample intent'}).click()
   }
   await page.getByRole('button',{name:'Continue to constraints'}).click()
-  await page.getByRole('heading',{name:'Review constraints',exact:true}).waitFor()
+  await page.getByRole('heading',{name:'Review structured policy',exact:true}).waitFor()
   if (validation) {
     await page.getByLabel('Single-payment limit').fill('7500000')
     await page.getByRole('button',{name:'Review mandate'}).click()
@@ -32,7 +32,7 @@ export async function signDefault(page, { validation = false, receipt } = {}) {
     await page.getByLabel('Single-payment limit').fill('3000')
   }
   await page.getByRole('button',{name:'Review mandate'}).click()
-  await page.getByRole('heading',{name:'Review and sign',exact:true}).waitFor()
+  await page.getByRole('heading',{name:'Verify and sign',exact:true}).waitFor()
   if (validation) {
     const mandates = await (await page.request.get(base+'/api/mandates')).json()
     assert.equal(mandates.length,0)

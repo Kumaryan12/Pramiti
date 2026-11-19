@@ -253,15 +253,15 @@ export function Reviews({ payments, catalogue, mandates, selectedId, busy, onRev
             <tbody>{rows.map(p=><tr key={p.id} className={active?.id===p.id ? 'selected-row' : ''}>
               <td><button className="table-link case-select" type="button" onClick={()=>{setActive(p.id);setNotice('')}} aria-pressed={active?.id===p.id}>{productTitle(p,catalogue)}</button>
                 <small>{p.proposal.merchant} · <code>{p.id.slice(0,8)}</code></small></td>
-              <td className="amount">{money(p.proposal.amount)}</td><td>{p.reasons[0] ?? 'Reason unavailable'}</td><td className="cell-time">{instant(p.created_at)}</td><td><StatusBadge value={p.status}/></td>
+              <td data-label="Amount" className="amount">{money(p.proposal.amount)}</td><td data-label="Reason">{p.reasons[0] ?? 'Reason unavailable'}</td><td data-label="Received" className="cell-time">{instant(p.created_at)}</td><td data-label="Status"><StatusBadge value={p.status}/></td>
             </tr>)}</tbody>
           </table></div> : <EmptyState title={reviewCases.length ? 'No matching review cases' : 'No escalations yet'} description="Escalated proposals appear here when the verifier needs a human decision."
             icon={UserRoundCheck} action={!reviewCases.length ? <ActionLink href="#demo">Run a scenario</ActionLink> : undefined}/>}
       </div>
     </Card>
-    {active && <div className="investigation-grid" aria-label="Selected review case">
+    {active && <div className="investigation-grid review-detail" aria-label="Selected review case">
       <div className="flow">
-        <Card title="Approved mandate">{mandate ? <MandateSummary mandate={mandate} catalogue={catalogue} compact/> : <p className="muted">Mandate unavailable.</p>}</Card>
+        <Card title="Approved mandate">{mandate ? <><blockquote className="intent-quote">{mandate.instruction}</blockquote><details className="record-disclosure"><summary>Signed conditions</summary><MandateSummary mandate={mandate} catalogue={catalogue} compact/></details></> : <p className="muted">Mandate unavailable.</p>}</Card>
         <Card title="Proposed transaction">
           <dl className="detail-list">
             <div><dt>Transaction ID</dt><dd><CopyableIdentifier value={active.id} name="transaction ID" compact/></dd></div>
@@ -269,15 +269,20 @@ export function Reviews({ payments, catalogue, mandates, selectedId, busy, onRev
             <div><dt>Proposed product</dt><dd>{productTitle(active,catalogue)}</dd></div>
             <div><dt>Amount and merchant</dt><dd>{money(active.proposal.amount)} · {active.proposal.merchant}</dd></div>
           </dl>
-          <TextLink href={'#evidence?tx='+active.id}>Open relevant evidence</TextLink>
+
         </Card>
       </div>
       <div className="flow">
         <Card title="Conditions requiring review">
           <ul className="decision-reasons">{active.reasons.map(reason=><li key={reason}>{decisionReason(reason)}</li>)}</ul>
           <CompatibilityEvidence payment={active}/>
+          <details className="record-disclosure"><summary>Policy and model checks</summary><ul className="plain-list">{Object.entries(active.checks).map(([key,ok])=><li key={key}>{label(key)} · {ok?'passed':'failed'}</li>)}</ul>
+            <p>{active.semantic ? 'Prediction set {'+active.semantic.prediction_set.join(', ')+'}' : 'No calibrated score recorded.'}</p></details>
         </Card>
+      </div>
+      <div className="flow">
         <Card title="Record human decision" className="review-controls">
+          <div className="case-summary"><strong>{money(active.proposal.amount)}</strong><span>{active.proposal.merchant}</span><TextLink href={'#evidence?tx='+active.id}>Open relevant evidence</TextLink></div>
           {active.status==='PENDING' ? <div className="form-stack">
             <p className="muted">The server rechecks hard policies before simulated settlement.</p>
             <label className="control">Reviewer note {missing ? '(required to approve)' : '(optional)'}
@@ -288,7 +293,7 @@ export function Reviews({ payments, catalogue, mandates, selectedId, busy, onRev
               <button type="button" className="btn secondary" disabled={busy} onClick={()=>setConfirmation({id:active.id,decision:'reject'})}>Reject</button>
             </div>
           </div> : <div className="form-stack"><StatusBadge value={active.status}/>
-            <p className="muted">{active.review?.note || 'No review note recorded.'}</p><TextLink href={'#verification?tx='+active.id}>Inspect final transaction</TextLink></div>}
+            <p className="muted">{active.review?.note || 'No review note recorded.'}</p><TextLink href={'#verification?tx='+active.id}>Inspect final transaction</TextLink>{active.source==='scripted' && <TextLink href={'#demo?tx='+active.id}>Return to demo outcome</TextLink>}</div>}
         </Card>
       </div>
     </div>}

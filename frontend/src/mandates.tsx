@@ -108,13 +108,14 @@ export function Mandates({ catalogue, mandates, busy, next, onSign }: {
     field(name, caption, <input {...attrs(name, !!help)} value={draft[name]} required={name !== 'requirements'}
       type={name === 'expires_at' ? 'datetime-local' : 'text'} inputMode={name.endsWith('amount') || name === 'cumulative_limit' ? 'decimal' : undefined}
       onChange={event => setValue(name, event.target.value)}/>, help)
-  const descriptions = ['Describe intent','Review constraints','Review and sign','Confirmation']
+  const descriptions = ['Describe intent','Review structured policy','Verify and sign','Confirmation']
   const visibleErrors = Object.entries(errors).filter((entry): entry is [string,string] => Boolean(entry[1]))
   return <>
     <PageHeader title="Intent mandates" description="Set the terms your agent can act on and sign the final contract in your browser."/>
     <StepIndicator steps={descriptions} current={step}/>
     <div className="mandate-grid">
       <Card className="wizard">
+        <p className="eyebrow">{step===3 ? 'Authorisation receipt' : 'Mandate studio · Step '+(step+1)+' of 4'}</p>
         <h2 ref={heading} tabIndex={-1}>{descriptions[step]}</h2>
         {step < 3 && <form noValidate className="form-stack" onSubmit={submit}>
           {visibleErrors.length > 0 && <div className="callout danger error-summary" role="alert" tabIndex={-1} ref={errorSummary}>
@@ -169,7 +170,7 @@ export function Mandates({ catalogue, mandates, busy, next, onSign }: {
           </div>
         </form>}
         {step === 3 && signed && <div className="form-stack">
-          <div className="callout success"><Check size={20} aria-hidden="true"/><div><strong>Mandate signed</strong><p>The verifier has accepted your signed policy. It expires {instant(signed.expires_at)}.</p></div></div>
+          <div className="callout success"><Check size={20} aria-hidden="true"/><div><strong>Mandate signed</strong><p>The server verified your Ed25519 signature. It expires {instant(signed.expires_at)}.</p></div></div>
           <div><strong>Mandate ID</strong><div><CopyableIdentifier value={signed.id} name="mandate ID"/></div></div>
           <MandateSummary mandate={signed} catalogue={catalogue}/>
           <div className="row-actions"><ActionLink href={'#'+next}>{next === 'demo' ? 'Continue to demonstration' : 'Open agent workspace'}</ActionLink>

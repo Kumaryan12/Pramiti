@@ -13,3 +13,4 @@
 
 - Phase A. Branched from 678b8a5, captured the running baseline and reviewed all three viewport sheets. Applied the requested brand palette, added self-hosted Instrument Serif for public display text and aligned workspace navigation with task names.
 - Phase B. Replaced the public introduction with an engraved cover and a payment record captured from a real substitution run. Added an interactive architecture explainer. The guided demo now retains one transaction across user, agent and verifier panels and links directly to review, settlement and evidence. Fixed a contrast regression found in the public closing section.
+- Phase C. Grouped session counts into one strip, put decision trends next to the review queue and added period selection. The signing studio now presents a server-verified signature receipt. Review cases place policy, evidence and decision controls together, with labelled records on phones.

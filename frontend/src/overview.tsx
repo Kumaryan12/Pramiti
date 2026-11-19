@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Activity, ArrowDownRight, Check, FlaskConical, GitBranch, ListFilter, ShieldCheck, ShoppingBag, TriangleAlert, UserRoundCheck, X } from 'lucide-react'
 import { money, type Evidence, type Mandate, type Payment, type Product } from './api'
 import {
@@ -11,10 +12,10 @@ export const scenarios = [
 ] as const
 export type Scenario = typeof scenarios[number]['key']
 
-function ActivityChart({ payments }: { payments: Payment[] }) {
-  const days = Array.from({length: 7}, (_, i) => {
+function ActivityChart({ payments, period }: { payments: Payment[]; period:number }) {
+  const days = Array.from({length: period}, (_, i) => {
     const day = new Date()
-    day.setDate(day.getDate() - (6 - i))
+    day.setDate(day.getDate() - (period - 1 - i))
     const dateKey = day.toDateString()
     const rows = payments.filter(item => item.created_at && new Date(item.created_at).toDateString() === dateKey)
     return {
@@ -25,9 +26,9 @@ function ActivityChart({ payments }: { payments: Payment[] }) {
     }
   })
   const maximum = Math.max(1, ...days.map(d => d.approve + d.review + d.reject))
-  if (!days.some(d => d.approve + d.review + d.reject)) return <div className="chart-placeholder"><Activity size={22} aria-hidden="true"/><p>No decisions in the last seven days.</p></div>
+  if (!days.some(d => d.approve + d.review + d.reject)) return <div className="chart-placeholder"><Activity size={22} aria-hidden="true"/><p>No decisions during this period.</p></div>
   return <>
-    <div className="activity-chart" aria-hidden="true">{days.map(day => <div className="activity-day" key={day.day}>
+    <div className="activity-chart" style={{gridTemplateColumns:'repeat('+period+',minmax(0,1fr))'}} aria-hidden="true">{days.map(day => <div className="activity-day" key={day.day}>
       <div className="activity-track">{(['approve','review','reject'] as const).map(kind => <div key={kind} className={'plot-' + kind} style={{height: (100 * day[kind] / maximum) + '%'}}/>)}</div>
       <span>{day.day}</span>
     </div>)}</div>
@@ -41,41 +42,40 @@ function ActivityChart({ payments }: { payments: Payment[] }) {
 export function Dashboard({ payments, catalogue, evidence, refreshed, busy, onRefresh }: {
   payments: Payment[]; catalogue: Product[]; evidence?: Evidence; refreshed?: string; busy: boolean; onRefresh: () => void
 }) {
+  const [period,setPeriod]=useState(7)
   const pending = payments.filter(item => item.status === 'PENDING')
   const settled = payments.filter(item => item.status === 'SETTLED')
   const decisions = (d: Payment['decision']) => payments.filter(item => item.decision === d).length
-  const observedModel = payments.some(item => item.semantic)
+  const observedModel = payments.find(item => item.semantic)?.semantic
   const count = payments.length
   return <>
     <PageHeader title="Command Centre" description="Monitor agent payment decisions, review exceptions, and trace settlement evidence."
       context={<p className="eyebrow">Workspace overview</p>} actions={<><button className="btn secondary" onClick={onRefresh} disabled={busy}>Refresh</button><ActionLink href="#demo">Run Demo</ActionLink></>}/>
     <div className="data-context"><span><FlaskConical size={16} aria-hidden="true"/> Synthetic payment workspace</span><span role="status">{busy ? 'Refreshing session data' : refreshed ? 'Updated ' + instant(refreshed) : 'Awaiting session data'}</span></div>
-    <div className="stats-grid">
+    <div className="stats-grid command-counts">
       <StatisticCard title="Transactions" value={count} detail="All proposals in this session" icon={ListFilter}/>
       <StatisticCard title="Auto-approved" value={decisions('ALLOW')} detail={count + ' total proposals'} icon={Check} tone="success"/>
       <StatisticCard title="Escalated" value={decisions('ESCALATE')} detail={count + ' total proposals'} icon={ArrowDownRight} tone="warning"/>
       <StatisticCard title="Rejected" value={decisions('REJECT')} detail={count + ' total proposals'} icon={X} tone="danger"/>
       <StatisticCard title="Pending review" value={pending.length} detail={decisions('ESCALATE') + ' escalated proposals'} icon={UserRoundCheck} tone="warning"/>
     </div>
-    <div className="overview-grid">
-      <div className="flow">
-        <Card title="Recent transactions" note="Latest proposals in this sandbox session" action={<TextLink href="#verification">View transactions</TextLink>} className="table-card">
-          {count ? <TransactionTable rows={payments.slice(0, 5)} catalogue={catalogue} compact /> : <EmptyState title="No payment proposals yet" description="Sign a demo mandate, run the shopper, and inspect the verifier’s decision." icon={ShoppingBag} action={<ActionLink href="#demo">Start the demo</ActionLink>}/>}
-        </Card>
-        <ChartContainer title="Decisions over time" note="Last 7 calendar days in this browser’s time zone">
-          <ActivityChart payments={payments}/>
-        </ChartContainer>
-      </div>
-      <div className="flow">
+    <div className="command-grid">
+      <ChartContainer title="Decision trends" note="Decisions by local calendar day" action={<select className="period-control" aria-label="Trend period" value={period} onChange={e=>setPeriod(Number(e.target.value))}><option value={3}>Last 3 days</option><option value={7}>Last 7 days</option></select>}>
+        <ActivityChart payments={payments} period={period}/>
+      </ChartContainer>
         <Card title="Needs attention" note="Outstanding human review">
           {pending.length ? <ul className="compact-list">{pending.slice(0, 3).map(item => <li key={item.id}>
             <div><strong>{item.proposal.merchant}</strong><small>{money(item.proposal.amount)} · {item.reasons[0]}</small></div><a className="text-link" href={'#review?tx=' + item.id}>Review<span className="visually-hidden">{' ' + item.id}</span></a>
           </li>)}</ul> : <div className="inline-empty"><Check size={18} aria-hidden="true"/> No proposals waiting for review.</div>}
         </Card>
+        <Card title="Recent transactions" note="Latest proposals in this sandbox session" action={<TextLink href="#verification">View transactions</TextLink>} className="table-card">
+          {count ? <TransactionTable rows={payments.slice(0, 5)} catalogue={catalogue} compact /> : <EmptyState title="No payment proposals yet" description="Sign a demo mandate, run the shopper, and inspect the verifier’s decision." icon={ShoppingBag} action={<ActionLink href="#demo">Start the demo</ActionLink>}/>}
+        </Card>
+      <div className="flow">
         <Card title="Verification and outcome">
           <dl className="detail-list">
             <div><dt>Settled in simulation</dt><dd className="amount">{settled.length} · {money(settled.reduce((sum,item) => sum + item.proposal.amount, 0))}</dd></div>
-            <div><dt>Calibrated model</dt><dd>{observedModel ? 'Scoring observed' : 'Awaiting a scored proposal'}</dd></div>
+            <div><dt>Calibrated model</dt><dd>{observedModel ? 'Scored'+(observedModel.alpha!==undefined ? ' · α '+observedModel.alpha : '') : 'Awaiting a scored proposal'}</dd></div>
             <div><dt>Ledger status</dt><dd>{evidence ? <StatusBadge value={evidence.valid ? 'VERIFIED' : 'INVALID'} /> : 'Verification unavailable'}</dd></div>
           </dl>
         </Card>
